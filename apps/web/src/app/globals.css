@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --accent: #b8935f;
+}
+
+/* FreeSewing SVG viewer 樣式 */
+.freesewing-svg-wrap svg {
+  max-width: 100%;
+  height: auto;
+}

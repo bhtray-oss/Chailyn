@@ -1,0 +1,37 @@
+{
+  "name": "pattern-engine",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.mjs",
+    "start": "node src/index.mjs",
+    "build": "echo 'ESM, no build needed'"
+  },
+  "dependencies": {
+    "@freesewing/aaron": "4.8.0",
+    "@freesewing/bella": "4.8.0",
+    "@freesewing/bibi": "4.8.0",
+    "@freesewing/brian": "4.8.0",
+    "@freesewing/carlita": "4.8.0",
+    "@freesewing/carlton": "4.8.0",
+    "@freesewing/config": "^4.8.0",
+    "@freesewing/core": "4.8.0",
+    "@freesewing/huey": "4.8.0",
+    "@freesewing/lily": "4.8.0",
+    "@freesewing/models": "4.8.0",
+    "@freesewing/paco": "4.8.0",
+    "@freesewing/plugin-theme": "^4.8.0",
+    "@freesewing/plugin-transform": "^4.8.0",
+    "@freesewing/sandy": "4.8.0",
+    "@freesewing/simon": "4.8.0",
+    "@freesewing/simone": "4.8.0",
+    "@freesewing/teagan": "4.8.0",
+    "@freesewing/titan": "4.8.0",
+    "@freesewing/waralee": "4.8.0",
+    "express": "^4.18.2",
+    "svg-pathdata": "^9.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

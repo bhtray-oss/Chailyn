@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(pip install *)",
+      "Bash(pnpm install *)",
+      "Bash(pip3 install *)",
+      "Bash(npm view *)",
+      "Bash(python3 -c \"import json,sys; v=json.load\\(sys.stdin\\); print\\('Latest:', v[-1]\\); print\\('Last 5:', v[-5:]\\)\")",
+      "Bash(python3 -c \"import json,sys; v=json.load\\(sys.stdin\\); fours=[x for x in v if x.startswith\\('4'\\)]; print\\('v4.x versions:', fours if fours else 'none'\\); print\\('Latest:', v[-1]\\)\")",
+      "Bash(python3 -c \"import json,sys; v=json.load\\(sys.stdin\\); fours=[x for x in v if x.startswith\\('4'\\)]; print\\('v4.x:', fours if fours else 'none — latest is:', v[-1]\\)\")",
+      "Bash(npm search *)",
+      "Bash(bash \"/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/test-start.sh\")",
+      "Bash([ ! -d \"$BASE/node_modules/@freesewing/$pkg\" ])",
+      "Bash(python3 -c \"import fastapi, uvicorn, sqlalchemy, asyncpg, anthropic, httpx; print\\('All Python deps OK'\\)\")",
+      "Bash(python3 -c \"import fastapi; print\\('fastapi ok'\\)\")",
+      "Bash(python3 -c \"import uvicorn; print\\('uvicorn ok'\\)\")",
+      "Bash(node_modules/.bin/tsc --noEmit)",
+      "Bash(python3 -c \"import fastapi, uvicorn, sqlalchemy, asyncpg, anthropic, httpx, pydantic_settings; print\\('All Python deps OK'\\)\")",
+      "Read(//Library/Frameworks/Python.framework/Versions/**)",
+      "Read(//usr/local/bin/**)",
+      "Bash(/opt/homebrew/bin/python3.11 -m venv \"/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv\")",
+      "Bash('/Users/raysmacbook/Documents/Claude/Projects/Chailyn'\\\\''s FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/bin/pip' install -r '/Users/raysmacbook/Documents/Claude/Projects/Chailyn'\\\\''s FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/requirements.txt')",
+      "Bash(echo \"exit: $?\")",
+      "Bash(node_modules/.bin/next dev *)",
+      "Bash(echo \"Next.js PID: $!\")",
+      "Bash(curl -s http://localhost:3000)",
+      "npm run debug"
+    ]
+  }

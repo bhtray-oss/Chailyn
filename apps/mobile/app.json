@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "Chailyn",
+    "slug": "chailyn-app",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#fafaf9"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "app.chailyn.mobile",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "選取服裝照片以進行 AI 分析",
+        "NSCameraUsageDescription": "拍攝服裝照片以進行 AI 分析"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#fafaf9"
+      },
+      "package": "app.chailyn.mobile"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "選取服裝照片以進行 AI 分析",
+          "cameraPermission": "拍攝服裝照片以進行 AI 分析"
+        }
+      ]
+    ],
+    "newArchEnabled": true
+  }
+}
