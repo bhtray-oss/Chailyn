@@ -121,6 +121,44 @@ app.post('/measurements/estimate', (req, res) => {
   }
 })
 
+// ─── GET /meta/:design ───────────────────────────────────────────────────────
+/**
+ * pattern-via-io 概念：stdin(design) → getRenderProps() → stdout(metadata)
+ * 回傳版型的結構元資料：裁片數量、裁片名稱、建議量身部位
+ */
+app.get('/meta/:design', async (req, res) => {
+  const { design } = req.params
+  try {
+    // 用預設身材（Aaron 範例尺寸）draft 一次，僅為提取結構
+    const defaultMeasurements = {
+      chest: 1080, waist: 880, hips: 980, neck: 420,
+      hpsToWaistBack: 550, shoulderToShoulder: 465,
+      shoulderSlope: 16, biceps: 335, waistToHips: 145,
+      inseam: 760, seat: 980, wrist: 170,
+    }
+    const filled = fillMissingWithNeckstimate(defaultMeasurements, 'cisFemale')
+    const result = await draftPattern({
+      design, measurements: filled, renderMode: 'props', sa: 0, paperless: false,
+    })
+    const props = result.renderProps
+    if (!props) return res.status(422).json({ ok: false, error: 'no renderProps' })
+
+    // 提取裁片名稱和數量
+    const partNames = Object.keys(props.stacks || props.parts || {})
+    const partCount = partNames.length
+
+    res.json({
+      ok: true,
+      design,
+      part_count: partCount,
+      part_names: partNames,
+      config: props.settings || {},
+    })
+  } catch (err) {
+    res.status(422).json({ ok: false, error: err.message })
+  }
+})
+
 // ─── POST /dxf ───────────────────────────────────────────────────────────────
 /**
  * Body: same as /draft, always runs in props mode internally

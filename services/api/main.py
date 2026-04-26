@@ -4,7 +4,7 @@ Chailyn FreeSewing APP · FastAPI 主入口
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import analyses, body_profiles, patterns, auth, search, bom
+from routers import analyses, body_profiles, patterns, auth, search, bom, catalog
 
 app = FastAPI(
     title="Chailyn API",
@@ -26,6 +26,7 @@ app.include_router(body_profiles.router, prefix="/profiles", tags=["profiles"])
 app.include_router(patterns.router,      prefix="/patterns", tags=["patterns"])
 app.include_router(search.router,        prefix="/search",   tags=["search"])
 app.include_router(bom.router,           prefix="/bom",      tags=["bom"])
+app.include_router(catalog.router,       prefix="/catalog",  tags=["catalog"])
 
 
 @app.get("/health")

@@ -377,6 +377,15 @@ async def _run_analysis(job_id: str, photo_id: str, user_id: str):
             )
             await db.commit()
 
+            # ── 自動分類：布料 / 廓形 / 版型 存入 catalog ──────────────────
+            try:
+                from services.auto_classify import classify_and_store
+                await classify_and_store(
+                    db, str(analysis_id), photo_id, user_id, analysis
+                )
+            except Exception as cls_err:
+                print(f"[auto_classify] {cls_err}")
+
         except Exception as e:
             await db.execute(
                 text("""
