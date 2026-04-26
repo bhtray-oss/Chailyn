@@ -10,6 +10,7 @@ import uuid
 import json
 from pathlib import Path
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, BackgroundTasks
+from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from pydantic import BaseModel
@@ -188,6 +189,92 @@ async def analyze_sync(
     await db.commit()
 
     return {"analysis_id": str(analysis_id), "result": analysis}
+
+
+# ─── 列出使用者所有分析記錄 ───────────────────────────────────────────────────
+@router.get("/user/{user_id}")
+async def list_user_analyses(
+    user_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    """回傳該 user 所有已完成的分析 job（含照片 meta + 結果摘要），最新在前。"""
+    result = await db.execute(
+        text("""
+            SELECT
+                j.id          AS job_id,
+                j.photo_id,
+                j.status,
+                j.result,
+                j.analysis_id,
+                j.created_at,
+                j.finished_at,
+                p.mime_type,
+                p.file_size_kb
+            FROM analysis_jobs j
+            JOIN garment_photos p ON p.id = j.photo_id
+            WHERE j.user_id = :uid
+              AND j.status = 'done'
+            ORDER BY j.created_at DESC
+            LIMIT 100
+        """),
+        {"uid": str(user_id)},
+    )
+    rows = result.fetchall()
+    return [dict(r._mapping) for r in rows]
+
+
+# ─── 提供照片縮圖（本地檔案回傳） ─────────────────────────────────────────────
+@router.get("/photo/{photo_id}")
+async def get_photo(
+    photo_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    """回傳原始上傳圖片，供前端顯示縮圖。"""
+    result = await db.execute(
+        text("SELECT mime_type FROM garment_photos WHERE id = :id"),
+        {"id": str(photo_id)},
+    )
+    row = result.fetchone()
+    if not row:
+        raise HTTPException(404, "找不到照片記錄")
+
+    local_path = UPLOAD_DIR / str(photo_id)
+    if not local_path.exists():
+        raise HTTPException(404, "照片檔案不存在")
+
+    return FileResponse(str(local_path), media_type=row.mime_type)
+
+
+# ─── 刪除分析記錄 ─────────────────────────────────────────────────────────────
+@router.delete("/jobs/{job_id}")
+async def delete_analysis_job(
+    job_id: uuid.UUID,
+    user_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    """刪除指定 job 及其關聯的 ai_analyses 記錄（照片保留）。"""
+    result = await db.execute(
+        text("SELECT photo_id, analysis_id FROM analysis_jobs WHERE id = :id AND user_id = :uid"),
+        {"id": str(job_id), "uid": str(user_id)},
+    )
+    row = result.fetchone()
+    if not row:
+        raise HTTPException(404, "找不到記錄或無權限刪除")
+
+    # 刪除 ai_analyses
+    if row.analysis_id:
+        await db.execute(
+            text("DELETE FROM ai_analyses WHERE id = :id"),
+            {"id": str(row.analysis_id)},
+        )
+
+    # 刪除 job
+    await db.execute(
+        text("DELETE FROM analysis_jobs WHERE id = :id"),
+        {"id": str(job_id)},
+    )
+    await db.commit()
+    return {"deleted": str(job_id)}
 
 
 # ─── 取得分析結果 ─────────────────────────────────────────────────────────────

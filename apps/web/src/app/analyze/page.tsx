@@ -253,12 +253,18 @@ export default function AnalyzePage() {
                 </div>
               )}
 
-              <button
-                onClick={() => { setStep('upload'); setPreview(null); setAnalysis(null); setJobStatus(''); setActivePreview(null); setPatternSvgs({}) }}
-                className="text-sm text-stone-500 hover:text-stone-700 text-left"
-              >
-                ← 重新上傳
-              </button>
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => { setStep('upload'); setPreview(null); setAnalysis(null); setJobStatus(''); setActivePreview(null); setPatternSvgs({}) }}
+                  className="text-sm text-stone-500 hover:text-stone-700"
+                >
+                  ← 重新上傳
+                </button>
+                <a href="/history"
+                  className="flex items-center gap-1.5 text-xs text-stone-400 hover:text-stone-700 transition-colors">
+                  <span className="text-green-500">✓</span> 已自動儲存 · 查看歷史 →
+                </a>
+              </div>
             </div>
           </div>
 

@@ -130,6 +130,33 @@ export const jobApi = {
   },
 }
 
+// ─── Analysis History ─────────────────────────────────────────────────────────
+export interface AnalysisHistoryItem {
+  job_id:       string
+  photo_id:     string
+  status:       string
+  result:       import('./types').GarmentAnalysis
+  analysis_id:  string
+  created_at:   string
+  finished_at:  string
+  mime_type:    string
+  file_size_kb: number
+}
+
+export const historyApi = {
+  /** 列出使用者所有已完成的分析 */
+  list: (userId: string) =>
+    request<AnalysisHistoryItem[]>(`/analyses/user/${userId}`),
+
+  /** 照片縮圖 URL（直接給 <img src> 用） */
+  photoUrl: (photoId: string) =>
+    `${API_BASE}/analyses/photo/${photoId}`,
+
+  /** 刪除一筆分析記錄 */
+  delete: (jobId: string, userId: string) =>
+    request(`/analyses/jobs/${jobId}?user_id=${userId}`, { method: 'DELETE' }),
+}
+
 // ─── Patterns ─────────────────────────────────────────────────────────────────
 export const patternApi = {
   listDesigns: () =>

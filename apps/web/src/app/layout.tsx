@@ -21,6 +21,7 @@ export default function RootLayout({
             </a>
             <div className="flex items-center gap-6 text-sm text-stone-600">
               <a href="/analyze"  className="hover:text-stone-900 transition-colors">分析照片</a>
+              <a href="/history"  className="hover:text-stone-900 transition-colors">分析歷史</a>
               <a href="/search"   className="hover:text-stone-900 transition-colors">搜尋版型</a>
               <a href="/pattern"  className="hover:text-stone-900 transition-colors">版型</a>
               <a href="/wardrobe" className="hover:text-stone-900 transition-colors">衣櫃</a>
