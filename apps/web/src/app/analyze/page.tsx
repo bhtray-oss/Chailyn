@@ -36,7 +36,17 @@ export default function AnalyzePage() {
     try {
       // 1. 上傳照片
       setStep('uploading')
-      const { photo_id } = await analysisApi.uploadPhoto(DEV_USER_ID, file)
+      let uploadResult: { photo_id: string }
+      try {
+        uploadResult = await analysisApi.uploadPhoto(DEV_USER_ID, file)
+      } catch (e: any) {
+        const msg = e.message ?? ''
+        if (msg.includes('Failed to fetch') || msg.includes('fetch')) {
+          throw new Error('無法連線到伺服器（API :8000 未啟動？），請確認後端服務正在執行。')
+        }
+        throw new Error(`上傳失敗：${msg}`)
+      }
+      const { photo_id } = uploadResult
 
       // 2. 建立非同步 Job
       setStep('analyzing')
@@ -49,7 +59,14 @@ export default function AnalyzePage() {
       )
 
       if (job.status === 'failed') {
-        throw new Error(job.error ?? '分析失敗，請再試一次')
+        const errMsg = job.error ?? '分析失敗，請再試一次'
+        if (errMsg.includes('credit balance') || errMsg.includes('billing')) {
+          throw new Error('Anthropic 帳戶餘額不足，請至 console.anthropic.com 加值')
+        }
+        if (errMsg.includes('Could not process image')) {
+          throw new Error('圖片格式不支援或品質太低，請換一張清晰的服裝照片')
+        }
+        throw new Error(errMsg)
       }
 
       setAnalysis(job.result as GarmentAnalysis)
@@ -136,30 +153,78 @@ export default function AnalyzePage() {
           <div className="flex flex-col gap-4">
             {/* Fabric */}
             <Card title="布料">
-              <Row label="主布" value={analysis.fabric.primary.name} />
-              <Row label="成分" value={analysis.fabric.primary.composition_estimate} />
-              <Row label="垂墜" value={`${analysis.fabric.primary.drape}/10`} />
-              <Row label="厚度" value={`${analysis.fabric.primary.thickness}/10`} />
+              <Row label="主布" value={analysis.fabric?.primary?.name} />
+              <Row label="成分" value={analysis.fabric?.primary?.composition_estimate} />
+              <Row label="重量" value={(analysis.fabric?.primary as any)?.weight} />
+              <Row label="垂墜" value={analysis.fabric?.primary?.drape != null ? `${analysis.fabric.primary.drape}/10` : null} />
+              <Row label="厚度" value={analysis.fabric?.primary?.thickness != null ? `${analysis.fabric.primary.thickness}/10` : null} />
             </Card>
 
             {/* Cut */}
-            <Card title="剪裁">
-              <Row label="輪廓" value={analysis.cut.silhouette} />
-              <Row label="鬆量" value={analysis.cut.ease_estimate} />
-              <Row label="省道" value={`${analysis.cut.darts} 個`} />
+            <Card title="剪裁版型">
+              <Row label="廓形" value={analysis.cut?.silhouette} />
+              <Row label="鬆量" value={(analysis.cut as any)?.fit_ease ?? (analysis.cut as any)?.ease_estimate} />
+              <Row label="腰部" value={(analysis.cut as any)?.waist_treatment} />
+              <Row label="類型" value={(analysis as any)?.garment_type_detail} />
+            </Card>
+
+            {/* Components */}
+            <Card title="部件">
+              <Row label="領型" value={
+                typeof analysis.components?.collar === 'object' && analysis.components.collar !== null
+                  ? (analysis.components.collar as any).type ?? (analysis.components.collar as any).description
+                  : analysis.components?.collar as string | null
+              } />
+              <Row label="袖型" value={
+                typeof analysis.components?.sleeves === 'object' && analysis.components.sleeves !== null
+                  ? `${(analysis.components.sleeves as any).type ?? ''} ${(analysis.components.sleeves as any).length ?? ''}`.trim()
+                  : analysis.components?.sleeves as string | null
+              } />
+              <Row label="難度" value={
+                (analysis as any)?.difficulty_estimate
+                  ? '★'.repeat((analysis as any).difficulty_estimate)
+                  : null
+              } />
             </Card>
 
             {/* Closest patterns */}
-            <Card title="推薦版型">
-              {analysis.closest_freesewing_patterns.map((p) => (
-                <div key={p.design} className="flex items-center justify-between py-1">
-                  <span className="font-medium capitalize text-stone-800">{p.design}</span>
-                  <span className="text-xs text-stone-500">
-                    信心度 {Math.round(p.confidence * 100)}%
-                  </span>
+            <Card title="推薦 FreeSewing 版型">
+              {(analysis.closest_freesewing_patterns ?? []).map((p) => (
+                <div key={p.design} className="py-1.5 border-b border-stone-50 last:border-0">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium capitalize text-stone-800">{p.design}</span>
+                    <span className="text-xs text-stone-500">
+                      {Math.round(p.confidence * 100)}% 符合
+                    </span>
+                  </div>
+                  {(p as any).reasoning && (
+                    <p className="text-xs text-stone-400 mt-0.5">{(p as any).reasoning}</p>
+                  )}
                 </div>
               ))}
+              {/* Quick draft link for top result */}
+              {(analysis.closest_freesewing_patterns ?? []).length > 0 && (
+                <a
+                  href={`/pattern`}
+                  onClick={() => sessionStorage.setItem('autoSelectDesign',
+                    analysis.closest_freesewing_patterns[0].design)}
+                  className="mt-2 block text-center text-xs font-medium py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-700 transition-colors"
+                >
+                  打這款版型 →
+                </a>
+              )}
             </Card>
+
+            {/* Tags */}
+            {analysis.silhouette_tags?.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {analysis.silhouette_tags.map(tag => (
+                  <span key={tag} className="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full">
+                    {tag.replace(/_/g,' ')}
+                  </span>
+                ))}
+              </div>
+            )}
 
             <button
               onClick={() => { setStep('upload'); setPreview(null); setAnalysis(null); setJobStatus('') }}
