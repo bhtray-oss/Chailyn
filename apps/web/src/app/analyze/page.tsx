@@ -2,12 +2,13 @@
 
 import { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { analysisApi, jobApi } from '@/lib/api'
+import { analysisApi, jobApi, patternApi } from '@/lib/api'
 import type { GarmentAnalysis } from '@/lib/types'
 import type { AnalysisJob } from '@/lib/api'
 
 // DEV 用：硬編一個 user_id，正式版改從 auth context 取
-const DEV_USER_ID = '00000000-0000-0000-0000-000000000001'
+const DEV_USER_ID     = '00000000-0000-0000-0000-000000000001'
+const DEV_PROFILE_ID  = '00000000-0000-0000-0000-000000000002'
 
 type Step = 'upload' | 'uploading' | 'analyzing' | 'result'
 
@@ -24,6 +25,24 @@ export default function AnalyzePage() {
   const [analysis, setAnalysis] = useState<GarmentAnalysis | null>(null)
   const [error, setError]       = useState<string | null>(null)
   const [jobStatus, setJobStatus] = useState<string>('')
+  // design → 'loading' | svg string
+  const [patternSvgs, setPatternSvgs] = useState<Record<string, string | 'loading'>>({})
+
+  const draftPattern = useCallback(async (design: string) => {
+    setPatternSvgs(prev => ({ ...prev, [design]: 'loading' }))
+    try {
+      const data = await patternApi.draft({
+        userId: DEV_USER_ID,
+        design,
+        bodyProfileId: DEV_PROFILE_ID,
+        sa: 10,
+        renderMode: 'svg',
+      }) as any
+      setPatternSvgs(prev => ({ ...prev, [design]: data.svg ?? '' }))
+    } catch {
+      setPatternSvgs(prev => { const n = { ...prev }; delete n[design]; return n })
+    }
+  }, [])
 
   const onDrop = useCallback(async (files: File[]) => {
     const file = files[0]
@@ -189,30 +208,58 @@ export default function AnalyzePage() {
 
             {/* Closest patterns */}
             <Card title="推薦 FreeSewing 版型">
-              {(analysis.closest_freesewing_patterns ?? []).map((p) => (
-                <div key={p.design} className="py-1.5 border-b border-stone-50 last:border-0">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium capitalize text-stone-800">{p.design}</span>
-                    <span className="text-xs text-stone-500">
-                      {Math.round(p.confidence * 100)}% 符合
-                    </span>
+              {(analysis.closest_freesewing_patterns ?? []).map((p) => {
+                const svgState = patternSvgs[p.design]
+                return (
+                  <div key={p.design} className="py-2 border-b border-stone-100 last:border-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-semibold capitalize text-stone-800">{p.design}</span>
+                      <span className="text-xs text-stone-500">{Math.round(p.confidence * 100)}% 符合</span>
+                    </div>
+                    {(p as any).reasoning && (
+                      <p className="text-xs text-stone-400 mb-2">{(p as any).reasoning}</p>
+                    )}
+                    {/* Preview button */}
+                    {!svgState && (
+                      <button
+                        onClick={() => draftPattern(p.design)}
+                        className="text-xs font-medium px-3 py-1.5 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-50 transition-colors"
+                      >
+                        🪡 預覽版型圖樣
+                      </button>
+                    )}
+                    {svgState === 'loading' && (
+                      <div className="flex items-center gap-2 text-xs text-stone-400 py-1">
+                        <div className="w-3 h-3 border-2 border-stone-300 border-t-stone-600 rounded-full animate-spin" />
+                        打版中…
+                      </div>
+                    )}
+                    {svgState && svgState !== 'loading' && (
+                      <div className="mt-2 border border-stone-200 rounded-lg overflow-hidden bg-white">
+                        <div
+                          className="w-full overflow-auto"
+                          dangerouslySetInnerHTML={{ __html: svgState }}
+                        />
+                        <div className="flex gap-2 p-2 border-t border-stone-100">
+                          <a
+                            href="/pattern"
+                            onClick={() => sessionStorage.setItem('autoSelectDesign', p.design)}
+                            className="flex-1 text-center text-xs font-medium py-1.5 bg-stone-900 text-white rounded-md hover:bg-stone-700 transition-colors"
+                          >
+                            完整打版 →
+                          </a>
+                          <button
+                            onClick={() => setPatternSvgs(prev => { const n = { ...prev }; delete n[p.design]; return n })}
+                            className="text-xs px-3 py-1.5 text-stone-500 hover:text-stone-700"
+                          >
+                            收起
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  {(p as any).reasoning && (
-                    <p className="text-xs text-stone-400 mt-0.5">{(p as any).reasoning}</p>
-                  )}
-                </div>
-              ))}
-              {/* Quick draft link for top result */}
-              {(analysis.closest_freesewing_patterns ?? []).length > 0 && (
-                <a
-                  href={`/pattern`}
-                  onClick={() => sessionStorage.setItem('autoSelectDesign',
-                    analysis.closest_freesewing_patterns[0].design)}
-                  className="mt-2 block text-center text-xs font-medium py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-700 transition-colors"
-                >
-                  打這款版型 →
-                </a>
-              )}
+                )
+              })}
             </Card>
 
             {/* Tags */}
