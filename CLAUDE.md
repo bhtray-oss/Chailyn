@@ -306,7 +306,95 @@ ANTHROPIC_API_KEY=sk-ant-...
 
 ---
 
-## 9. API Quick Reference
+## 9. Patternmaking Rules Knowledge Base
+
+Source: *Patternmaking for Fashion Design, 5th Ed.* (Helen Joseph-Armstrong)
+Module: `services/api/services/patternmaking_rules.py`
+
+### 9.1 Silhouette Classification (Armstrong)
+
+| Code | Chinese | Description |
+|------|---------|-------------|
+| `sheath` | 合身直筒 | 雙腰省（前後各2個），緊貼身型 |
+| `shift` | 半合身 | 單腰省，略寬於身型 |
+| `box_fit` | 箱型 | 省道作鬆量不縫合，方正廓形 |
+| `princess` | 公主線 | 縱向分割從肩到裙擺，無腰省 |
+| `panel` | 縱向拼接 | 類公主線但分割不過肩 |
+| `empire` | 高腰分割 | 胸下分割線，下身擴張 |
+| `tent` | 帳篷型 | 肩寬裙擺寬無腰身，梯形極端版 |
+| `a_line` | A字 | 腰合身裙擺自然展開 |
+| `trapeze` | 梯形 | 肩窄裙擺大幅擴張 |
+| `bias_cut` | 斜裁 | 45度紋理，垂墜感極佳 |
+
+### 9.2 Collar → FreeSewing Design Mapping
+
+| Collar Type | Designs | Notes |
+|-------------|---------|-------|
+| `basic_shirt_collar` / `convertible` | simon, simone | 可翻，1吋立領高 |
+| `notched_lapel` / `shawl_collar` | carlton, jaeger, sven | 需駁領工藝，難度高 |
+| `peter_pan` / `flat_collar` | — | 不可翻，適合娃娃裝 |
+| `mandarin` / `stand_collar` | simon options | 中式立領 |
+| `turtleneck` / `mock_neck` | teagan options, noble | 針織布高領 |
+| `hood` | huey, hugo | 連帽 |
+| `crew_neck` | teagan, aaron, brian | 基本圓領 |
+| `none` / `strapless` | sandy（裙腰）, wahid | 無領片 |
+
+### 9.3 Sleeve → Design Mapping
+
+| Sleeve Type | Design | Notes |
+|-------------|--------|-------|
+| `set_in` | simon, simone, bella, noble | 標準裝袖，1.25-1.5吋吃量 |
+| `tailored_two_piece` | carlton, jaeger, sven | 兩片袖，需袖肘縫 |
+| `drop_shoulder` | huey, hugo, teagan oversized | 落肩，無吃量 |
+| `raglan` | 自定義 | 需從頸部開始的斜線縫 |
+| `bishop` | simon options | 袖口抽褶 |
+| `sleeveless` | aaron, wahid, bella | 無袖 |
+| `tank` | aaron | A字背心型袖窿 |
+
+### 9.4 Pants Foundations (Armstrong 4 Types)
+
+| Foundation | Design | Ease | Waist |
+|------------|--------|------|-------|
+| Culotte（褲裙）| paco variant | +100mm | 鬆緊 |
+| Trouser（西裝褲）| charlie | +25-50mm | 省+拉鍊 |
+| Slack（休閒褲）| paco | +50-75mm | 鬆緊/拉鍊 |
+| Jean（牛仔褲）| — | +0-12mm | 無省 |
+
+### 9.5 Ease Standards (mm)
+
+| Fit Level | Bust | Waist | Hip | Sleeve Biceps | Cap |
+|-----------|------|-------|-----|---------------|-----|
+| `fitted` | 50 | 25 | 25 | 38 | 32 |
+| `semi_fitted` | 63 | 38 | 50 | 50 | 38 |
+| `relaxed` | 100 | 50 | 75 | 63 | 38 |
+| `oversized` | 150+ | 100 | 125 | 100 | 38 |
+
+### 9.6 Knit Stretch Classification
+
+| Grade | Stretch% | Use case | Ease reduction |
+|-------|----------|----------|----------------|
+| `stable_knit` | 18% | 上衣、夾克 | 0% |
+| `moderate_stretch` | 25% | 運動服、休閒 | 10% |
+| `stretchy_knit` | 50% | 緊身衣、輕量泳衣 | 20% |
+| `super_stretch` | 100% | 連身緊身衣、萊卡 | 30% |
+| `rib_knit` | 100% | 領口/袖口羅紋 | 25% |
+
+### 9.7 Claude Vision Output Fields (Updated)
+
+新版 `claude_vision.py` 多了以下欄位：
+- `garment_category`: `top | bottom | outerwear | lingerie | block | dress`
+- `garment_type_detail`: 具體款式（button-down shirt, wrap skirt...）
+- `skirt_type` / `pant_type`: 具體裙型/褲型代碼
+- `components.collar.type`: Armstrong 領型代碼
+- `components.sleeves.type`: Armstrong 袖型代碼
+- `components.sleeves.cuff_type`: 袖口類型
+- `cut.waist_treatment`: 腰部處理方式
+- `cut.fit_ease`: fitted/semi_fitted/relaxed/oversized
+- `difficulty_estimate`: 1-4 難度
+
+---
+
+## 10. API Quick Reference
 
 ```
 # Auth

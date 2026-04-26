@@ -41,9 +41,10 @@ def embed_text(text: str) -> list[float]:
 def embed_analysis(analysis: dict) -> dict[str, list[float]]:
     """
     從 Claude Vision 分析結果中萃取語意，生成兩個向量：
-    - fabric_vec：布料語意（name + composition + drape/thickness/stretch）
-    - cut_vec：剪裁語意（silhouette + ease + components + tags）
+    - fabric_vec：布料語意（name + composition + weight + drape/thickness/stretch）
+    - cut_vec：剪裁語意（silhouette + fit_ease + collar + sleeve + garment_type + tags）
 
+    支援新版（含 collar.type / sleeves.type 結構物件）與舊版（字串）格式。
     回傳 { "fabric": [...], "cut": [...] }
     """
     # ── 布料文字 ──
@@ -51,12 +52,17 @@ def embed_analysis(analysis: dict) -> dict[str, list[float]]:
     f = (analysis.get("fabric") or {}).get("primary") or {}
     if f.get("name"):             fabric_parts.append(f["name"])
     if f.get("composition_estimate"): fabric_parts.append(f["composition_estimate"])
+    if f.get("weight"):           fabric_parts.append(f["weight"])
     if f.get("drape") is not None:
         fabric_parts.append(f"drape {f['drape']}")
     if f.get("thickness") is not None:
         fabric_parts.append(f"thickness {f['thickness']}")
     if f.get("stretch") is not None:
         fabric_parts.append(f"stretch {f['stretch']}")
+    if f.get("stretch_pct_estimate") is not None:
+        pct = f["stretch_pct_estimate"]
+        stretch_label = "super stretch" if pct >= 75 else ("stretchy" if pct >= 40 else ("moderate stretch" if pct >= 20 else "stable"))
+        fabric_parts.append(stretch_label)
     sec = (analysis.get("fabric") or {}).get("secondary") or {}
     if sec.get("name"):           fabric_parts.append(sec["name"])
     fabric_text = ", ".join(filter(None, fabric_parts)) or "unknown fabric"
@@ -64,13 +70,48 @@ def embed_analysis(analysis: dict) -> dict[str, list[float]]:
     # ── 剪裁文字 ──
     cut_parts: list[str] = []
     c = analysis.get("cut") or {}
-    if c.get("silhouette"):       cut_parts.append(c["silhouette"])
-    if c.get("ease_estimate"):    cut_parts.append(c["ease_estimate"])
+    if c.get("silhouette"):       cut_parts.append(c["silhouette"].replace("_", " "))
+    if c.get("fit_ease"):         cut_parts.append(c["fit_ease"].replace("_", " "))
+    if c.get("waist_treatment"):  cut_parts.append(c["waist_treatment"])
+    for sl in (c.get("stylelines") or []):
+        cut_parts.append(str(sl))
+
+    # 新版 components 結構：collar/sleeves 可能是 dict 或 str
     comp = analysis.get("components") or {}
-    for k in ("collar", "sleeves", "pockets", "closures"):
-        if comp.get(k):           cut_parts.append(str(comp[k]))
+    collar = comp.get("collar")
+    if isinstance(collar, dict):
+        if collar.get("type"):        cut_parts.append(collar["type"].replace("_", " "))
+        if collar.get("description"): cut_parts.append(collar["description"])
+    elif isinstance(collar, str) and collar:
+        cut_parts.append(collar)
+
+    sleeves = comp.get("sleeves")
+    if isinstance(sleeves, dict):
+        if sleeves.get("type"):       cut_parts.append(sleeves["type"].replace("_", " "))
+        if sleeves.get("length"):     cut_parts.append(sleeves["length"])
+        if sleeves.get("cuff_type"):  cut_parts.append(sleeves["cuff_type"].replace("_", " "))
+    elif isinstance(sleeves, str) and sleeves:
+        cut_parts.append(sleeves)
+
+    closures = comp.get("closures")
+    if isinstance(closures, dict):
+        if closures.get("type"):      cut_parts.append(closures["type"].replace("_", " "))
+    elif isinstance(closures, str) and closures:
+        cut_parts.append(closures)
+
+    # 服裝大類 + 詳細類型
+    if analysis.get("garment_category"):
+        cut_parts.append(analysis["garment_category"])
+    if analysis.get("garment_type_detail"):
+        cut_parts.append(analysis["garment_type_detail"])
+    if analysis.get("skirt_type"):
+        cut_parts.append(analysis["skirt_type"].replace("_", " "))
+    if analysis.get("pant_type"):
+        cut_parts.append(analysis["pant_type"].replace("_", " "))
+
     for tag in (analysis.get("silhouette_tags") or []):
         cut_parts.append(tag.replace("_", " "))
+
     cut_text = ", ".join(filter(None, cut_parts)) or "unknown cut"
 
     return {
