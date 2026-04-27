@@ -151,6 +151,34 @@ const zh = {
   'hist.drafting':       '打版中…',
   'hist.unknownFabric':  '未知布料',
 
+  // ── Home page ──────────────────────────────────────────────────────────────
+  'home.hero.title':   'AI 服裝分析 × 個人化打版',
+  'home.hero.desc':    '上傳一張照片，30 秒內取得材質、剪裁、近似版型三合一分析。搭配你的身材資料，直接輸出可實際裁製的紙樣。',
+  'home.hero.upload':  '立即上傳照片',
+  'home.hero.browse':  '瀏覽版型庫',
+  // Feature cards
+  'home.f1.title': '上傳照片',
+  'home.f1.desc':  '1–5 張服裝照片，系統自動辨識材質、剪裁與版型元素',
+  'home.f1.cta':   '開始分析',
+  'home.f2.title': '個人版型',
+  'home.f2.desc':  '結合你的身材資料，一鍵生成可列印的裁縫紙樣（PDF / SVG）',
+  'home.f2.cta':   '瀏覽版型',
+  'home.f3.title': '身材檔案',
+  'home.f3.desc':  '建立多組身材快照，所有版型自動對應你的真實尺寸',
+  'home.f3.cta':   '建立檔案',
+  // Why section
+  'home.why':            '為什麼選擇 Chailyn?',
+  'home.engine.title':   '精確的打版引擎',
+  'home.engine.desc':    '基於 FreeSewing 開源技術，提供超過 15 種可無限自訂的基礎版型。',
+  'home.ai.title':       'AI 視覺辨識',
+  'home.ai.desc':        '利用 Claude Vision 模型，快速分析服裝結構，節省手動測量時間。',
+  'home.output.title':   '1:1 真實尺寸輸出',
+  'home.output.desc':    '所有生成的版型皆可以 SVG 格式匯出，在 A4/A0 紙張上準確列印。',
+  // Stats
+  'home.stat.patterns':     '內建版型',
+  'home.stat.measurements': '身材測量項目',
+  'home.stat.time':         'AI 分析時間',
+
   // ── Misc ───────────────────────────────────────────────────────────────────
   'misc.garment':        '服裝',
 }
@@ -305,6 +333,34 @@ const en: typeof zh = {
   'hist.previewPattern': '🪡 Preview Pattern',
   'hist.drafting':       'Drafting…',
   'hist.unknownFabric':  'Unknown fabric',
+
+  // ── Home page ──────────────────────────────────────────────────────────────
+  'home.hero.title':   'AI Garment Analysis × Personalized Patternmaking',
+  'home.hero.desc':    'Upload a photo and get a 3-in-1 analysis of fabric, cut & matching patterns in 30 seconds. Pair with your body measurements to output print-ready sewing patterns.',
+  'home.hero.upload':  'Upload a Photo',
+  'home.hero.browse':  'Browse Patterns',
+  // Feature cards
+  'home.f1.title': 'Upload Photo',
+  'home.f1.desc':  '1–5 garment photos — AI automatically identifies fabric, cut & pattern elements',
+  'home.f1.cta':   'Start Analyzing',
+  'home.f2.title': 'Personal Patterns',
+  'home.f2.desc':  'Combine with your measurements to generate print-ready sewing patterns (PDF / SVG)',
+  'home.f2.cta':   'Browse Patterns',
+  'home.f3.title': 'Body Profile',
+  'home.f3.desc':  'Create multiple body snapshots — all patterns automatically adapt to your real dimensions',
+  'home.f3.cta':   'Create Profile',
+  // Why section
+  'home.why':            'Why Chailyn?',
+  'home.engine.title':   'Precision Pattern Engine',
+  'home.engine.desc':    'Built on FreeSewing open-source technology, offering 15+ fully customizable base patterns.',
+  'home.ai.title':       'AI Visual Recognition',
+  'home.ai.desc':        'Powered by Claude Vision to rapidly analyze garment structure and save manual measurement time.',
+  'home.output.title':   '1:1 True-to-Size Output',
+  'home.output.desc':    'Every generated pattern exports as SVG and prints accurately on A4/A0 paper.',
+  // Stats
+  'home.stat.patterns':     'Built-in Patterns',
+  'home.stat.measurements': 'Measurement Points',
+  'home.stat.time':         'AI Analysis Time',
 
   // ── Misc ───────────────────────────────────────────────────────────────────
   'misc.garment':        'Garment',
