@@ -3,6 +3,35 @@
  * 伺服器端工具，僅供 Next.js API routes 使用
  */
 import Anthropic from '@anthropic-ai/sdk'
+import fs from 'fs'
+import path from 'path'
+
+/**
+ * 讀取 ANTHROPIC_API_KEY：
+ * 優先順序：process.env → .env.local（直接讀檔，避免 shell 空值蓋掉）
+ */
+function getApiKey(): string {
+  // 1. process.env 有值（且非空字串）
+  if (process.env.ANTHROPIC_API_KEY?.trim()) {
+    return process.env.ANTHROPIC_API_KEY.trim()
+  }
+  // 2. 直接從 .env.local 讀取（cwd = apps/web/）
+  try {
+    const envPath = path.join(process.cwd(), '.env.local')
+    const content = fs.readFileSync(envPath, 'utf-8')
+    const match   = content.match(/^ANTHROPIC_API_KEY=(.+)$/m)
+    const key     = match?.[1]?.trim()
+    if (key) return key
+  } catch {
+    // 檔案不存在，繼續往下拋錯
+  }
+  throw new Error(
+    'ANTHROPIC_API_KEY 未設定。\n' +
+    '請在 apps/web/.env.local 加入：\n' +
+    'ANTHROPIC_API_KEY=sk-ant-...\n' +
+    '（前往 https://console.anthropic.com/keys 取得）'
+  )
+}
 
 const SYSTEM_PROMPT = `你是專業服裝打版師與材料分析師，精通 Patternmaking for Fashion Design（Helen Joseph-Armstrong）書中的版型術語與工藝標準。
 請檢視圖中服裝並以 JSON 輸出詳細分析結果。
@@ -92,11 +121,7 @@ export async function analyzeGarmentPhoto(
   imageBuffer: Buffer,
   mediaType: string,
 ): Promise<Record<string, unknown>> {
-  const apiKey = process.env.ANTHROPIC_API_KEY
-  if (!apiKey) {
-    throw new Error('ANTHROPIC_API_KEY 未設定。請在 apps/web/.env.local 填入你的 API Key。')
-  }
-
+  const apiKey = getApiKey()
   const client = new Anthropic({ apiKey })
   const b64 = imageBuffer.toString('base64')
 
