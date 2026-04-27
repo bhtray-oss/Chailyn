@@ -3,7 +3,16 @@ const nextConfig = {
   reactStrictMode: true,
   experimental: {
     // @freesewing/react 需要 'use client' 邊界
-    serverComponentsExternalPackages: ['@freesewing/core', '@freesewing/react'],
+    serverComponentsExternalPackages: [
+      '@freesewing/core', '@freesewing/react',
+      '@freesewing/aaron', '@freesewing/bella', '@freesewing/bibi',
+      '@freesewing/brian', '@freesewing/carlita', '@freesewing/carlton',
+      '@freesewing/huey', '@freesewing/lily', '@freesewing/paco',
+      '@freesewing/sandy', '@freesewing/simon', '@freesewing/simone',
+      '@freesewing/teagan', '@freesewing/titan', '@freesewing/waralee',
+      '@freesewing/plugin-theme', '@freesewing/plugin-transform',
+      '@freesewing/models', '@anthropic-ai/sdk',
+    ],
     // Fix pnpm workspace symlink snapshot warning
     outputFileTracingRoot: require('path').join(__dirname, '../../'),
   },
