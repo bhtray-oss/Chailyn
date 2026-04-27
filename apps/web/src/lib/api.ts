@@ -126,7 +126,7 @@ export const jobApi = {
       if (job.status === 'done' || job.status === 'failed') return job
       await new Promise(r => setTimeout(r, intervalMs))
     }
-    throw new Error('分析逾時，請稍後再試')
+    throw new Error('TIMEOUT')
   },
 }
 
@@ -370,14 +370,22 @@ export interface RecommendationsResult {
 }
 
 export const recommendationsApi = {
-  generate: (
+  generate: async (
     analysis: Record<string, unknown>,
     measurements?: Record<string, number>,
-  ) =>
-    request<RecommendationsResult>('/recommendations', {
+    lang: 'zh' | 'en' = 'zh',
+  ): Promise<RecommendationsResult> => {
+    const res = await fetch('/api/recommendations', {
       method: 'POST',
-      body: JSON.stringify({ analysis, measurements: measurements ?? {} }),
-    }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ analysis, measurements: measurements ?? {}, lang }),
+    })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }))
+      throw new Error(err.detail ?? 'API error')
+    }
+    return res.json()
+  },
 }
 
 export interface VersionEntry {

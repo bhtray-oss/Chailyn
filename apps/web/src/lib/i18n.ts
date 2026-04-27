@@ -25,12 +25,36 @@ const zh = {
   'analyze.uploadNewTitle':'上傳新服裝照片',
   'analyze.cancel':        '✕ 取消',
   'analyze.goRecs':        '✨ 前往設計建議頁面 →',
-  // Cards
+
+  // ── Analysis status labels ─────────────────────────────────────────────────
+  'status.pending': '排隊等待中…',
+  'status.running': 'Claude 正在分析照片…',
+  'status.done':    '分析完成',
+  'status.failed':  '分析失敗',
+
+  // ── Error messages ─────────────────────────────────────────────────────────
+  'error.serverDown':    '無法連線到伺服器（API :8000 未啟動？），請確認後端服務正在執行。',
+  'error.uploadFailed':  '上傳失敗：',
+  'error.billing':       'Anthropic 帳戶餘額不足，請至 console.anthropic.com 加值',
+  'error.imageQuality':  '圖片格式不支援或品質太低，請換一張清晰的服裝照片',
+  'error.analysisFailed':'分析失敗，請再試一次',
+  'error.timeout':       '分析逾時，請稍後再試',
+  'error.recsFailed':    '推薦生成失敗，請再試一次',
+  'error.deleteFailed':  '刪除失敗：',
+  'error.deleteConfirm': '確定要刪除這筆分析記錄？',
+
+  // ── Pattern preview panel ──────────────────────────────────────────────────
+  'preview.title':      '版型圖樣',
+  'preview.fullPieces': '完整裁片',
+  'preview.generating': '正在生成版型…',
+
+  // ── Cards ──────────────────────────────────────────────────────────────────
   'card.fabric':           '布料',
   'card.cut':              '剪裁版型',
   'card.components':       '部件',
   'card.patterns':         '推薦 FreeSewing 版型',
-  // Row labels
+
+  // ── Row labels ─────────────────────────────────────────────────────────────
   'row.primary':           '主布',
   'row.composition':       '成分',
   'row.weight':            '重量',
@@ -43,7 +67,8 @@ const zh = {
   'row.collar':            '領型',
   'row.sleeve':            '袖型',
   'row.difficulty':        '難度',
-  // Pattern card
+
+  // ── Pattern card ───────────────────────────────────────────────────────────
   'pattern.match':         '% 符合',
   'pattern.preview':       '🪡 預覽版型圖樣',
   'pattern.drafting':      '打版中…',
@@ -54,7 +79,8 @@ const zh = {
   'pattern.others':        '← 其他推薦',
   'pattern.seam':          '縫份',
   'pattern.generated':     '使用 FreeSewing v4 生成',
-  // Recs CTA
+
+  // ── Recs CTA (inline on analyze page) ─────────────────────────────────────
   'recs.cta.title':        '為你量身推薦',
   'recs.cta.subtitle':     '結合 AI 分析與你的身材，產生版型調整、布料、配色、採購清單與製作預估',
   'recs.cta.btn':          '✨ 立即生成個人化推薦',
@@ -106,11 +132,15 @@ const zh = {
 
   // ── History page ───────────────────────────────────────────────────────────
   'hist.title':          '分析歷史',
+  'hist.subtitle':       '所有服裝照片的 AI 分析記錄，自動儲存',
+  'hist.newAnalysis':    '+ 新增分析',
   'hist.loading':        '載入中…',
   'hist.empty':          '尚無分析記錄。',
+  'hist.emptyHint':      '上傳服裝照片後，結果會自動儲存在這裡',
+  'hist.startAnalysis':  '開始分析',
   'hist.goAnalyze':      '前往分析照片 →',
-  'hist.expand':         '展開詳情',
-  'hist.collapse':       '收合',
+  'hist.expand':         '查看詳情',
+  'hist.collapse':       '收起',
   'hist.delete':         '刪除',
   'hist.deleting':       '刪除中…',
   'hist.fabric':         '布料',
@@ -119,6 +149,10 @@ const zh = {
   'hist.difficulty':     '難度',
   'hist.previewPattern': '🪡 預覽版型',
   'hist.drafting':       '打版中…',
+  'hist.unknownFabric':  '未知布料',
+
+  // ── Misc ───────────────────────────────────────────────────────────────────
+  'misc.garment':        '服裝',
 }
 
 const en: typeof zh = {
@@ -146,12 +180,36 @@ const en: typeof zh = {
   'analyze.uploadNewTitle':'Upload New Garment Photo',
   'analyze.cancel':        '✕ Cancel',
   'analyze.goRecs':        '✨ Go to Design Tips →',
-  // Cards
+
+  // ── Analysis status labels ─────────────────────────────────────────────────
+  'status.pending': 'Queuing…',
+  'status.running': 'Claude is analyzing your photo…',
+  'status.done':    'Analysis complete',
+  'status.failed':  'Analysis failed',
+
+  // ── Error messages ─────────────────────────────────────────────────────────
+  'error.serverDown':    'Cannot connect to server (API :8000 not running?). Please ensure the backend is running.',
+  'error.uploadFailed':  'Upload failed: ',
+  'error.billing':       'Anthropic account balance insufficient. Please top up at console.anthropic.com',
+  'error.imageQuality':  'Image format not supported or quality too low. Please use a clear garment photo.',
+  'error.analysisFailed':'Analysis failed, please try again',
+  'error.timeout':       'Analysis timed out, please try again later',
+  'error.recsFailed':    'Failed to generate recommendations, please try again',
+  'error.deleteFailed':  'Delete failed: ',
+  'error.deleteConfirm': 'Delete this analysis record?',
+
+  // ── Pattern preview panel ──────────────────────────────────────────────────
+  'preview.title':      'Pattern',
+  'preview.fullPieces': 'Full pieces',
+  'preview.generating': 'Generating pattern…',
+
+  // ── Cards ──────────────────────────────────────────────────────────────────
   'card.fabric':           'Fabric',
   'card.cut':              'Cut & Pattern',
   'card.components':       'Components',
   'card.patterns':         'Recommended FreeSewing Patterns',
-  // Row labels
+
+  // ── Row labels ─────────────────────────────────────────────────────────────
   'row.primary':           'Primary',
   'row.composition':       'Composition',
   'row.weight':            'Weight',
@@ -164,7 +222,8 @@ const en: typeof zh = {
   'row.collar':            'Collar',
   'row.sleeve':            'Sleeve',
   'row.difficulty':        'Difficulty',
-  // Pattern card
+
+  // ── Pattern card ───────────────────────────────────────────────────────────
   'pattern.match':         '% match',
   'pattern.preview':       '🪡 Preview Pattern',
   'pattern.drafting':      'Drafting…',
@@ -175,7 +234,8 @@ const en: typeof zh = {
   'pattern.others':        '← Other Picks',
   'pattern.seam':          'Seam allowance',
   'pattern.generated':     'Generated with FreeSewing v4',
-  // Recs CTA
+
+  // ── Recs CTA (inline on analyze page) ─────────────────────────────────────
   'recs.cta.title':        'Personalized Recommendations',
   'recs.cta.subtitle':     'Combining AI analysis with your measurements for pattern adjustments, fabric, colors, shopping list & cost estimate',
   'recs.cta.btn':          '✨ Generate My Recommendations',
@@ -227,8 +287,12 @@ const en: typeof zh = {
 
   // ── History page ───────────────────────────────────────────────────────────
   'hist.title':          'Analysis History',
+  'hist.subtitle':       'All garment photo analyses, auto-saved',
+  'hist.newAnalysis':    '+ New Analysis',
   'hist.loading':        'Loading…',
   'hist.empty':          'No analysis records yet.',
+  'hist.emptyHint':      'Upload a garment photo and results will be saved here automatically',
+  'hist.startAnalysis':  'Start Analyzing',
   'hist.goAnalyze':      'Go Analyze a Photo →',
   'hist.expand':         'Expand',
   'hist.collapse':       'Collapse',
@@ -240,6 +304,10 @@ const en: typeof zh = {
   'hist.difficulty':     'Difficulty',
   'hist.previewPattern': '🪡 Preview Pattern',
   'hist.drafting':       'Drafting…',
+  'hist.unknownFabric':  'Unknown fabric',
+
+  // ── Misc ───────────────────────────────────────────────────────────────────
+  'misc.garment':        'Garment',
 }
 
 export const dict: Record<Lang, typeof zh> = { zh, en }

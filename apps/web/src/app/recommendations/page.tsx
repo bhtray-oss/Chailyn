@@ -65,6 +65,7 @@ export default function RecommendationsPage() {
       const result = await recommendationsApi.generate(
         selected.result as unknown as Record<string, unknown>,
         DEV_MEASUREMENTS,
+        lang,
       )
       setRecs(result)
       saveCache(selected.analysis_id, result)
@@ -141,7 +142,7 @@ export default function RecommendationsPage() {
                     </div>
                     <div className="p-2">
                       <p className="text-xs font-medium text-stone-700 truncate">
-                        {(a as any)?.garment_type_detail ?? (a as any)?.garment_category ?? (lang === 'zh' ? '服裝' : 'Garment')}
+                        {(a as any)?.garment_type_detail ?? (a as any)?.garment_category ?? t('misc.garment')}
                       </p>
                       <p className="text-[10px] text-stone-400 mt-0.5">
                         {new Date(item.created_at).toLocaleDateString(lang === 'zh' ? 'zh-TW' : 'en-US', { month: 'short', day: 'numeric' })}
@@ -180,7 +181,7 @@ export default function RecommendationsPage() {
               <div className="flex-1">
                 <p className="text-white/70 text-xs mb-1">{t('rec.summary')}</p>
                 <p className="text-white text-lg font-bold mb-1">
-                  {(analysis as any)?.garment_type_detail ?? (analysis as any)?.garment_category ?? (lang === 'zh' ? '服裝' : 'Garment')}
+                  {(analysis as any)?.garment_type_detail ?? (analysis as any)?.garment_category ?? t('misc.garment')}
                 </p>
                 <div className="flex flex-wrap gap-3 text-sm text-white/80 mb-4">
                   {analysis.fabric?.primary?.name && (

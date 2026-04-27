@@ -19,15 +19,8 @@ const DEV_MEASUREMENTS: Record<string, number> = {
 
 type Step = 'upload' | 'uploading' | 'analyzing' | 'result'
 
-const STATUS_LABEL: Record<string, string> = {
-  pending: '排隊等待中…',
-  running: 'Claude 正在分析照片…',
-  done:    '分析完成',
-  failed:  '分析失敗',
-}
-
 export default function AnalyzePage() {
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
   const [step, setStep]           = useState<Step>('upload')
   const [preview, setPreview]     = useState<string | null>(null)
   const [analysis, setAnalysis]   = useState<GarmentAnalysis | null>(null)
@@ -84,11 +77,12 @@ export default function AnalyzePage() {
       const result = await recommendationsApi.generate(
         analysis as unknown as Record<string, unknown>,
         DEV_MEASUREMENTS,
+        lang,
       )
       setRecs(result)
       setTimeout(() => recsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
     } catch (e: any) {
-      setRecsError(e.message ?? '推薦生成失敗，請再試一次')
+      setRecsError(e.message ?? t('error.recsFailed'))
     } finally {
       setRecsLoading(false)
     }
@@ -113,9 +107,9 @@ export default function AnalyzePage() {
       } catch (e: any) {
         const msg = e.message ?? ''
         if (msg.includes('Failed to fetch') || msg.includes('fetch')) {
-          throw new Error('無法連線到伺服器（API :8000 未啟動？），請確認後端服務正在執行。')
+          throw new Error(t('error.serverDown'))
         }
-        throw new Error(`上傳失敗：${msg}`)
+        throw new Error(t('error.uploadFailed') + msg)
       }
       const { photo_id } = uploadResult
 
@@ -123,22 +117,26 @@ export default function AnalyzePage() {
       const { job_id } = await jobApi.create(photo_id, DEV_USER_ID)
       const job: AnalysisJob = await jobApi.waitUntilDone(
         job_id,
-        (j) => setJobStatus(STATUS_LABEL[j.status] ?? j.status),
+        (j) => {
+          const key = `status.${j.status}` as Parameters<typeof t>[0]
+          setJobStatus(t(key) || j.status)
+        },
       )
 
       if (job.status === 'failed') {
-        const errMsg = job.error ?? '分析失敗，請再試一次'
+        const errMsg = job.error ?? t('error.analysisFailed')
         if (errMsg.includes('credit balance') || errMsg.includes('billing'))
-          throw new Error('Anthropic 帳戶餘額不足，請至 console.anthropic.com 加值')
+          throw new Error(t('error.billing'))
         if (errMsg.includes('Could not process image'))
-          throw new Error('圖片格式不支援或品質太低，請換一張清晰的服裝照片')
+          throw new Error(t('error.imageQuality'))
         throw new Error(errMsg)
       }
 
       setAnalysis(job.result as GarmentAnalysis)
       setStep('result')
     } catch (e: any) {
-      setError(e.message ?? '發生錯誤，請再試一次')
+      const msg: string = e.message ?? ''
+      setError(msg === 'TIMEOUT' ? t('error.timeout') : (msg || t('error.analysisFailed')))
       setStep('upload')
     }
   }, [])
@@ -357,10 +355,10 @@ export default function AnalyzePage() {
               <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100 bg-stone-50">
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-semibold text-stone-800 capitalize">
-                    {activePreview} 版型圖樣
+                    {activePreview} {t('preview.title')}
                   </span>
                   {activeSvg && activeSvg !== 'loading' && (
-                    <span className="text-xs text-stone-400">完整裁片</span>
+                    <span className="text-xs text-stone-400">{t('preview.fullPieces')}</span>
                   )}
                 </div>
 
@@ -410,7 +408,7 @@ export default function AnalyzePage() {
                 {activeSvg === 'loading' ? (
                   <div className="flex flex-col items-center justify-center py-24 gap-4">
                     <div className="w-8 h-8 border-4 border-stone-200 border-t-stone-700 rounded-full animate-spin" />
-                    <p className="text-stone-400 text-sm">正在生成 {activePreview} 版型…</p>
+                    <p className="text-stone-400 text-sm">{t('preview.generating')}</p>
                   </div>
                 ) : activeSvg ? (
                   <div className="p-6">

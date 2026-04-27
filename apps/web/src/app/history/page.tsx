@@ -34,14 +34,14 @@ export default function HistoryPage() {
   useEffect(() => { load() }, [load])
 
   const handleDelete = async (jobId: string) => {
-    if (!confirm('確定要刪除這筆分析記錄？')) return
+    if (!confirm(t('error.deleteConfirm'))) return
     setDeleting(jobId)
     try {
       await historyApi.delete(jobId, DEV_USER_ID)
       setItems(prev => prev.filter(i => i.job_id !== jobId))
       if (expanded === jobId) setExpanded(null)
     } catch (e: any) {
-      alert(`刪除失敗：${e.message}`)
+      alert(t('error.deleteFailed') + e.message)
     } finally {
       setDeleting(null)
     }
@@ -79,13 +79,11 @@ export default function HistoryPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-stone-900">{t('hist.title')}</h1>
-          <p className="text-stone-500 text-sm mt-1">
-            {lang === 'zh' ? '所有服裝照片的 AI 分析記錄，自動儲存' : 'All garment photo analyses, auto-saved'}
-          </p>
+          <p className="text-stone-500 text-sm mt-1">{t('hist.subtitle')}</p>
         </div>
         <a href="/analyze"
           className="text-sm font-medium px-4 py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-700 transition-colors">
-          {lang === 'zh' ? '+ 新增分析' : '+ New Analysis'}
+          {t('hist.newAnalysis')}
         </a>
       </div>
 
@@ -100,12 +98,10 @@ export default function HistoryPage() {
         <div className="text-center py-24 text-stone-400">
           <div className="text-5xl mb-4">📂</div>
           <p className="text-lg font-medium text-stone-600 mb-2">{t('hist.empty')}</p>
-          <p className="text-sm mb-6">
-            {lang === 'zh' ? '上傳服裝照片後，結果會自動儲存在這裡' : 'Upload a garment photo and the results will be saved here automatically'}
-          </p>
+          <p className="text-sm mb-6">{t('hist.emptyHint')}</p>
           <a href="/analyze"
             className="text-sm font-medium px-5 py-2.5 bg-stone-900 text-white rounded-lg hover:bg-stone-700 transition-colors">
-            {t('hist.goAnalyze')}
+            {t('hist.startAnalysis')}
           </a>
         </div>
       )}
@@ -138,7 +134,7 @@ export default function HistoryPage() {
                       <div>
                         <p className="text-xs text-stone-400 mb-1">{formatDate(item.created_at)}</p>
                         <p className="font-semibold text-stone-800">
-                          {analysis?.fabric?.primary?.name ?? (lang === 'zh' ? '未知布料' : 'Unknown fabric')}
+                          {analysis?.fabric?.primary?.name ?? t('hist.unknownFabric')}
                           {analysis?.cut?.silhouette ? ` · ${analysis.cut.silhouette}` : ''}
                         </p>
                         <p className="text-sm text-stone-500 mt-0.5">
