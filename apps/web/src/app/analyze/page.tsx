@@ -38,6 +38,10 @@ export default function AnalyzePage() {
   const [zoom, setZoom]                   = useState(100)
   const previewRef = useRef<HTMLDivElement>(null)
 
+  // 「上傳新服裝照片」展開上傳區（不清除現有結果）
+  const [showUploadZone, setShowUploadZone] = useState(false)
+  const uploadZoneRef = useRef<HTMLDivElement>(null)
+
   // 為你量身推薦狀態
   const [recs, setRecs]           = useState<RecommendationsResult | null>(null)
   const [recsLoading, setRecsLoading] = useState(false)
@@ -97,6 +101,7 @@ export default function AnalyzePage() {
     setPatternSvgs({})
     setActivePreview(null)
     setRecs(null)
+    setShowUploadZone(false)
 
     try {
       setStep('uploading')
@@ -151,40 +156,55 @@ export default function AnalyzePage() {
       <h1 className="text-2xl font-bold text-stone-900 mb-2">服裝照片分析</h1>
       <p className="text-stone-500 mb-8">上傳 1 張服裝照片，AI 將自動識別材質、剪裁與推薦版型</p>
 
-      {/* ── Upload zone ───────────────────────────────────────────────────── */}
-      {step !== 'result' && (
-        <div
-          {...getRootProps()}
-          className={`
-            border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-colors
-            ${isDragActive ? 'border-amber-500 bg-amber-50' : 'border-stone-300 hover:border-stone-400 bg-white'}
-            ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}
-          `}
-        >
-          <input {...getInputProps()} />
-          {step === 'uploading' && (
-            <div>
-              <div className="text-3xl mb-3 animate-spin inline-block">⟳</div>
-              <p className="text-stone-600">照片上傳中…</p>
+      {/* ── Upload zone（初始 or 展開新上傳）──────────────────────────────── */}
+      {(step !== 'result' || showUploadZone) && (
+        <div ref={uploadZoneRef} className={showUploadZone ? 'mb-8' : ''}>
+          {/* 展開模式的標題列 */}
+          {showUploadZone && step === 'result' && (
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-medium text-stone-700">上傳新服裝照片</p>
+              <button
+                onClick={() => setShowUploadZone(false)}
+                className="text-xs text-stone-400 hover:text-stone-700 transition-colors"
+              >
+                ✕ 取消
+              </button>
             </div>
           )}
-          {step === 'analyzing' && (
-            <div className="space-y-3">
-              <div className="w-48 h-1.5 mx-auto bg-stone-200 rounded-full overflow-hidden">
-                <div className="h-full bg-amber-400 rounded-full animate-pulse w-2/3" />
+          <div
+            {...getRootProps()}
+            className={`
+              border-2 border-dashed rounded-xl text-center cursor-pointer transition-colors
+              ${showUploadZone ? 'p-8' : 'p-12'}
+              ${isDragActive ? 'border-amber-500 bg-amber-50' : 'border-stone-300 hover:border-stone-400 bg-white'}
+              ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}
+            `}
+          >
+            <input {...getInputProps()} />
+            {step === 'uploading' && (
+              <div>
+                <div className="text-3xl mb-3 animate-spin inline-block">⟳</div>
+                <p className="text-stone-600">照片上傳中…</p>
               </div>
-              <p className="text-stone-600 text-sm">{jobStatus || 'Claude 正在分析照片…'}</p>
-            </div>
-          )}
-          {step === 'upload' && (
-            <div>
-              <div className="text-4xl mb-3">📸</div>
-              <p className="text-stone-700 font-medium">
-                {isDragActive ? '放開以上傳' : '拖拉照片到此，或點擊選擇'}
-              </p>
-              <p className="text-stone-400 text-sm mt-2">支援 JPG、PNG、WebP，最大 10MB</p>
-            </div>
-          )}
+            )}
+            {step === 'analyzing' && (
+              <div className="space-y-3">
+                <div className="w-48 h-1.5 mx-auto bg-stone-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-amber-400 rounded-full animate-pulse w-2/3" />
+                </div>
+                <p className="text-stone-600 text-sm">{jobStatus || 'Claude 正在分析照片…'}</p>
+              </div>
+            )}
+            {(step === 'upload' || (step === 'result' && showUploadZone)) && (
+              <div>
+                <div className="text-4xl mb-3">📸</div>
+                <p className="text-stone-700 font-medium">
+                  {isDragActive ? '放開以上傳' : '拖拉照片到此，或點擊選擇'}
+                </p>
+                <p className="text-stone-400 text-sm mt-2">支援 JPG、PNG、WebP，最大 10MB</p>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -207,14 +227,28 @@ export default function AnalyzePage() {
               </a>
             </div>
             <div className="flex items-center gap-2">
+              {/* 清除：立刻清空所有畫面狀態 */}
               <button
-                onClick={() => { setStep('upload'); setPreview(null); setAnalysis(null); setJobStatus(''); setActivePreview(null); setPatternSvgs({}); setRecs(null) }}
+                onClick={() => {
+                  setStep('upload')
+                  setPreview(null)
+                  setAnalysis(null)
+                  setJobStatus('')
+                  setActivePreview(null)
+                  setPatternSvgs({})
+                  setRecs(null)
+                  setShowUploadZone(false)
+                }}
                 className="text-sm px-4 py-1.5 rounded-lg border border-stone-300 text-stone-600 hover:bg-stone-100 transition-colors"
               >
                 清除
               </button>
+              {/* 上傳新照片：展開上傳區，保留現有分析結果 */}
               <button
-                onClick={() => { setStep('upload'); setPreview(null); setAnalysis(null); setJobStatus(''); setActivePreview(null); setPatternSvgs({}); setRecs(null) }}
+                onClick={() => {
+                  setShowUploadZone(true)
+                  setTimeout(() => uploadZoneRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50)
+                }}
                 className="text-sm px-4 py-1.5 rounded-lg text-white font-medium transition-colors"
                 style={{ background: '#2E5E4E' }}
               >
