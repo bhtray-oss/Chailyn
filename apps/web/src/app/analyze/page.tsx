@@ -5,6 +5,7 @@ import { useDropzone } from 'react-dropzone'
 import { analysisApi, jobApi, patternApi, recommendationsApi } from '@/lib/api'
 import type { GarmentAnalysis } from '@/lib/types'
 import type { AnalysisJob, RecommendationsResult } from '@/lib/api'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 const DEV_USER_ID    = '00000000-0000-0000-0000-000000000001'
 const DEV_PROFILE_ID = '00000000-0000-0000-0000-000000000002'
@@ -26,6 +27,7 @@ const STATUS_LABEL: Record<string, string> = {
 }
 
 export default function AnalyzePage() {
+  const { t } = useLanguage()
   const [step, setStep]           = useState<Step>('upload')
   const [preview, setPreview]     = useState<string | null>(null)
   const [analysis, setAnalysis]   = useState<GarmentAnalysis | null>(null)
@@ -153,8 +155,8 @@ export default function AnalyzePage() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      <h1 className="text-2xl font-bold text-stone-900 mb-2">服裝照片分析</h1>
-      <p className="text-stone-500 mb-8">上傳 1 張服裝照片，AI 將自動識別材質、剪裁與推薦版型</p>
+      <h1 className="text-2xl font-bold text-stone-900 mb-2">{t('analyze.title')}</h1>
+      <p className="text-stone-500 mb-8">{t('analyze.subtitle')}</p>
 
       {/* ── Upload zone（初始 or 展開新上傳）──────────────────────────────── */}
       {(step !== 'result' || showUploadZone) && (
@@ -162,12 +164,12 @@ export default function AnalyzePage() {
           {/* 展開模式的標題列 */}
           {showUploadZone && step === 'result' && (
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-medium text-stone-700">上傳新服裝照片</p>
+              <p className="text-sm font-medium text-stone-700">{t('analyze.uploadNewTitle')}</p>
               <button
                 onClick={() => setShowUploadZone(false)}
                 className="text-xs text-stone-400 hover:text-stone-700 transition-colors"
               >
-                ✕ 取消
+                {t('analyze.cancel')}
               </button>
             </div>
           )}
@@ -184,7 +186,7 @@ export default function AnalyzePage() {
             {step === 'uploading' && (
               <div>
                 <div className="text-3xl mb-3 animate-spin inline-block">⟳</div>
-                <p className="text-stone-600">照片上傳中…</p>
+                <p className="text-stone-600">{t('analyze.uploading')}</p>
               </div>
             )}
             {step === 'analyzing' && (
@@ -192,16 +194,16 @@ export default function AnalyzePage() {
                 <div className="w-48 h-1.5 mx-auto bg-stone-200 rounded-full overflow-hidden">
                   <div className="h-full bg-amber-400 rounded-full animate-pulse w-2/3" />
                 </div>
-                <p className="text-stone-600 text-sm">{jobStatus || 'Claude 正在分析照片…'}</p>
+                <p className="text-stone-600 text-sm">{jobStatus || t('analyze.analyzing')}</p>
               </div>
             )}
             {(step === 'upload' || (step === 'result' && showUploadZone)) && (
               <div>
                 <div className="text-4xl mb-3">📸</div>
                 <p className="text-stone-700 font-medium">
-                  {isDragActive ? '放開以上傳' : '拖拉照片到此，或點擊選擇'}
+                  {isDragActive ? t('analyze.release') : t('analyze.drop')}
                 </p>
-                <p className="text-stone-400 text-sm mt-2">支援 JPG、PNG、WebP，最大 10MB</p>
+                <p className="text-stone-400 text-sm mt-2">{t('analyze.hint')}</p>
               </div>
             )}
           </div>
@@ -221,9 +223,9 @@ export default function AnalyzePage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl">
             <div className="flex items-center gap-2 text-sm">
               <span className="text-emerald-500 text-base">✓</span>
-              <span className="text-emerald-700 font-medium">照片與分析已儲存至歷史</span>
+              <span className="text-emerald-700 font-medium">{t('analyze.saved')}</span>
               <a href="/history" className="text-emerald-600 underline underline-offset-2 text-xs hover:text-emerald-800">
-                查看歷史紀錄 →
+                {t('analyze.viewHistory')}
               </a>
             </div>
             <div className="flex items-center gap-2">
@@ -241,9 +243,8 @@ export default function AnalyzePage() {
                 }}
                 className="text-sm px-4 py-1.5 rounded-lg border border-stone-300 text-stone-600 hover:bg-stone-100 transition-colors"
               >
-                清除
+                {t('analyze.clear')}
               </button>
-              {/* 上傳新照片：展開上傳區，保留現有分析結果 */}
               <button
                 onClick={() => {
                   setShowUploadZone(true)
@@ -252,7 +253,7 @@ export default function AnalyzePage() {
                 className="text-sm px-4 py-1.5 rounded-lg text-white font-medium transition-colors"
                 style={{ background: '#2E5E4E' }}
               >
-                📸 上傳新服裝照片
+                {t('analyze.uploadNew')}
               </button>
             </div>
           </div>
@@ -266,33 +267,33 @@ export default function AnalyzePage() {
             )}
 
             <div className="flex flex-col gap-4">
-              <Card title="布料">
-                <Row label="主布" value={analysis.fabric?.primary?.name} />
-                <Row label="成分" value={analysis.fabric?.primary?.composition_estimate} />
-                <Row label="重量" value={(analysis.fabric?.primary as any)?.weight} />
-                <Row label="垂墜" value={analysis.fabric?.primary?.drape != null ? `${analysis.fabric.primary.drape}/10` : null} />
-                <Row label="厚度" value={analysis.fabric?.primary?.thickness != null ? `${analysis.fabric.primary.thickness}/10` : null} />
+              <Card title={t('card.fabric')}>
+                <Row label={t('row.primary')}      value={analysis.fabric?.primary?.name} />
+                <Row label={t('row.composition')}  value={analysis.fabric?.primary?.composition_estimate} />
+                <Row label={t('row.weight')}       value={(analysis.fabric?.primary as any)?.weight} />
+                <Row label={t('row.drape')}        value={analysis.fabric?.primary?.drape != null ? `${analysis.fabric.primary.drape}/10` : null} />
+                <Row label={t('row.thickness')}    value={analysis.fabric?.primary?.thickness != null ? `${analysis.fabric.primary.thickness}/10` : null} />
               </Card>
 
-              <Card title="剪裁版型">
-                <Row label="廓形" value={analysis.cut?.silhouette} />
-                <Row label="鬆量" value={(analysis.cut as any)?.fit_ease ?? (analysis.cut as any)?.ease_estimate} />
-                <Row label="腰部" value={(analysis.cut as any)?.waist_treatment} />
-                <Row label="類型" value={(analysis as any)?.garment_type_detail} />
+              <Card title={t('card.cut')}>
+                <Row label={t('row.silhouette')} value={analysis.cut?.silhouette} />
+                <Row label={t('row.ease')}       value={(analysis.cut as any)?.fit_ease ?? (analysis.cut as any)?.ease_estimate} />
+                <Row label={t('row.waist')}      value={(analysis.cut as any)?.waist_treatment} />
+                <Row label={t('row.type')}       value={(analysis as any)?.garment_type_detail} />
               </Card>
 
-              <Card title="部件">
-                <Row label="領型" value={
+              <Card title={t('card.components')}>
+                <Row label={t('row.collar')} value={
                   typeof analysis.components?.collar === 'object' && analysis.components.collar !== null
                     ? (analysis.components.collar as any).type ?? (analysis.components.collar as any).description
                     : analysis.components?.collar as string | null
                 } />
-                <Row label="袖型" value={
+                <Row label={t('row.sleeve')} value={
                   typeof analysis.components?.sleeves === 'object' && analysis.components.sleeves !== null
                     ? `${(analysis.components.sleeves as any).type ?? ''} ${(analysis.components.sleeves as any).length ?? ''}`.trim()
                     : analysis.components?.sleeves as string | null
                 } />
-                <Row label="難度" value={
+                <Row label={t('row.difficulty')} value={
                   (analysis as any)?.difficulty_estimate
                     ? '★'.repeat((analysis as any).difficulty_estimate)
                     : null
@@ -300,7 +301,7 @@ export default function AnalyzePage() {
               </Card>
 
               {/* 推薦版型 */}
-              <Card title="推薦 FreeSewing 版型">
+              <Card title={t('card.patterns')}>
                 {(analysis.closest_freesewing_patterns ?? []).map((p) => {
                   const isActive = activePreview === p.design
                   const state = patternSvgs[p.design]
@@ -309,7 +310,7 @@ export default function AnalyzePage() {
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-semibold capitalize text-stone-800">{p.design}</span>
                         <span className="text-xs bg-stone-100 text-stone-500 px-2 py-0.5 rounded-full">
-                          {Math.round(p.confidence * 100)}% 符合
+                          {Math.round(p.confidence * 100)}{t('pattern.match')}
                         </span>
                       </div>
                       {(p as any).reasoning && (
@@ -326,7 +327,7 @@ export default function AnalyzePage() {
                           ${state === 'loading' ? 'opacity-50 cursor-not-allowed' : ''}
                         `}
                       >
-                        {state === 'loading' ? '打版中…' : isActive && state ? '✓ 已預覽' : '🪡 預覽版型圖樣'}
+                        {state === 'loading' ? t('pattern.drafting') : isActive && state ? t('pattern.previewed') : t('pattern.preview')}
                       </button>
                     </div>
                   )
@@ -345,7 +346,7 @@ export default function AnalyzePage() {
 
               <a href="/recommendations"
                 className="flex items-center gap-1.5 text-xs text-stone-400 hover:text-stone-700 transition-colors">
-                ✨ 前往設計建議頁面 →
+                {t('analyze.goRecs')}
               </a>
             </div>
           </div>
@@ -383,7 +384,7 @@ export default function AnalyzePage() {
                       <button
                         onClick={() => setZoom(100)}
                         className="text-xs text-stone-400 hover:text-stone-700 ml-1"
-                      >重置</button>
+                      >{t('pattern.reset')}</button>
                     </div>
                   )}
 
@@ -394,13 +395,13 @@ export default function AnalyzePage() {
                         onClick={() => sessionStorage.setItem('autoSelectDesign', activePreview)}
                         className="text-xs font-medium px-4 py-1.5 bg-stone-900 text-white rounded-lg hover:bg-stone-700 transition-colors"
                       >
-                        完整打版 →
+                        {t('pattern.fullDraft')}
                       </a>
                     )}
                     <button
                       onClick={() => setActivePreview(null)}
                       className="text-xs text-stone-400 hover:text-stone-700 px-2"
-                    >✕ 關閉</button>
+                    >{t('pattern.close')}</button>
                   </div>
                 </div>
               </div>
@@ -424,7 +425,7 @@ export default function AnalyzePage() {
               {activeSvg && activeSvg !== 'loading' && (
                 <div className="px-6 py-3 border-t border-stone-100 bg-stone-50 flex items-center justify-between">
                   <p className="text-xs text-stone-400">
-                    縫份 10mm・使用 FreeSewing v4 生成
+                    {t('pattern.seam')} 10mm・{t('pattern.generated')}
                   </p>
                   <div className="flex gap-2 text-xs text-stone-400">
                     {(analysis.closest_freesewing_patterns ?? []).filter(p => p.design !== activePreview).map(p => (
@@ -437,7 +438,7 @@ export default function AnalyzePage() {
                       </button>
                     ))}
                     {(analysis.closest_freesewing_patterns ?? []).filter(p => p.design !== activePreview).length > 0 && (
-                      <span className="text-stone-300">← 其他推薦</span>
+                      <span className="text-stone-300">{t('pattern.others')}</span>
                     )}
                   </div>
                 </div>
@@ -448,9 +449,9 @@ export default function AnalyzePage() {
           {/* ── 為你量身推薦 CTA ─────────────────────────────────────────────── */}
           {!recs && (
             <div className="mt-10 rounded-2xl p-8 text-center" style={{ background: 'linear-gradient(135deg,#2E5E4E 0%,#3d7a65 100%)' }}>
-              <p className="text-white/80 text-sm mb-1">分析完成</p>
-              <h2 className="text-white text-xl font-bold mb-2">為你量身推薦</h2>
-              <p className="text-white/70 text-sm mb-6">結合 AI 分析與你的身材，產生版型調整、布料、配色、採購清單與製作預估</p>
+              <p className="text-white/80 text-sm mb-1">{t('analyze.saved')}</p>
+              <h2 className="text-white text-xl font-bold mb-2">{t('recs.cta.title')}</h2>
+              <p className="text-white/70 text-sm mb-6">{t('recs.cta.subtitle')}</p>
               <button
                 onClick={generateRecs}
                 disabled={recsLoading}
@@ -460,9 +461,9 @@ export default function AnalyzePage() {
                 {recsLoading ? (
                   <>
                     <span className="w-4 h-4 border-2 border-stone-800/30 border-t-stone-800 rounded-full animate-spin inline-block" />
-                    Claude 正在生成推薦…
+                    {t('recs.cta.generating')}
                   </>
-                ) : '✨ 立即生成個人化推薦'}
+                ) : t('recs.cta.btn')}
               </button>
               {recsError && (
                 <p className="mt-4 text-red-300 text-sm">{recsError}</p>
@@ -476,15 +477,15 @@ export default function AnalyzePage() {
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-xl font-bold text-stone-900">為你量身推薦</h2>
-                  <p className="text-stone-500 text-sm mt-0.5">結合 AI 分析與你的身材，產生以下優化建議</p>
+                  <h2 className="text-xl font-bold text-stone-900">{t('rec.heading')}</h2>
+                  <p className="text-stone-500 text-sm mt-0.5">{t('rec.byAI')}</p>
                 </div>
                 <button
                   onClick={generateRecs}
                   disabled={recsLoading}
                   className="text-xs text-stone-400 hover:text-stone-700 disabled:opacity-50"
                 >
-                  {recsLoading ? '更新中…' : '↻ 重新生成'}
+                  {recsLoading ? t('recs.cta.generating') : t('recs.cta.regen')}
                 </button>
               </div>
 
@@ -492,7 +493,7 @@ export default function AnalyzePage() {
               <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
 
                 {/* 1. 版型調整 */}
-                <RecCard icon="📏" title="版型調整">
+                <RecCard icon="📏" title={t('rec.card.adj')}>
                   <ul className="space-y-1.5">
                     {recs.pattern_adjustments.map((adj, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-stone-700">
@@ -504,25 +505,25 @@ export default function AnalyzePage() {
                 </RecCard>
 
                 {/* 2. 布料建議 */}
-                <RecCard icon="🧶" title="布料建議">
+                <RecCard icon="🧶" title={t('rec.card.fabric')}>
                   <div className="space-y-2 text-sm">
                     <div>
-                      <span className="text-xs font-semibold uppercase tracking-widest text-stone-400">推薦</span>
+                      <span className="text-xs font-semibold uppercase tracking-widest text-stone-400">{t('rec.fabric.rec')}</span>
                       <p className="text-stone-800 mt-0.5">{recs.fabric.primary}</p>
                     </div>
                     <div>
-                      <span className="text-xs font-semibold uppercase tracking-widest text-stone-400">替代</span>
+                      <span className="text-xs font-semibold uppercase tracking-widest text-stone-400">{t('rec.fabric.alt')}</span>
                       <p className="text-stone-700 mt-0.5">{recs.fabric.alternative}</p>
                     </div>
                     <div>
-                      <span className="text-xs font-semibold uppercase tracking-widest text-red-400">避免</span>
+                      <span className="text-xs font-semibold uppercase tracking-widest text-red-400">{t('rec.fabric.avoid')}</span>
                       <p className="text-stone-500 mt-0.5">{recs.fabric.avoid}</p>
                     </div>
                   </div>
                 </RecCard>
 
                 {/* 3. 色彩方案 */}
-                <RecCard icon="🎨" title="色彩方案">
+                <RecCard icon="🎨" title={t('rec.card.color')}>
                   <div className="flex flex-wrap gap-2 mb-3">
                     {recs.colors.map((c) => (
                       <div key={c.hex} className="flex flex-col items-center gap-1">
@@ -541,7 +542,7 @@ export default function AnalyzePage() {
                 </RecCard>
 
                 {/* 4. 風格延伸 */}
-                <RecCard icon="💡" title="風格延伸">
+                <RecCard icon="💡" title={t('rec.card.style')}>
                   <div className="space-y-2">
                     {recs.style_variants.map((v) => (
                       <div key={v.occasion} className="text-sm">
@@ -558,13 +559,13 @@ export default function AnalyzePage() {
                 </RecCard>
 
                 {/* 5. 採購清單 */}
-                <RecCard icon="🛒" title="採購清單">
+                <RecCard icon="🛒" title={t('rec.card.shopping')}>
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="text-stone-400 border-b border-stone-100">
-                        <th className="text-left pb-1.5 font-medium">材料</th>
-                        <th className="text-center pb-1.5 font-medium">數量</th>
-                        <th className="text-right pb-1.5 font-medium">NT$</th>
+                        <th className="text-left pb-1.5 font-medium">{t('rec.shop.material')}</th>
+                        <th className="text-center pb-1.5 font-medium">{t('rec.shop.qty')}</th>
+                        <th className="text-right pb-1.5 font-medium">{t('rec.shop.price')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -578,7 +579,7 @@ export default function AnalyzePage() {
                     </tbody>
                     <tfoot>
                       <tr>
-                        <td colSpan={2} className="pt-2 text-stone-400 font-medium">合計</td>
+                        <td colSpan={2} className="pt-2 text-stone-400 font-medium">{t('rec.shop.total')}</td>
                         <td className="pt-2 text-right font-bold" style={{ color: '#2E5E4E' }}>
                           NT$ {recs.shopping_list.reduce((s, i) => s + i.price_ntd, 0).toLocaleString()}
                         </td>
@@ -588,28 +589,28 @@ export default function AnalyzePage() {
                 </RecCard>
 
                 {/* 6. 製作預估 */}
-                <RecCard icon="⏱" title="製作預估">
+                <RecCard icon="⏱" title={t('rec.card.production')}>
                   <div className="space-y-3 text-sm">
                     <div className="flex items-center justify-between">
-                      <span className="text-stone-500">難度</span>
+                      <span className="text-stone-500">{t('rec.prod.difficulty')}</span>
                       <span className="text-amber-500 text-base">
                         {'★'.repeat(recs.production.difficulty)}
                         <span className="text-stone-200">{'★'.repeat(4 - recs.production.difficulty)}</span>
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-stone-500">製作時間</span>
-                      <span className="text-stone-800 font-medium">{recs.production.hours_min}–{recs.production.hours_max} 小時</span>
+                      <span className="text-stone-500">{t('rec.prod.time')}</span>
+                      <span className="text-stone-800 font-medium">{recs.production.hours_min}–{recs.production.hours_max} {t('rec.prod.hours')}</span>
                     </div>
                     <div className="border-t border-stone-100 pt-3 space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-stone-500">DIY 材料成本</span>
+                        <span className="text-stone-500">{t('rec.prod.diy')}</span>
                         <span className="font-bold text-base" style={{ color: '#2E5E4E' }}>
                           NT$ {recs.production.cost_ntd.toLocaleString()}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-stone-400 text-xs">vs 市售參考價</span>
+                        <span className="text-stone-400 text-xs">vs {t('rec.prod.retail')}</span>
                         <span className="text-stone-400 text-xs line-through">
                           NT$ {recs.production.retail_ntd.toLocaleString()}
                         </span>
@@ -619,7 +620,7 @@ export default function AnalyzePage() {
                           className="text-xs font-semibold px-2 py-0.5 rounded-full"
                           style={{ background: '#C9A66B20', color: '#8B6914' }}
                         >
-                          省 {Math.round((1 - recs.production.cost_ntd / recs.production.retail_ntd) * 100)}%
+                          {t('rec.prod.save')} {Math.round((1 - recs.production.cost_ntd / recs.production.retail_ntd) * 100)}%
                         </span>
                       </div>
                     </div>
@@ -628,7 +629,7 @@ export default function AnalyzePage() {
 
                 {/* 7. 靈感版型 — full-width on xl */}
                 <div className="md:col-span-2 xl:col-span-3">
-                  <RecCard icon="🌿" title="靈感版型">
+                  <RecCard icon="🌿" title={t('rec.card.mood')}>
                     <div className="flex flex-wrap gap-3">
                       {recs.mood_patterns.map((mp) => (
                         <div
