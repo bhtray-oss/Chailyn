@@ -197,6 +197,32 @@ export default function AnalyzePage() {
       {/* ── Analysis result ───────────────────────────────────────────────── */}
       {step === 'result' && analysis && (
         <>
+          {/* 已儲存提示 + 操作列 */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-emerald-500 text-base">✓</span>
+              <span className="text-emerald-700 font-medium">照片與分析已儲存至歷史</span>
+              <a href="/history" className="text-emerald-600 underline underline-offset-2 text-xs hover:text-emerald-800">
+                查看歷史紀錄 →
+              </a>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => { setStep('upload'); setPreview(null); setAnalysis(null); setJobStatus(''); setActivePreview(null); setPatternSvgs({}); setRecs(null) }}
+                className="text-sm px-4 py-1.5 rounded-lg border border-stone-300 text-stone-600 hover:bg-stone-100 transition-colors"
+              >
+                清除
+              </button>
+              <button
+                onClick={() => { setStep('upload'); setPreview(null); setAnalysis(null); setJobStatus(''); setActivePreview(null); setPatternSvgs({}); setRecs(null) }}
+                className="text-sm px-4 py-1.5 rounded-lg text-white font-medium transition-colors"
+                style={{ background: '#2E5E4E' }}
+              >
+                📸 上傳新服裝照片
+              </button>
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-2 gap-6">
             {preview && (
               <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
@@ -283,18 +309,10 @@ export default function AnalyzePage() {
                 </div>
               )}
 
-              <div className="flex items-center justify-between">
-                <button
-                  onClick={() => { setStep('upload'); setPreview(null); setAnalysis(null); setJobStatus(''); setActivePreview(null); setPatternSvgs({}); setRecs(null) }}
-                  className="text-sm text-stone-500 hover:text-stone-700"
-                >
-                  ← 重新上傳
-                </button>
-                <a href="/history"
-                  className="flex items-center gap-1.5 text-xs text-stone-400 hover:text-stone-700 transition-colors">
-                  <span className="text-green-500">✓</span> 已自動儲存 · 查看歷史 →
-                </a>
-              </div>
+              <a href="/recommendations"
+                className="flex items-center gap-1.5 text-xs text-stone-400 hover:text-stone-700 transition-colors">
+                ✨ 前往設計建議頁面 →
+              </a>
             </div>
           </div>
 
