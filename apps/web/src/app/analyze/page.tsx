@@ -2,12 +2,19 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { analysisApi, jobApi, patternApi } from '@/lib/api'
+import { analysisApi, jobApi, patternApi, recommendationsApi } from '@/lib/api'
 import type { GarmentAnalysis } from '@/lib/types'
-import type { AnalysisJob } from '@/lib/api'
+import type { AnalysisJob, RecommendationsResult } from '@/lib/api'
 
 const DEV_USER_ID    = '00000000-0000-0000-0000-000000000001'
 const DEV_PROFILE_ID = '00000000-0000-0000-0000-000000000002'
+
+// Default measurements (mm) matching ensureDevProfile()
+const DEV_MEASUREMENTS: Record<string, number> = {
+  chest: 920, waist: 720, hips: 980, highBust: 870,
+  hpsToWaistBack: 390, shoulderToWrist: 580, shoulderWidth: 370,
+  neck: 350, inseam: 750, biceps: 300, wrist: 155, height: 1630,
+}
 
 type Step = 'upload' | 'uploading' | 'analyzing' | 'result'
 
@@ -28,10 +35,15 @@ export default function AnalyzePage() {
   // 版型預覽狀態
   const [patternSvgs, setPatternSvgs]     = useState<Record<string, string | 'loading'>>({})
   const [activePreview, setActivePreview] = useState<string | null>(null)
-  const [zoom, setZoom]                   = useState(100) // %
+  const [zoom, setZoom]                   = useState(100)
   const previewRef = useRef<HTMLDivElement>(null)
 
-  // 當 activePreview 改變時，自動滾動到預覽區
+  // 為你量身推薦狀態
+  const [recs, setRecs]           = useState<RecommendationsResult | null>(null)
+  const [recsLoading, setRecsLoading] = useState(false)
+  const [recsError, setRecsError] = useState<string | null>(null)
+  const recsRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     if (activePreview && previewRef.current) {
       previewRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -41,7 +53,7 @@ export default function AnalyzePage() {
   const draftPattern = useCallback(async (design: string) => {
     setActivePreview(design)
     setZoom(100)
-    if (patternSvgs[design] && patternSvgs[design] !== 'loading') return // 已快取
+    if (patternSvgs[design] && patternSvgs[design] !== 'loading') return
     setPatternSvgs(prev => ({ ...prev, [design]: 'loading' }))
     try {
       const data = await patternApi.draft({
@@ -58,6 +70,24 @@ export default function AnalyzePage() {
     }
   }, [patternSvgs])
 
+  const generateRecs = useCallback(async () => {
+    if (!analysis) return
+    setRecsLoading(true)
+    setRecsError(null)
+    try {
+      const result = await recommendationsApi.generate(
+        analysis as unknown as Record<string, unknown>,
+        DEV_MEASUREMENTS,
+      )
+      setRecs(result)
+      setTimeout(() => recsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
+    } catch (e: any) {
+      setRecsError(e.message ?? '推薦生成失敗，請再試一次')
+    } finally {
+      setRecsLoading(false)
+    }
+  }, [analysis])
+
   const onDrop = useCallback(async (files: File[]) => {
     const file = files[0]
     if (!file) return
@@ -66,6 +96,7 @@ export default function AnalyzePage() {
     setJobStatus('')
     setPatternSvgs({})
     setActivePreview(null)
+    setRecs(null)
 
     try {
       setStep('uploading')
@@ -166,7 +197,6 @@ export default function AnalyzePage() {
       {/* ── Analysis result ───────────────────────────────────────────────── */}
       {step === 'result' && analysis && (
         <>
-          {/* 2-col grid: photo + info cards */}
           <div className="grid md:grid-cols-2 gap-6">
             {preview && (
               <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
@@ -209,7 +239,7 @@ export default function AnalyzePage() {
                 } />
               </Card>
 
-              {/* 推薦版型 — 點擊後在下方展示全圖 */}
+              {/* 推薦版型 */}
               <Card title="推薦 FreeSewing 版型">
                 {(analysis.closest_freesewing_patterns ?? []).map((p) => {
                   const isActive = activePreview === p.design
@@ -255,7 +285,7 @@ export default function AnalyzePage() {
 
               <div className="flex items-center justify-between">
                 <button
-                  onClick={() => { setStep('upload'); setPreview(null); setAnalysis(null); setJobStatus(''); setActivePreview(null); setPatternSvgs({}) }}
+                  onClick={() => { setStep('upload'); setPreview(null); setAnalysis(null); setJobStatus(''); setActivePreview(null); setPatternSvgs({}); setRecs(null) }}
                   className="text-sm text-stone-500 hover:text-stone-700"
                 >
                   ← 重新上傳
@@ -271,7 +301,6 @@ export default function AnalyzePage() {
           {/* ── 全寬版型圖樣預覽 ─────────────────────────────────────────────── */}
           {activePreview && (
             <div ref={previewRef} className="mt-10 border border-stone-200 rounded-2xl overflow-hidden bg-white shadow-sm">
-              {/* Toolbar */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100 bg-stone-50">
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-semibold text-stone-800 capitalize">
@@ -283,7 +312,6 @@ export default function AnalyzePage() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                  {/* Zoom slider */}
                   {activeSvg && activeSvg !== 'loading' && (
                     <div className="flex items-center gap-2">
                       <button
@@ -325,7 +353,6 @@ export default function AnalyzePage() {
                 </div>
               </div>
 
-              {/* SVG 顯示區：可縮放、可捲動 */}
               <div className="overflow-auto bg-stone-50" style={{ maxHeight: '80vh' }}>
                 {activeSvg === 'loading' ? (
                   <div className="flex flex-col items-center justify-center py-24 gap-4">
@@ -334,7 +361,6 @@ export default function AnalyzePage() {
                   </div>
                 ) : activeSvg ? (
                   <div className="p-6">
-                    {/* CSS zoom 縮放，讓捲動條正確反映實際內容大小 */}
                     <div
                       style={{ zoom: zoom / 100 }}
                       dangerouslySetInnerHTML={{ __html: activeSvg }}
@@ -343,7 +369,6 @@ export default function AnalyzePage() {
                 ) : null}
               </div>
 
-              {/* Bottom bar with info */}
               {activeSvg && activeSvg !== 'loading' && (
                 <div className="px-6 py-3 border-t border-stone-100 bg-stone-50 flex items-center justify-between">
                   <p className="text-xs text-stone-400">
@@ -367,11 +392,223 @@ export default function AnalyzePage() {
               )}
             </div>
           )}
+
+          {/* ── 為你量身推薦 CTA ─────────────────────────────────────────────── */}
+          {!recs && (
+            <div className="mt-10 rounded-2xl p-8 text-center" style={{ background: 'linear-gradient(135deg,#2E5E4E 0%,#3d7a65 100%)' }}>
+              <p className="text-white/80 text-sm mb-1">分析完成</p>
+              <h2 className="text-white text-xl font-bold mb-2">為你量身推薦</h2>
+              <p className="text-white/70 text-sm mb-6">結合 AI 分析與你的身材，產生版型調整、布料、配色、採購清單與製作預估</p>
+              <button
+                onClick={generateRecs}
+                disabled={recsLoading}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all disabled:opacity-60"
+                style={{ background: '#C9A66B', color: '#1a1a1a' }}
+              >
+                {recsLoading ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-stone-800/30 border-t-stone-800 rounded-full animate-spin inline-block" />
+                    Claude 正在生成推薦…
+                  </>
+                ) : '✨ 立即生成個人化推薦'}
+              </button>
+              {recsError && (
+                <p className="mt-4 text-red-300 text-sm">{recsError}</p>
+              )}
+            </div>
+          )}
+
+          {/* ── 推薦結果 ─────────────────────────────────────────────────────── */}
+          {recs && (
+            <div ref={recsRef} className="mt-10">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-xl font-bold text-stone-900">為你量身推薦</h2>
+                  <p className="text-stone-500 text-sm mt-0.5">結合 AI 分析與你的身材，產生以下優化建議</p>
+                </div>
+                <button
+                  onClick={generateRecs}
+                  disabled={recsLoading}
+                  className="text-xs text-stone-400 hover:text-stone-700 disabled:opacity-50"
+                >
+                  {recsLoading ? '更新中…' : '↻ 重新生成'}
+                </button>
+              </div>
+
+              {/* 7-card grid */}
+              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+
+                {/* 1. 版型調整 */}
+                <RecCard icon="📏" title="版型調整">
+                  <ul className="space-y-1.5">
+                    {recs.pattern_adjustments.map((adj, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-stone-700">
+                        <span className="mt-0.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#2E5E4E', marginTop: 6 }} />
+                        {adj}
+                      </li>
+                    ))}
+                  </ul>
+                </RecCard>
+
+                {/* 2. 布料建議 */}
+                <RecCard icon="🧶" title="布料建議">
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <span className="text-xs font-semibold uppercase tracking-widest text-stone-400">推薦</span>
+                      <p className="text-stone-800 mt-0.5">{recs.fabric.primary}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold uppercase tracking-widest text-stone-400">替代</span>
+                      <p className="text-stone-700 mt-0.5">{recs.fabric.alternative}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold uppercase tracking-widest text-red-400">避免</span>
+                      <p className="text-stone-500 mt-0.5">{recs.fabric.avoid}</p>
+                    </div>
+                  </div>
+                </RecCard>
+
+                {/* 3. 色彩方案 */}
+                <RecCard icon="🎨" title="色彩方案">
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {recs.colors.map((c) => (
+                      <div key={c.hex} className="flex flex-col items-center gap-1">
+                        <div
+                          className="w-10 h-10 rounded-lg border border-stone-200 shadow-sm"
+                          style={{ background: c.hex }}
+                          title={c.hex}
+                        />
+                        <span className="text-[10px] text-stone-500 text-center leading-tight">{c.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {recs.color_notes.map((note, i) => (
+                    <p key={i} className="text-xs text-stone-500 leading-relaxed">{note}</p>
+                  ))}
+                </RecCard>
+
+                {/* 4. 風格延伸 */}
+                <RecCard icon="💡" title="風格延伸">
+                  <div className="space-y-2">
+                    {recs.style_variants.map((v) => (
+                      <div key={v.occasion} className="text-sm">
+                        <span
+                          className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-1"
+                          style={{ background: '#2E5E4E15', color: '#2E5E4E' }}
+                        >
+                          {v.occasion}
+                        </span>
+                        <p className="text-stone-600 leading-relaxed">{v.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </RecCard>
+
+                {/* 5. 採購清單 */}
+                <RecCard icon="🛒" title="採購清單">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="text-stone-400 border-b border-stone-100">
+                        <th className="text-left pb-1.5 font-medium">材料</th>
+                        <th className="text-center pb-1.5 font-medium">數量</th>
+                        <th className="text-right pb-1.5 font-medium">NT$</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {recs.shopping_list.map((item, i) => (
+                        <tr key={i} className="border-b border-stone-50 last:border-0">
+                          <td className="py-1.5 text-stone-700">{item.item}</td>
+                          <td className="py-1.5 text-center text-stone-500">{item.qty}</td>
+                          <td className="py-1.5 text-right text-stone-700 font-medium">{item.price_ntd.toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colSpan={2} className="pt-2 text-stone-400 font-medium">合計</td>
+                        <td className="pt-2 text-right font-bold" style={{ color: '#2E5E4E' }}>
+                          NT$ {recs.shopping_list.reduce((s, i) => s + i.price_ntd, 0).toLocaleString()}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </RecCard>
+
+                {/* 6. 製作預估 */}
+                <RecCard icon="⏱" title="製作預估">
+                  <div className="space-y-3 text-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="text-stone-500">難度</span>
+                      <span className="text-amber-500 text-base">
+                        {'★'.repeat(recs.production.difficulty)}
+                        <span className="text-stone-200">{'★'.repeat(4 - recs.production.difficulty)}</span>
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-stone-500">製作時間</span>
+                      <span className="text-stone-800 font-medium">{recs.production.hours_min}–{recs.production.hours_max} 小時</span>
+                    </div>
+                    <div className="border-t border-stone-100 pt-3 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-stone-500">DIY 材料成本</span>
+                        <span className="font-bold text-base" style={{ color: '#2E5E4E' }}>
+                          NT$ {recs.production.cost_ntd.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-stone-400 text-xs">vs 市售參考價</span>
+                        <span className="text-stone-400 text-xs line-through">
+                          NT$ {recs.production.retail_ntd.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span
+                          className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                          style={{ background: '#C9A66B20', color: '#8B6914' }}
+                        >
+                          省 {Math.round((1 - recs.production.cost_ntd / recs.production.retail_ntd) * 100)}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </RecCard>
+
+                {/* 7. 靈感版型 — full-width on xl */}
+                <div className="md:col-span-2 xl:col-span-3">
+                  <RecCard icon="🌿" title="靈感版型">
+                    <div className="flex flex-wrap gap-3">
+                      {recs.mood_patterns.map((mp) => (
+                        <div
+                          key={mp.code}
+                          className="flex-1 min-w-[180px] rounded-lg border border-stone-200 p-3"
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-bold text-stone-800">{mp.code}</span>
+                            <span
+                              className="text-xs font-semibold px-1.5 py-0.5 rounded"
+                              style={{ background: '#2E5E4E15', color: '#2E5E4E' }}
+                            >
+                              {mp.similarity}% 相似
+                            </span>
+                          </div>
+                          <p className="text-sm text-stone-600">{mp.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </RecCard>
+                </div>
+
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
   )
 }
+
+// ── Sub-components ────────────────────────────────────────────────────────────
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -387,6 +624,18 @@ function Row({ label, value }: { label: string; value: string | number | null | 
     <div className="flex justify-between text-sm">
       <span className="text-stone-500">{label}</span>
       <span className="text-stone-800 font-medium">{value ?? '—'}</span>
+    </div>
+  )
+}
+
+function RecCard({ icon, title, children }: { icon: string; title: string; children: React.ReactNode }) {
+  return (
+    <div className="bg-white border border-stone-200 rounded-xl p-5">
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-lg">{icon}</span>
+        <h3 className="text-sm font-semibold text-stone-800">{title}</h3>
+      </div>
+      {children}
     </div>
   )
 }

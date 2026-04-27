@@ -347,6 +347,39 @@ export const searchApi = {
     request<CatalogSearchResult[]>(`/search/similar/${analysisId}?top_k=${topK}`),
 }
 
+// ─── Recommendations ─────────────────────────────────────────────────────────
+export interface RecommendationsResult {
+  pattern_adjustments: string[]
+  fabric: {
+    primary:     string
+    alternative: string
+    avoid:       string
+  }
+  colors: Array<{ hex: string; name: string }>
+  color_notes: string[]
+  style_variants: Array<{ occasion: string; description: string }>
+  shopping_list: Array<{ item: string; qty: string; price_ntd: number }>
+  production: {
+    difficulty:  number
+    hours_min:   number
+    hours_max:   number
+    cost_ntd:    number
+    retail_ntd:  number
+  }
+  mood_patterns: Array<{ code: string; name: string; similarity: number }>
+}
+
+export const recommendationsApi = {
+  generate: (
+    analysis: Record<string, unknown>,
+    measurements?: Record<string, number>,
+  ) =>
+    request<RecommendationsResult>('/recommendations', {
+      method: 'POST',
+      body: JSON.stringify({ analysis, measurements: measurements ?? {} }),
+    }),
+}
+
 export interface VersionEntry {
   id:                 string
   version:            number

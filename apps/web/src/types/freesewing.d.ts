@@ -16,4 +16,4 @@ declare module '@freesewing/titan'   { export const Titan:   new (cfg: unknown) 
 declare module '@freesewing/waralee' { export const Waralee: new (cfg: unknown) => any }
 declare module '@freesewing/plugin-theme'     { export const themePlugin: unknown }
 declare module '@freesewing/plugin-transform' { export const transformPlugin: unknown }
-declare module '@freesewing/models'           { [key: string]: unknown }
+declare module '@freesewing/models'           { export const cisFemaleAdult38: Record<string, number>; export const cisMaleAdult38: Record<string, number> }
