@@ -24,11 +24,11 @@ const config: CapacitorConfig = {
 
   server: {
     // ── 開發用（模擬器）：直接連本機 Next.js dev server
-    url: 'http://localhost:3000',
-    cleartext: true,
+    // url: 'http://localhost:3000',
 
-    // ── 實機開發：換成你的 Mac 區網 IP（System Preferences → Network）
-    // url: 'http://192.168.x.x:3000',
+    // ── 實機開發（iPhone/iPad 與 Mac 同一 Wi-Fi）
+    url: 'http://192.168.1.165:3000',
+    cleartext: true,
 
     // ── 正式部署：Vercel 生產 URL（取消下一行註解）
     // url: 'https://your-chailyn-app.vercel.app',
