@@ -3,18 +3,18 @@
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext'
 import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
-import { Home, Camera, Clock, Shirt, MoreHorizontal, Search } from 'lucide-react'
+import { Home, Camera, Clock, Sparkles, MoreHorizontal, Search } from 'lucide-react'
 
 // ── 底部 Tab 定義 ────────────────────────────────────────────────────────────
-// "更多" tab 涵蓋：/profile /pattern /recommendations /search
-const MORE_PATHS = ['/profile', '/pattern', '/recommendations', '/search', '/more']
+// "更多" tab 涵蓋：/profile /pattern /wardrobe /search
+const MORE_PATHS = ['/profile', '/pattern', '/wardrobe', '/search', '/more']
 
 const TABS = [
-  { href: '/',         Icon: Home,          labelZh: '首頁', labelEn: 'Home'     },
-  { href: '/analyze',  Icon: Camera,        labelZh: '分析', labelEn: 'Analyze'  },
-  { href: '/history',  Icon: Clock,         labelZh: '歷史', labelEn: 'History'  },
-  { href: '/wardrobe', Icon: Shirt,         labelZh: '衣櫃', labelEn: 'Wardrobe' },
-  { href: '/more',     Icon: MoreHorizontal,labelZh: '更多', labelEn: 'More'     },
+  { href: '/',               Icon: Home,          labelZh: '首頁', labelEn: 'Home'     },
+  { href: '/analyze',        Icon: Camera,        labelZh: '分析', labelEn: 'Analyze'  },
+  { href: '/history',        Icon: Clock,         labelZh: '歷史', labelEn: 'History'  },
+  { href: '/recommendations',Icon: Sparkles,      labelZh: '建議', labelEn: 'Tips'     },
+  { href: '/more',           Icon: MoreHorizontal,labelZh: '更多', labelEn: 'More'     },
 ] as const
 
 // ── 頂部 Header ──────────────────────────────────────────────────────────────
