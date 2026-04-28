@@ -2,7 +2,7 @@
 
 import { useLanguage } from '@/contexts/LanguageContext'
 import {
-  User, Ruler, Sparkles, Search,
+  User, Ruler, Shirt, Search,
   ChevronRight, Settings,
 } from 'lucide-react'
 
@@ -31,12 +31,12 @@ export default function MorePage() {
       descEn:  'Browse 15 FreeSewing patterns, draft & export',
     },
     {
-      href:    '/recommendations',
-      icon:    <Sparkles size={22} className="text-amber-500" />,
-      labelZh: '設計建議',
-      labelEn: 'Design Tips',
-      descZh:  'AI 針對分析結果給出搭配與製作建議',
-      descEn:  'AI styling & production recommendations',
+      href:    '/wardrobe',
+      icon:    <Shirt size={22} className="text-indigo-500" />,
+      labelZh: '衣櫃',
+      labelEn: 'Wardrobe',
+      descZh:  '所有已儲存的版型，依款式分組',
+      descEn:  'All saved patterns, grouped by design',
     },
     {
       href:    '/search',
