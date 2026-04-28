@@ -2,7 +2,7 @@
 
 import { useLanguage } from '@/contexts/LanguageContext'
 import {
-  User, Clock, Sparkles, Search,
+  User, Ruler, Sparkles, Search,
   ChevronRight, Settings,
 } from 'lucide-react'
 
@@ -23,20 +23,12 @@ export default function MorePage() {
 
   const menuItems: MenuItem[] = [
     {
-      href:    '/profile',
-      icon:    <User size={22} className="text-stone-600" />,
-      labelZh: '身材檔案',
-      labelEn: 'Body Profile',
-      descZh:  '管理量身數據，支援多版本',
-      descEn:  'Manage measurements, multi-profile',
-    },
-    {
-      href:    '/history',
-      icon:    <Clock size={22} className="text-blue-500" />,
-      labelZh: '分析歷史',
-      labelEn: 'Analysis History',
-      descZh:  '查看過去所有服裝照片分析記錄',
-      descEn:  'View all past garment analyses',
+      href:    '/pattern',
+      icon:    <Ruler size={22} className="text-stone-600" />,
+      labelZh: '版型庫',
+      labelEn: 'Pattern Library',
+      descZh:  '瀏覽 15 款 FreeSewing 版型，即時打版下載',
+      descEn:  'Browse 15 FreeSewing patterns, draft & export',
     },
     {
       href:    '/recommendations',
@@ -53,6 +45,14 @@ export default function MorePage() {
       labelEn: 'Search Patterns',
       descZh:  '用自然語言搜尋適合的 FreeSewing 版型',
       descEn:  'Find FreeSewing patterns by description',
+    },
+    {
+      href:    '/profile',
+      icon:    <User size={22} className="text-stone-500" />,
+      labelZh: '身材檔案',
+      labelEn: 'Body Profile',
+      descZh:  '管理量身數據，支援多版本',
+      descEn:  'Manage measurements, multi-profile',
     },
   ]
 
