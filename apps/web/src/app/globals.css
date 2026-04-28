@@ -42,6 +42,10 @@ html {
   height: auto;
 }
 
+/* ── 隱藏捲軸（橫向 scroll 用）──────────────────────────────────────────────── */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
 /* ── Bottom Tab Bar 高度補償（避免內容被遮住） ──────────────────────────────── */
 .has-bottom-tab {
   padding-bottom: calc(var(--tab-height) + env(safe-area-inset-bottom, 0px) + 1rem);
