@@ -70,16 +70,8 @@ export default function ProfilePage() {
     setSaving(true)
     setError(null)
     try {
-      await fetch('http://localhost:8000/profiles/', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({
-          user_id:      DEV_USER_ID,
-          label,
-          measurements,
-          notes:        notes || null,
-        }),
-      }).then(r => { if (!r.ok) throw new Error(t('profile.saveFailed')); return r.json() })
+      await profileApi.create(DEV_USER_ID, label, measurements as Record<string, number>, notes || undefined)
+        .catch((e: any) => { throw new Error(t('profile.saveFailed') + ': ' + e.message) })
 
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
