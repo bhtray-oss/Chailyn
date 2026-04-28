@@ -2,6 +2,7 @@ export type Lang = 'zh' | 'en'
 
 const zh = {
   // ── Nav ────────────────────────────────────────────────────────────────────
+  'nav.home':            '首頁',
   'nav.analyze':         '分析照片',
   'nav.history':         '分析歷史',
   'nav.recommendations': '設計建議',
@@ -9,6 +10,10 @@ const zh = {
   'nav.pattern':         '版型',
   'nav.wardrobe':        '衣櫃',
   'nav.profile':         '身材檔案',
+  'nav.tab.analyze':     '分析',
+  'nav.tab.pattern':     '打版',
+  'nav.tab.wardrobe':    '衣櫃',
+  'nav.tab.profile':     '我的',
 
   // ── Analyze page ───────────────────────────────────────────────────────────
   'analyze.title':         '服裝照片分析',
@@ -304,6 +309,7 @@ const zh = {
 
 const en: typeof zh = {
   // ── Nav ────────────────────────────────────────────────────────────────────
+  'nav.home':            'Home',
   'nav.analyze':         'Analyze',
   'nav.history':         'History',
   'nav.recommendations': 'Design Tips',
@@ -311,6 +317,10 @@ const en: typeof zh = {
   'nav.pattern':         'Pattern',
   'nav.wardrobe':        'Wardrobe',
   'nav.profile':         'Body Profile',
+  'nav.tab.analyze':     'Analyze',
+  'nav.tab.pattern':     'Draft',
+  'nav.tab.wardrobe':    'Wardrobe',
+  'nav.tab.profile':     'Profile',
 
   // ── Analyze page ───────────────────────────────────────────────────────────
   'analyze.title':         'Garment Analysis',

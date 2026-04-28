@@ -4,10 +4,51 @@
 
 :root {
   --accent: #b8935f;
+  --tab-height: 64px;
 }
 
-/* FreeSewing SVG viewer 樣式 */
+/* ── iOS Safe Area ─────────────────────────────────────────────────────────── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  :root {
+    --safe-bottom: env(safe-area-inset-bottom);
+    --safe-top:    env(safe-area-inset-top);
+  }
+}
+
+/* ── iPhone tap 優化 ────────────────────────────────────────────────────────── */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 防止 iOS 表單輸入自動縮放（font-size < 16px 會觸發縮放） */
+input, textarea, select {
+  font-size: 16px !important;
+}
+@media (min-width: 768px) {
+  input, textarea, select {
+    font-size: inherit !important;
+  }
+}
+
+/* 滑順滾動 */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── FreeSewing SVG viewer ──────────────────────────────────────────────────── */
 .freesewing-svg-wrap svg {
   max-width: 100%;
   height: auto;
+}
+
+/* ── Bottom Tab Bar 高度補償（避免內容被遮住） ──────────────────────────────── */
+.has-bottom-tab {
+  padding-bottom: calc(var(--tab-height) + env(safe-area-inset-bottom, 0px) + 1rem);
+}
+
+@media (min-width: 768px) {
+  .has-bottom-tab {
+    padding-bottom: 2rem;
+  }
 }
