@@ -2,6 +2,11 @@ node_modules/
 .next/
 dist/
 build/
+# Capacitor static export output
+apps/web/out/
+# iOS build artifacts (keep ios/ source, ignore generated/fetched files)
+apps/web/ios/App/App/public/
+apps/web/ios/App/Pods/
 .env
 .env.local
 *.pyc
