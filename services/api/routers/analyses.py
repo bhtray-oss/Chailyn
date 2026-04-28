@@ -6,6 +6,7 @@ POST /analyses/jobs          — 建立非同步分析 Job
 GET  /analyses/jobs/{job_id} — 輪詢 Job 狀態
 GET  /analyses/{id}          — 取得分析結果（舊版相容）
 """
+import os
 import uuid
 import json
 from pathlib import Path
@@ -23,8 +24,8 @@ router = APIRouter()
 ALLOWED_MIME = {"image/jpeg", "image/png", "image/webp"}
 MAX_SIZE_MB = 10
 
-# 持久化上傳目錄（不用 /tmp，重啟後不會消失）
-UPLOAD_DIR = Path.home() / ".chailyn" / "uploads"
+# 持久化上傳目錄（Railway: set UPLOAD_DIR=/data/uploads; local: ~/.chailyn/uploads）
+UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", str(Path.home() / ".chailyn" / "uploads")))
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 
