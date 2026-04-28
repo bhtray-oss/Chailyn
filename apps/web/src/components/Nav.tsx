@@ -3,15 +3,18 @@
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext'
 import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
-import { Home, Camera, Ruler, Shirt, User, Search } from 'lucide-react'
+import { Home, Camera, Ruler, Shirt, MoreHorizontal, Search } from 'lucide-react'
 
 // ── 底部 Tab 定義 ────────────────────────────────────────────────────────────
+// "更多" tab 涵蓋：/profile /history /recommendations /search
+const MORE_PATHS = ['/profile', '/history', '/recommendations', '/search', '/more']
+
 const TABS = [
-  { href: '/',         Icon: Home,   labelZh: '首頁',   labelEn: 'Home'     },
-  { href: '/analyze',  Icon: Camera, labelZh: '分析',   labelEn: 'Analyze'  },
-  { href: '/pattern',  Icon: Ruler,  labelZh: '打版',   labelEn: 'Draft'    },
-  { href: '/wardrobe', Icon: Shirt,  labelZh: '衣櫃',   labelEn: 'Wardrobe' },
-  { href: '/profile',  Icon: User,   labelZh: '我的',   labelEn: 'Profile'  },
+  { href: '/',         Icon: Home,          labelZh: '首頁', labelEn: 'Home'     },
+  { href: '/analyze',  Icon: Camera,        labelZh: '分析', labelEn: 'Analyze'  },
+  { href: '/pattern',  Icon: Ruler,         labelZh: '打版', labelEn: 'Draft'    },
+  { href: '/wardrobe', Icon: Shirt,         labelZh: '衣櫃', labelEn: 'Wardrobe' },
+  { href: '/more',     Icon: MoreHorizontal,labelZh: '更多', labelEn: 'More'     },
 ] as const
 
 // ── 頂部 Header ──────────────────────────────────────────────────────────────
@@ -30,10 +33,10 @@ function TopBar() {
         </a>
 
         <div className="flex items-center gap-2">
-          {/* 搜尋（桌機也顯示，手機只有這個圖示） */}
+          {/* 搜尋圖示（手機版頂部快速入口） */}
           <a
             href="/search"
-            className="w-10 h-10 flex items-center justify-center rounded-full text-stone-500 hover:bg-stone-100 transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-full text-stone-500 hover:bg-stone-100 transition-colors md:hidden"
             aria-label="搜尋版型"
           >
             <Search size={20} />
@@ -41,13 +44,13 @@ function TopBar() {
 
           {/* 桌機導航連結（md 以上才顯示） */}
           <nav className="hidden md:flex items-center gap-5 text-sm text-stone-600 ml-2">
-            <a href="/analyze"          className="hover:text-stone-900 transition-colors">{lang === 'zh' ? '分析照片' : 'Analyze'}</a>
-            <a href="/history"          className="hover:text-stone-900 transition-colors">{lang === 'zh' ? '分析歷史' : 'History'}</a>
-            <a href="/recommendations"  className="hover:text-stone-900 transition-colors font-medium" style={{ color: '#2E5E4E' }}>{lang === 'zh' ? '設計建議' : 'Design Tips'}</a>
-            <a href="/search"           className="hover:text-stone-900 transition-colors">{lang === 'zh' ? '搜尋版型' : 'Search'}</a>
-            <a href="/pattern"          className="hover:text-stone-900 transition-colors">{lang === 'zh' ? '版型' : 'Pattern'}</a>
-            <a href="/wardrobe"         className="hover:text-stone-900 transition-colors">{lang === 'zh' ? '衣櫃' : 'Wardrobe'}</a>
-            <a href="/profile"          className="hover:text-stone-900 transition-colors">{lang === 'zh' ? '身材檔案' : 'Profile'}</a>
+            <a href="/analyze"         className="hover:text-stone-900 transition-colors">{lang === 'zh' ? '分析照片' : 'Analyze'}</a>
+            <a href="/history"         className="hover:text-stone-900 transition-colors">{lang === 'zh' ? '分析歷史' : 'History'}</a>
+            <a href="/recommendations" className="hover:text-stone-900 transition-colors font-medium" style={{ color: '#2E5E4E' }}>{lang === 'zh' ? '設計建議' : 'Design Tips'}</a>
+            <a href="/search"          className="hover:text-stone-900 transition-colors">{lang === 'zh' ? '搜尋版型' : 'Search'}</a>
+            <a href="/pattern"         className="hover:text-stone-900 transition-colors">{lang === 'zh' ? '版型' : 'Pattern'}</a>
+            <a href="/wardrobe"        className="hover:text-stone-900 transition-colors">{lang === 'zh' ? '衣櫃' : 'Wardrobe'}</a>
+            <a href="/profile"         className="hover:text-stone-900 transition-colors">{lang === 'zh' ? '身材檔案' : 'Profile'}</a>
           </nav>
 
           {/* 語言切換 */}
@@ -76,6 +79,12 @@ function BottomTabBar() {
   const { lang } = useLanguage()
   const pathname  = usePathname()
 
+  const isActive = (href: string) => {
+    if (href === '/more') return MORE_PATHS.some(p => pathname === p || pathname.startsWith(p + '/'))
+    if (href === '/')    return pathname === '/'
+    return pathname === href || pathname.startsWith(href + '/')
+  }
+
   return (
     <nav
       className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-stone-200"
@@ -83,32 +92,27 @@ function BottomTabBar() {
     >
       <div className="flex h-16">
         {TABS.map(({ href, Icon, labelZh, labelEn }) => {
-          const active = href === '/'
-            ? pathname === '/'
-            : pathname === href || pathname.startsWith(href + '/')
-          const label = lang === 'zh' ? labelZh : labelEn
+          const active = isActive(href)
+          const label  = lang === 'zh' ? labelZh : labelEn
 
           return (
             <a
               key={href}
               href={href}
-              className={`flex-1 flex flex-col items-center justify-center gap-0.5 transition-colors active:bg-stone-50 ${
+              className={`relative flex-1 flex flex-col items-center justify-center gap-0.5 transition-colors active:bg-stone-50 ${
                 active ? 'text-stone-900' : 'text-stone-400'
               }`}
             >
               <Icon
                 size={23}
                 strokeWidth={active ? 2.5 : 1.8}
-                className={active ? 'text-stone-900' : 'text-stone-400'}
               />
-              <span className={`text-[10px] font-medium leading-none ${
-                active ? 'text-stone-900' : 'text-stone-400'
-              }`}>
+              <span className="text-[10px] font-medium leading-none">
                 {label}
               </span>
               {/* 底部 active 指示點 */}
               {active && (
-                <span className="absolute bottom-0 w-1 h-1 rounded-full bg-stone-900 mb-1" />
+                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-stone-800" />
               )}
             </a>
           )

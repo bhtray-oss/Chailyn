@@ -14,6 +14,7 @@ const zh = {
   'nav.tab.pattern':     '打版',
   'nav.tab.wardrobe':    '衣櫃',
   'nav.tab.profile':     '我的',
+  'nav.more':            '更多',
 
   // ── Analyze page ───────────────────────────────────────────────────────────
   'analyze.title':         '服裝照片分析',
@@ -321,6 +322,7 @@ const en: typeof zh = {
   'nav.tab.pattern':     'Draft',
   'nav.tab.wardrobe':    'Wardrobe',
   'nav.tab.profile':     'Profile',
+  'nav.more':            'More',
 
   // ── Analyze page ───────────────────────────────────────────────────────────
   'analyze.title':         'Garment Analysis',
