@@ -1,23 +1,21 @@
 'use client'
 
-/**
- * PatternViewer.tsx — FreeSewing SVG 版型預覽元件
- */
-
 import { useState } from 'react'
 import { dxfApi, bomApi } from '@/lib/api'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface Props {
   svg:         string
   designName?: string
-  instanceId?: string   // 儲存後的版型 ID，用於 Redraft 連結
+  instanceId?: string
 }
 
 export default function PatternViewer({ svg, designName, instanceId }: Props) {
-  const [zoom, setZoom]         = useState(100)
+  const { t } = useLanguage()
+  const [zoom, setZoom]             = useState(100)
   const [dxfLoading, setDxfLoading] = useState(false)
-  const [bomOpen, setBomOpen]   = useState(false)
-  const [bom, setBom]           = useState<import('@/lib/api').BomResponse | null>(null)
+  const [bomOpen, setBomOpen]       = useState(false)
+  const [bom, setBom]               = useState<import('@/lib/api').BomResponse | null>(null)
   const [bomLoading, setBomLoading] = useState(false)
 
   const handleDxf = async () => {
@@ -35,10 +33,9 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
   const handleBom = async () => {
     if (!instanceId) return
     setBomOpen(o => !o)
-    if (bom) return    // already loaded
+    if (bom) return
     setBomLoading(true)
     try {
-      // try fetch existing, if empty auto-generate
       let data = await bomApi.get(instanceId)
       if (data.total === 0) {
         await bomApi.generate(instanceId)
@@ -62,13 +59,21 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
     URL.revokeObjectURL(url)
   }
 
+  const BOM_CATEGORY_KEYS: Record<string, Parameters<typeof t>[0]> = {
+    fabric:      'bom.fabric',
+    interfacing: 'bom.interfacing',
+    notions:     'bom.notions',
+    thread:      'bom.thread',
+    misc:        'bom.misc',
+  }
+
   return (
     <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
       {/* Toolbar */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-stone-100">
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium text-stone-700 capitalize">
-            {designName ?? '版型預覽'}
+            {designName ?? t('viewer.fallback')}
           </span>
         </div>
         <div className="flex items-center gap-3">
@@ -85,7 +90,6 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
             >+</button>
           </div>
 
-          {/* Redraft 按鈕 */}
           {instanceId && (
             <a
               href={`/pattern?redraft=${instanceId}`}
@@ -95,7 +99,6 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
             </a>
           )}
 
-          {/* BOM 按鈕 */}
           {instanceId && (
             <button
               onClick={handleBom}
@@ -105,18 +108,17 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
                   : 'bg-stone-100 hover:bg-stone-200 text-stone-700 border-stone-200'
               }`}
             >
-              {bomLoading ? '…' : '📋 BOM'}
+              {bomLoading ? '…' : t('viewer.bom')}
             </button>
           )}
 
-          {/* DXF 匯出 */}
           {instanceId && (
             <button
               onClick={handleDxf}
               disabled={dxfLoading}
               className="px-3 py-1 text-xs font-medium bg-stone-100 hover:bg-stone-200 text-stone-700 rounded border border-stone-200 transition-colors disabled:opacity-50"
             >
-              {dxfLoading ? '生成中…' : '↓ DXF'}
+              {dxfLoading ? t('viewer.dxfLoading') : '↓ DXF'}
             </button>
           )}
 
@@ -139,14 +141,14 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
       </div>
 
       <p className="px-4 py-2 text-xs text-stone-400 border-t border-stone-100">
-        輸出格式：SVG / DXF · 單位：mm · 縫份已含
+        {t('viewer.footer')}
       </p>
 
       {/* BOM panel */}
       {bomOpen && (
         <div className="border-t border-stone-200 bg-stone-50">
           <div className="px-4 py-3 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-stone-700">物料清單（BOM）</h3>
+            <h3 className="text-sm font-semibold text-stone-700">{t('viewer.bomTitle')}</h3>
             {instanceId && (
               <button
                 onClick={async () => {
@@ -160,24 +162,24 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
                 }}
                 className="text-xs text-stone-500 hover:text-stone-700"
               >
-                ↻ 重新估算
+                {t('viewer.bomRegen')}
               </button>
             )}
           </div>
 
           {bomLoading && (
-            <div className="px-4 pb-3 text-xs text-stone-400">載入中…</div>
+            <div className="px-4 pb-3 text-xs text-stone-400">{t('viewer.bomLoading')}</div>
           )}
 
           {bom && !bomLoading && (
             <div className="px-4 pb-4 space-y-3">
-              {Object.entries(BOM_CATEGORY_LABELS).map(([cat, label]) => {
+              {Object.entries(BOM_CATEGORY_KEYS).map(([cat, labelKey]) => {
                 const items = bom.groups[cat]
                 if (!items?.length) return null
                 return (
                   <div key={cat}>
                     <div className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1">
-                      {label}
+                      {t(labelKey)}
                     </div>
                     <table className="w-full text-xs">
                       <tbody>
@@ -189,7 +191,7 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
                             </td>
                             {item.width_mm && (
                               <td className="py-1.5 text-right text-stone-400 w-20">
-                                幅寬 {item.width_mm / 10}cm
+                                {t('viewer.widthUnit')} {item.width_mm / 10}cm
                               </td>
                             )}
                           </tr>
@@ -200,7 +202,7 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
                 )
               })}
               <p className="text-xs text-stone-400 pt-1">
-                共 {bom.total} 項 · 用料含 20% 餘量
+                {bom.total} · {t('viewer.bomTotal')}
               </p>
             </div>
           )}
@@ -208,12 +210,4 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
       )}
     </div>
   )
-}
-
-const BOM_CATEGORY_LABELS: Record<string, string> = {
-  fabric:       '布料',
-  interfacing:  '布襯',
-  notions:      '小料輔料',
-  thread:       '車線',
-  misc:         '其他',
 }

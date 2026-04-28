@@ -3,33 +3,14 @@
 import { useState, useRef } from 'react'
 import { searchApi } from '@/lib/api'
 import type { CatalogSearchResult } from '@/lib/api'
+import { useLanguage } from '@/contexts/LanguageContext'
 
-const DEV_USER_ID = '00000000-0000-0000-0000-000000000001'
-
-const GARMENT_TYPES = [
-  { id: '',          label: '全部' },
-  { id: 'top',       label: '上衣' },
-  { id: 'bottom',    label: '下身' },
-  { id: 'outerwear', label: '外套' },
-  { id: 'block',     label: '基礎版' },
-  { id: 'lingerie',  label: '內衣' },
-]
-
-const FABRIC_WEIGHTS = [
-  { id: '',       label: '任意重量' },
-  { id: 'light',  label: '輕薄' },
-  { id: 'medium', label: '中等' },
-  { id: 'heavy',  label: '厚重' },
-]
-
+const GARMENT_TYPE_KEYS = ['', 'top', 'bottom', 'outerwear', 'block', 'lingerie'] as const
+const FABRIC_WEIGHT_KEYS = ['', 'light', 'medium', 'heavy'] as const
 const DIFFICULTY_STARS: Record<number, string> = { 1: '★', 2: '★★', 3: '★★★', 4: '★★★★' }
 
-const PRESET_QUERIES = [
-  '寬鬆棉質上衣', '正裝襯衫', '輕盈夏日裙', '保暖外套', '初學者容易製作',
-  '彈性針織', '雙排扣大衣', '瑜珈/運動',
-]
-
 export default function SearchPage() {
+  const { t, lang } = useLanguage()
   const [query, setQuery]         = useState('')
   const [results, setResults]     = useState<CatalogSearchResult[]>([])
   const [loading, setLoading]     = useState(false)
@@ -37,6 +18,29 @@ export default function SearchPage() {
   const [gtype, setGtype]         = useState('')
   const [fweight, setFweight]     = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const presetQueries = [
+    t('search.preset.1'), t('search.preset.2'), t('search.preset.3'), t('search.preset.4'),
+    t('search.preset.5'), t('search.preset.6'), t('search.preset.7'), t('search.preset.8'),
+  ]
+
+  const gtypeLabel = (id: string) => {
+    if (id === '')          return t('type.all')
+    if (id === 'top')       return t('type.top')
+    if (id === 'bottom')    return t('type.bottom')
+    if (id === 'outerwear') return t('type.outerwear')
+    if (id === 'block')     return t('type.block')
+    if (id === 'lingerie')  return t('type.lingerie')
+    return id
+  }
+
+  const fweightLabel = (id: string) => {
+    if (id === '')       return t('weight.any')
+    if (id === 'light')  return t('weight.light')
+    if (id === 'medium') return t('weight.medium')
+    if (id === 'heavy')  return t('weight.heavy')
+    return id
+  }
 
   const doSearch = async (q?: string) => {
     const queryText = q ?? query
@@ -56,8 +60,8 @@ export default function SearchPage() {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-stone-900 mb-2">版型語意搜尋</h1>
-        <p className="text-stone-500">用自然語言描述想要的服裝，AI 幫你找最接近的版型</p>
+        <h1 className="text-2xl font-bold text-stone-900 mb-2">{t('search.title')}</h1>
+        <p className="text-stone-500">{t('search.subtitle')}</p>
       </div>
 
       {/* Search box */}
@@ -67,7 +71,7 @@ export default function SearchPage() {
           value={query}
           onChange={e => setQuery(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && doSearch()}
-          placeholder="例：寬鬆棉質連帽衫、fitted linen shirt..."
+          placeholder={t('search.placeholder')}
           className="flex-1 border border-stone-300 rounded-xl px-4 py-3 text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
         />
         <button
@@ -75,36 +79,36 @@ export default function SearchPage() {
           disabled={loading || !query.trim()}
           className="px-6 py-3 bg-stone-900 text-white font-medium rounded-xl hover:bg-stone-700 disabled:opacity-40 transition-colors"
         >
-          {loading ? '搜尋中…' : '搜尋'}
+          {loading ? t('search.searching') : t('search.btn')}
         </button>
       </div>
 
       {/* Filters */}
       <div className="flex flex-wrap gap-4 mb-6">
         <div className="flex gap-1.5 flex-wrap">
-          {GARMENT_TYPES.map(g => (
+          {GARMENT_TYPE_KEYS.map(id => (
             <button
-              key={g.id}
-              onClick={() => setGtype(g.id)}
+              key={id}
+              onClick={() => setGtype(id)}
               className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                gtype === g.id
+                gtype === id
                   ? 'bg-stone-900 text-white'
                   : 'bg-white border border-stone-200 text-stone-600 hover:bg-stone-50'
               }`}
-            >{g.label}</button>
+            >{gtypeLabel(id)}</button>
           ))}
         </div>
         <div className="flex gap-1.5 flex-wrap">
-          {FABRIC_WEIGHTS.map(f => (
+          {FABRIC_WEIGHT_KEYS.map(id => (
             <button
-              key={f.id}
-              onClick={() => setFweight(f.id)}
+              key={id}
+              onClick={() => setFweight(id)}
               className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                fweight === f.id
+                fweight === id
                   ? 'bg-amber-600 text-white'
                   : 'bg-white border border-stone-200 text-stone-600 hover:bg-stone-50'
               }`}
-            >{f.label}</button>
+            >{fweightLabel(id)}</button>
           ))}
         </div>
       </div>
@@ -112,9 +116,9 @@ export default function SearchPage() {
       {/* Preset queries */}
       {!searched && (
         <div>
-          <p className="text-xs text-stone-400 mb-3">快速試試：</p>
+          <p className="text-xs text-stone-400 mb-3">{t('search.quickTry')}</p>
           <div className="flex flex-wrap gap-2">
-            {PRESET_QUERIES.map(q => (
+            {presetQueries.map(q => (
               <button
                 key={q}
                 onClick={() => { setQuery(q); doSearch(q) }}
@@ -132,15 +136,15 @@ export default function SearchPage() {
         <div className="flex items-center justify-center h-40 text-stone-400">
           <div className="text-center">
             <div className="text-3xl animate-spin mb-2">⟳</div>
-            <p className="text-sm">AI 正在比對向量…</p>
+            <p className="text-sm">{t('search.matching')}</p>
           </div>
         </div>
       )}
 
       {searched && !loading && results.length === 0 && (
         <div className="text-center py-16 text-stone-400">
-          <p className="text-lg mb-1">找不到相符的版型</p>
-          <p className="text-sm">試試其他關鍵字，或移除篩選條件</p>
+          <p className="text-lg mb-1">{t('search.noResults')}</p>
+          <p className="text-sm">{t('search.noResultsHint')}</p>
         </div>
       )}
 
@@ -156,13 +160,26 @@ export default function SearchPage() {
 }
 
 function SearchResultCard({ item }: { item: CatalogSearchResult }) {
+  const { t, lang } = useLanguage()
   const pct = Math.round((item.score ?? 0) * 100)
 
-  const WEIGHT_LABELS: Record<string, string> = { light: '輕薄', medium: '中等', heavy: '厚重' }
-  const TYPE_LABELS: Record<string, string>   = {
-    top: '上衣', bottom: '下身', outerwear: '外套',
-    block: '基礎版', lingerie: '內衣',
+  const weightLabel = (w: string) => {
+    if (w === 'light')  return t('weight.light')
+    if (w === 'medium') return t('weight.medium')
+    if (w === 'heavy')  return t('weight.heavy')
+    return w
   }
+
+  const typeLabel = (tp: string) => {
+    if (tp === 'top')       return t('type.top')
+    if (tp === 'bottom')    return t('type.bottom')
+    if (tp === 'outerwear') return t('type.outerwear')
+    if (tp === 'block')     return t('type.block')
+    if (tp === 'lingerie')  return t('type.lingerie')
+    return tp
+  }
+
+  const description = item.description_zh
 
   return (
     <div className="bg-white border border-stone-200 rounded-2xl p-4 hover:shadow-md transition-shadow">
@@ -170,13 +187,9 @@ function SearchResultCard({ item }: { item: CatalogSearchResult }) {
       <div className="flex items-start justify-between mb-2">
         <span className="font-semibold text-stone-800 capitalize text-base">{item.name}</span>
         <div className="flex flex-col items-end gap-1">
-          {/* Similarity bar */}
           <div className="flex items-center gap-1.5">
             <div className="w-16 h-1.5 bg-stone-100 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-amber-400 rounded-full"
-                style={{ width: `${pct}%` }}
-              />
+              <div className="h-full bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
             </div>
             <span className="text-xs text-stone-400">{pct}%</span>
           </div>
@@ -184,20 +197,20 @@ function SearchResultCard({ item }: { item: CatalogSearchResult }) {
       </div>
 
       {/* Description */}
-      {item.description_zh && (
-        <p className="text-xs text-stone-500 mb-3 leading-relaxed">{item.description_zh}</p>
+      {description && (
+        <p className="text-xs text-stone-500 mb-3 leading-relaxed">{description}</p>
       )}
 
       {/* Meta chips */}
       <div className="flex flex-wrap gap-1.5 mb-3">
         {item.garment_type && (
           <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
-            {TYPE_LABELS[item.garment_type] ?? item.garment_type}
+            {typeLabel(item.garment_type)}
           </span>
         )}
         {item.fabric_weight && (
           <span className="text-xs bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full">
-            {WEIGHT_LABELS[item.fabric_weight] ?? item.fabric_weight}
+            {weightLabel(item.fabric_weight)}
           </span>
         )}
         {item.difficulty && (
@@ -220,14 +233,11 @@ function SearchResultCard({ item }: { item: CatalogSearchResult }) {
 
       {/* Action */}
       <a
-        href={`/pattern`}
-        onClick={() => {
-          // 存到 sessionStorage 讓 pattern 頁自動選取
-          sessionStorage.setItem('autoSelectDesign', item.fs_design_id)
-        }}
+        href="/pattern"
+        onClick={() => { sessionStorage.setItem('autoSelectDesign', item.fs_design_id) }}
         className="block text-center text-xs font-medium py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-700 transition-colors mt-1"
       >
-        打這款版型 →
+        {t('search.draftThis')}
       </a>
     </div>
   )
