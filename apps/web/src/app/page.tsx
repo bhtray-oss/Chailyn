@@ -28,10 +28,10 @@ export default function Home() {
     <div className="py-12">
       {/* Hero */}
       <div className="text-center mb-16">
-        <h1 className="text-4xl font-bold tracking-tight text-stone-900 mb-4">
+        <h1 className="text-xl md:text-2xl font-bold tracking-tight text-stone-900 mb-3">
           {t('home.hero.title')}
         </h1>
-        <p className="text-lg text-stone-500 max-w-xl mx-auto">
+        <p className="text-sm md:text-base text-stone-500 max-w-xl mx-auto">
           {t('home.hero.desc')}
         </p>
         <div className="mt-8 flex justify-center gap-4">

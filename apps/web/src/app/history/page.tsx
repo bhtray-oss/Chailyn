@@ -5,6 +5,7 @@ import { historyApi, patternApi } from '@/lib/api'
 import type { AnalysisHistoryItem } from '@/lib/api'
 import type { GarmentAnalysis } from '@/lib/types'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { Trash2, ChevronDown, ChevronUp, ZoomIn, ZoomOut, X } from 'lucide-react'
 
 const DEV_USER_ID    = '00000000-0000-0000-0000-000000000001'
 const DEV_PROFILE_ID = '00000000-0000-0000-0000-000000000002'
@@ -15,20 +16,15 @@ export default function HistoryPage() {
   const [loading, setLoading]   = useState(true)
   const [expanded, setExpanded] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
-  const [patternSvgs, setPatternSvgs] = useState<Record<string, string | 'loading'>>({})
+  const [patternSvgs, setPatternSvgs]   = useState<Record<string, string | 'loading'>>({})
   const [activePreview, setActivePreview] = useState<string | null>(null)
   const [zoom, setZoom] = useState(100)
 
   const load = useCallback(async () => {
     setLoading(true)
-    try {
-      const data = await historyApi.list(DEV_USER_ID)
-      setItems(data)
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setLoading(false)
-    }
+    try { setItems(await historyApi.list(DEV_USER_ID)) }
+    catch (e) { console.error(e) }
+    finally   { setLoading(false) }
   }, [])
 
   useEffect(() => { load() }, [load])
@@ -54,11 +50,8 @@ export default function HistoryPage() {
     setPatternSvgs(prev => ({ ...prev, [design]: 'loading' }))
     try {
       const data = await patternApi.draft({
-        userId: DEV_USER_ID,
-        design,
-        bodyProfileId: DEV_PROFILE_ID,
-        sa: 10,
-        renderMode: 'svg',
+        userId: DEV_USER_ID, design,
+        bodyProfileId: DEV_PROFILE_ID, sa: 10, renderMode: 'svg',
       }) as any
       setPatternSvgs(prev => ({ ...prev, [design]: data.svg ?? '' }))
     } catch {
@@ -67,222 +60,268 @@ export default function HistoryPage() {
     }
   }
 
-  const formatDate = (iso: string) => {
-    const d = new Date(iso)
-    return d.toLocaleString(lang === 'zh' ? 'zh-TW' : 'en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-  }
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleString(lang === 'zh' ? 'zh-TW' : 'en-US', {
+      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+    })
 
-  const activeSvg = activePreview ? patternSvgs[activePreview] : null
+  // ── Empty / Loading ────────────────────────────────────────────────────────
+  if (loading) return (
+    <div className="flex items-center justify-center py-24 gap-3 text-stone-400">
+      <div className="w-5 h-5 border-2 border-stone-300 border-t-stone-600 rounded-full animate-spin" />
+      {t('hist.loading')}
+    </div>
+  )
 
+  if (items.length === 0) return (
+    <div className="text-center py-24 text-stone-400">
+      <div className="text-5xl mb-4">📂</div>
+      <p className="text-base font-medium text-stone-600 mb-1">{t('hist.empty')}</p>
+      <p className="text-sm mb-6">{t('hist.emptyHint')}</p>
+      <a href="/analyze"
+        className="text-sm font-medium px-5 py-2.5 bg-stone-900 text-white rounded-lg hover:bg-stone-700 transition-colors">
+        {t('hist.startAnalysis')}
+      </a>
+    </div>
+  )
+
+  // ── Main list ──────────────────────────────────────────────────────────────
   return (
-    <div className="max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+    <div className="max-w-2xl mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-5">
         <div>
-          <h1 className="text-2xl font-bold text-stone-900">{t('hist.title')}</h1>
-          <p className="text-stone-500 text-sm mt-1">{t('hist.subtitle')}</p>
+          <h1 className="text-xl font-bold text-stone-900">{t('hist.title')}</h1>
+          <p className="text-stone-400 text-xs mt-0.5">
+            {lang === 'zh' ? `共 ${items.length} 筆記錄` : `${items.length} records`}
+          </p>
         </div>
         <a href="/analyze"
-          className="text-sm font-medium px-4 py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-700 transition-colors">
-          {t('hist.newAnalysis')}
+          className="text-sm font-medium px-4 py-2 bg-stone-900 text-white rounded-xl hover:bg-stone-700 transition-colors">
+          + {lang === 'zh' ? '新增分析' : 'New'}
         </a>
       </div>
 
-      {loading && (
-        <div className="flex items-center justify-center py-24 gap-3 text-stone-400">
-          <div className="w-5 h-5 border-2 border-stone-300 border-t-stone-600 rounded-full animate-spin" />
-          {t('hist.loading')}
-        </div>
-      )}
+      <div className="space-y-3">
+        {items.map((item) => {
+          const analysis    = item.result as GarmentAnalysis
+          const isExpanded  = expanded === item.job_id
+          const topPatterns = analysis?.closest_freesewing_patterns?.slice(0, 3) ?? []
+          const fabric      = analysis?.fabric?.primary?.name
+          const composition = analysis?.fabric?.primary?.composition_estimate
+          const silhouette  = analysis?.cut?.silhouette
+          const difficulty  = (analysis as any)?.difficulty_estimate as number | undefined
+          const tags        = analysis?.silhouette_tags?.slice(0, 3) ?? []
 
-      {!loading && items.length === 0 && (
-        <div className="text-center py-24 text-stone-400">
-          <div className="text-5xl mb-4">📂</div>
-          <p className="text-lg font-medium text-stone-600 mb-2">{t('hist.empty')}</p>
-          <p className="text-sm mb-6">{t('hist.emptyHint')}</p>
-          <a href="/analyze"
-            className="text-sm font-medium px-5 py-2.5 bg-stone-900 text-white rounded-lg hover:bg-stone-700 transition-colors">
-            {t('hist.startAnalysis')}
-          </a>
-        </div>
-      )}
+          return (
+            <div key={item.job_id}
+              className="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm">
 
-      {!loading && items.length > 0 && (
-        <div className="space-y-4">
-          {items.map((item) => {
-            const analysis = item.result as GarmentAnalysis
-            const isExpanded = expanded === item.job_id
-            const topPatterns = analysis?.closest_freesewing_patterns?.slice(0, 3) ?? []
+              {/* ── Row 1: 圖片 + 主要資訊 ─────────────────────────────── */}
+              <div className="flex gap-3 p-3">
+                {/* 照片縮圖 */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={historyApi.photoUrl(item.photo_id)}
+                  alt=""
+                  className="w-20 h-20 object-cover rounded-xl bg-stone-100 flex-shrink-0 border border-stone-100"
+                  onError={(e) => {
+                    const el = e.target as HTMLImageElement
+                    el.style.display = 'none'
+                  }}
+                />
 
-            return (
-              <div key={item.job_id}
-                className="bg-white border border-stone-200 rounded-2xl overflow-hidden hover:shadow-sm transition-shadow">
-
-                {/* ── Card header ── */}
-                <div className="flex gap-4 p-4">
-                  {/* Thumbnail */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={historyApi.photoUrl(item.photo_id)}
-                    alt={lang === 'zh' ? '服裝照片' : 'Garment photo'}
-                    className="w-24 h-24 object-cover rounded-xl border border-stone-100 flex-shrink-0 bg-stone-50"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                  />
-
-                  {/* Summary text */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <p className="text-xs text-stone-400 mb-1">{formatDate(item.created_at)}</p>
-                        <p className="font-semibold text-stone-800">
-                          {analysis?.fabric?.primary?.name ?? t('hist.unknownFabric')}
-                          {analysis?.cut?.silhouette ? ` · ${analysis.cut.silhouette}` : ''}
-                        </p>
-                        <p className="text-sm text-stone-500 mt-0.5">
-                          {analysis?.fabric?.primary?.composition_estimate ?? ''}
-                        </p>
-                      </div>
-                      {/* Difficulty badge */}
-                      {(analysis as any)?.difficulty_estimate && (
-                        <span className="text-xs text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full flex-shrink-0">
-                          {'★'.repeat((analysis as any).difficulty_estimate)}
-                        </span>
+                {/* 右側資訊欄 */}
+                <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+                  {/* 上層：材質 + 難度徽章 */}
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-semibold text-stone-900 text-sm truncate">
+                        {fabric ?? (lang === 'zh' ? '未知材質' : 'Unknown fabric')}
+                      </p>
+                      {composition && (
+                        <p className="text-xs text-stone-400 mt-0.5 truncate">{composition}</p>
                       )}
                     </div>
-
-                    {/* Pattern tags */}
-                    <div className="flex flex-wrap gap-1.5 mt-2">
-                      {topPatterns.map(p => (
-                        <span key={p.design}
-                          className="text-xs bg-stone-100 text-stone-700 px-2 py-0.5 rounded-full capitalize">
-                          {p.design} {Math.round(p.confidence * 100)}%
-                        </span>
-                      ))}
-                      {analysis?.silhouette_tags?.slice(0, 2).map(tag => (
-                        <span key={tag}
-                          className="text-xs bg-amber-50 text-amber-600 border border-amber-100 px-2 py-0.5 rounded-full">
-                          {tag.replace(/_/g, ' ')}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex flex-col gap-2 flex-shrink-0">
-                    <button
-                      onClick={() => { setExpanded(isExpanded ? null : item.job_id); setActivePreview(null) }}
-                      className="text-xs font-medium px-3 py-1.5 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-50 transition-colors"
-                    >
-                      {isExpanded ? t('hist.collapse') : t('hist.expand')}
-                    </button>
-                    <button
-                      onClick={() => handleDelete(item.job_id)}
-                      disabled={deleting === item.job_id}
-                      className="text-xs px-3 py-1.5 rounded-lg text-red-500 hover:bg-red-50 border border-red-200 transition-colors disabled:opacity-50"
-                    >
-                      {deleting === item.job_id ? t('hist.deleting') : t('hist.delete')}
-                    </button>
-                  </div>
-                </div>
-
-                {/* ── Expanded detail ── */}
-                {isExpanded && analysis && (
-                  <div className="border-t border-stone-100 p-4">
-                    {/* Info grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                      <InfoBox label={t('hist.silhouette')} value={analysis.cut?.silhouette} />
-                      <InfoBox label={t('row.ease')} value={(analysis.cut as any)?.fit_ease} />
-                      <InfoBox label={t('row.collar')} value={
-                        typeof analysis.components?.collar === 'object'
-                          ? (analysis.components.collar as any)?.type
-                          : analysis.components?.collar as string
-                      } />
-                      <InfoBox label={t('row.sleeve')} value={
-                        typeof analysis.components?.sleeves === 'object'
-                          ? (analysis.components.sleeves as any)?.type
-                          : analysis.components?.sleeves as string
-                      } />
-                    </div>
-
-                    {/* Recommended patterns + preview buttons */}
-                    <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-3">
-                      {t('hist.patterns')}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {topPatterns.map(p => {
-                        const isActive = activePreview === p.design
-                        const state = patternSvgs[p.design]
-                        return (
-                          <button key={p.design}
-                            onClick={() => draftPattern(p.design)}
-                            disabled={state === 'loading'}
-                            className={`text-sm font-medium px-4 py-2 rounded-xl border transition-colors capitalize
-                              ${isActive && state && state !== 'loading'
-                                ? 'bg-stone-900 text-white border-stone-900'
-                                : 'border-stone-300 text-stone-700 hover:bg-stone-50'}
-                              ${state === 'loading' ? 'opacity-50' : ''}`}
-                          >
-                            {state === 'loading' && isActive ? t('hist.drafting') : `${t('hist.previewPattern')} ${p.design} (${Math.round(p.confidence * 100)}%)`}
-                          </button>
-                        )
-                      })}
-                    </div>
-
-                    {/* Full-width SVG preview */}
-                    {activePreview && (
-                      <div className="border border-stone-200 rounded-xl overflow-hidden bg-stone-50">
-                        {/* Toolbar */}
-                        <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-stone-100">
-                          <span className="text-sm font-semibold text-stone-800 capitalize">
-                            {activePreview} {lang === 'zh' ? '版型圖樣' : 'pattern'}
-                          </span>
-                          <div className="flex items-center gap-3">
-                            {activeSvg && activeSvg !== 'loading' && (
-                              <div className="flex items-center gap-1.5">
-                                <button onClick={() => setZoom(z => Math.max(30, z - 10))}
-                                  className="w-6 h-6 rounded border border-stone-300 text-stone-600 hover:bg-stone-100 text-xs flex items-center justify-center">−</button>
-                                <input type="range" min={30} max={300} step={5} value={zoom}
-                                  onChange={e => setZoom(Number(e.target.value))}
-                                  className="w-28 accent-stone-700" />
-                                <button onClick={() => setZoom(z => Math.min(300, z + 10))}
-                                  className="w-6 h-6 rounded border border-stone-300 text-stone-600 hover:bg-stone-100 text-xs flex items-center justify-center">+</button>
-                                <span className="text-xs text-stone-500 w-10">{zoom}%</span>
-                                <button onClick={() => setZoom(100)} className="text-xs text-stone-400 hover:text-stone-700">{t('pattern.reset')}</button>
-                              </div>
-                            )}
-                            <button onClick={() => setActivePreview(null)} className="text-stone-400 hover:text-stone-700 text-sm px-2">{t('pattern.close')}</button>
-                          </div>
-                        </div>
-
-                        {/* SVG content */}
-                        <div className="overflow-auto p-4" style={{ maxHeight: '70vh' }}>
-                          {activeSvg === 'loading' ? (
-                            <div className="flex items-center justify-center py-16 gap-3">
-                              <div className="w-6 h-6 border-2 border-stone-200 border-t-stone-700 rounded-full animate-spin" />
-                              <span className="text-stone-400 text-sm">{t('hist.drafting')}</span>
-                            </div>
-                          ) : activeSvg ? (
-                            <div style={{ zoom: zoom / 100 }}
-                              dangerouslySetInnerHTML={{ __html: activeSvg }} />
-                          ) : null}
-                        </div>
-                      </div>
+                    {difficulty && (
+                      <span className="text-xs text-amber-600 bg-amber-50 border border-amber-100 px-1.5 py-0.5 rounded-full flex-shrink-0 font-medium">
+                        {'★'.repeat(difficulty)}
+                      </span>
                     )}
                   </div>
-                )}
+
+                  {/* 中層：剪裁輪廓 */}
+                  {silhouette && (
+                    <p className="text-xs text-stone-500 mt-1">
+                      {lang === 'zh' ? '輪廓' : 'Silhouette'}: <span className="font-medium text-stone-700">{silhouette}</span>
+                    </p>
+                  )}
+
+                  {/* 下層：時間 */}
+                  <p className="text-[11px] text-stone-300 mt-1">
+                    {formatDate(item.created_at)}
+                  </p>
+                </div>
               </div>
-            )
-          })}
-        </div>
-      )}
+
+              {/* ── Row 2: Tags（版型 + 輪廓標籤） ───────────────────── */}
+              {(topPatterns.length > 0 || tags.length > 0) && (
+                <div className="flex flex-wrap gap-1.5 px-3 pb-2">
+                  {topPatterns.map(p => (
+                    <span key={p.design}
+                      className="text-[11px] bg-stone-100 text-stone-700 px-2 py-0.5 rounded-full capitalize font-medium">
+                      {p.design} {Math.round(p.confidence * 100)}%
+                    </span>
+                  ))}
+                  {tags.map(tag => (
+                    <span key={tag}
+                      className="text-[11px] bg-blue-50 text-blue-600 border border-blue-100 px-2 py-0.5 rounded-full">
+                      {tag.replace(/_/g, ' ')}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* ── Row 3: 操作列 ──────────────────────────────────────── */}
+              <div className="flex border-t border-stone-100">
+                {/* 查看詳情 */}
+                <button
+                  onClick={() => { setExpanded(isExpanded ? null : item.job_id); setActivePreview(null) }}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium text-stone-700 hover:bg-stone-50 active:bg-stone-100 transition-colors"
+                >
+                  {isExpanded
+                    ? <><ChevronUp size={14} />{lang === 'zh' ? '收起詳情' : 'Collapse'}</>
+                    : <><ChevronDown size={14} />{lang === 'zh' ? '查看詳情' : 'Details'}</>
+                  }
+                </button>
+
+                {/* 分隔線 */}
+                <div className="w-px bg-stone-100" />
+
+                {/* 刪除 */}
+                <button
+                  onClick={() => handleDelete(item.job_id)}
+                  disabled={deleting === item.job_id}
+                  className="flex items-center justify-center gap-1.5 px-5 py-3 text-xs font-medium text-red-400 hover:bg-red-50 active:bg-red-100 transition-colors disabled:opacity-40"
+                >
+                  <Trash2 size={14} />
+                  {deleting === item.job_id
+                    ? (lang === 'zh' ? '刪除中…' : 'Deleting…')
+                    : (lang === 'zh' ? '刪除' : 'Delete')
+                  }
+                </button>
+              </div>
+
+              {/* ── 展開詳情 ───────────────────────────────────────────── */}
+              {isExpanded && analysis && (
+                <div className="border-t border-stone-100 bg-stone-50/60 p-3 space-y-3">
+
+                  {/* 詳情資訊格 */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <InfoBox label={lang === 'zh' ? '輪廓' : 'Silhouette'}    value={analysis.cut?.silhouette} />
+                    <InfoBox label={lang === 'zh' ? '合身度' : 'Ease'}        value={(analysis.cut as any)?.fit_ease} />
+                    <InfoBox label={lang === 'zh' ? '領型' : 'Collar'}        value={
+                      typeof analysis.components?.collar === 'object'
+                        ? (analysis.components.collar as any)?.type
+                        : analysis.components?.collar as string
+                    } />
+                    <InfoBox label={lang === 'zh' ? '袖型' : 'Sleeve'}        value={
+                      typeof analysis.components?.sleeves === 'object'
+                        ? (analysis.components.sleeves as any)?.type
+                        : analysis.components?.sleeves as string
+                    } />
+                  </div>
+
+                  {/* 推薦版型按鈕 */}
+                  {topPatterns.length > 0 && (
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-widest text-stone-400 mb-2">
+                        {lang === 'zh' ? '推薦版型' : 'Recommended Patterns'}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {topPatterns.map(p => {
+                          const isActive = activePreview === p.design
+                          const state    = patternSvgs[p.design]
+                          return (
+                            <button key={p.design}
+                              onClick={() => draftPattern(p.design)}
+                              disabled={state === 'loading'}
+                              className={`text-xs font-medium px-3 py-2 rounded-xl border transition-colors capitalize
+                                ${isActive && state && state !== 'loading'
+                                  ? 'bg-stone-900 text-white border-stone-900'
+                                  : 'bg-white border-stone-300 text-stone-700 hover:bg-stone-50'}
+                                ${state === 'loading' ? 'opacity-50' : ''}`}
+                            >
+                              {state === 'loading' && isActive
+                                ? (lang === 'zh' ? '產圖中…' : 'Drafting…')
+                                : `${p.design} · ${Math.round(p.confidence * 100)}%`
+                              }
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* SVG 預覽 */}
+                  {activePreview && (
+                    <div className="border border-stone-200 rounded-xl overflow-hidden bg-white">
+                      {/* Toolbar */}
+                      <div className="flex items-center justify-between px-3 py-2.5 border-b border-stone-100">
+                        <span className="text-xs font-semibold text-stone-800 capitalize">
+                          {activePreview}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          {patternSvgs[activePreview] && patternSvgs[activePreview] !== 'loading' && (
+                            <div className="flex items-center gap-1">
+                              <button onClick={() => setZoom(z => Math.max(30, z - 15))}
+                                className="w-7 h-7 rounded-lg border border-stone-200 flex items-center justify-center hover:bg-stone-50">
+                                <ZoomOut size={13} className="text-stone-600" />
+                              </button>
+                              <span className="text-xs text-stone-500 w-8 text-center">{zoom}%</span>
+                              <button onClick={() => setZoom(z => Math.min(300, z + 15))}
+                                className="w-7 h-7 rounded-lg border border-stone-200 flex items-center justify-center hover:bg-stone-50">
+                                <ZoomIn size={13} className="text-stone-600" />
+                              </button>
+                            </div>
+                          )}
+                          <button onClick={() => setActivePreview(null)}
+                            className="w-7 h-7 rounded-lg border border-stone-200 flex items-center justify-center hover:bg-stone-50">
+                            <X size={13} className="text-stone-500" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* SVG content */}
+                      <div className="overflow-auto p-3 bg-stone-50" style={{ maxHeight: '60vh' }}>
+                        {patternSvgs[activePreview] === 'loading' ? (
+                          <div className="flex items-center justify-center py-12 gap-2">
+                            <div className="w-5 h-5 border-2 border-stone-200 border-t-stone-700 rounded-full animate-spin" />
+                            <span className="text-stone-400 text-sm">{lang === 'zh' ? '產圖中…' : 'Drafting…'}</span>
+                          </div>
+                        ) : (
+                          <div style={{ zoom: zoom / 100 }}
+                            dangerouslySetInnerHTML={{ __html: patternSvgs[activePreview] as string }} />
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
 
+// ── InfoBox ──────────────────────────────────────────────────────────────────
 function InfoBox({ label, value }: { label: string; value?: string | null }) {
   return (
-    <div className="bg-stone-50 rounded-xl p-3">
-      <p className="text-xs text-stone-400 mb-1">{label}</p>
-      <p className="text-sm font-medium text-stone-800">{value ?? '—'}</p>
+    <div className="bg-white border border-stone-100 rounded-xl px-3 py-2.5">
+      <p className="text-[10px] text-stone-400 uppercase tracking-wide mb-1">{label}</p>
+      <p className="text-sm font-medium text-stone-800 truncate">{value ?? '—'}</p>
     </div>
   )
 }
