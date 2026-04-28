@@ -104,19 +104,19 @@ export const jobApi = {
       body: JSON.stringify({ photo_id: photoId, user_id: userId }),
     }),
 
-  /** 查詢 Job 狀態（前端每 2 秒輪詢一次） */
+  /** 查詢 Job 狀態（前端每 1 秒輪詢一次） */
   poll: (jobId: string) =>
     request<AnalysisJob>(`/analyses/jobs/${jobId}`),
 
   /**
    * 輪詢直到完成或失敗，回傳最終 Job。
-   * intervalMs  輪詢間隔（ms），預設 2000
+   * intervalMs  輪詢間隔（ms），預設 1000（1 秒，讓結果盡快呈現）
    * timeoutMs   最長等待時間（ms），預設 120000（2 分鐘）
    */
   waitUntilDone: async (
     jobId: string,
     onUpdate?: (job: AnalysisJob) => void,
-    intervalMs = 2000,
+    intervalMs = 1000,
     timeoutMs  = 120_000,
   ): Promise<AnalysisJob> => {
     const deadline = Date.now() + timeoutMs
