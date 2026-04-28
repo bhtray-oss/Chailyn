@@ -27,7 +27,7 @@ const config: CapacitorConfig = {
     // url: 'http://localhost:3000',
 
     // ── 實機開發（iPhone/iPad 與 Mac 同一 Wi-Fi）
-    url: 'http://192.168.1.165:3000',
+    url: 'http://192.168.12.169:3000',
     cleartext: true,
 
     // ── 正式部署：Vercel 生產 URL（取消下一行註解）
