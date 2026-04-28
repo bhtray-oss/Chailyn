@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
+const isCapacitor = process.env.BUILD_TARGET === 'capacitor'
+
 const nextConfig = {
   reactStrictMode: true,
+  // 靜態匯出（Capacitor 離線包殼用）：BUILD_TARGET=capacitor pnpm build
+  ...(isCapacitor && { output: 'export', images: { unoptimized: true } }),
   experimental: {
     // @freesewing/react 需要 'use client' 邊界
     serverComponentsExternalPackages: [
