@@ -5,7 +5,8 @@ import { historyApi, patternApi } from '@/lib/api'
 import type { AnalysisHistoryItem } from '@/lib/api'
 import type { GarmentAnalysis } from '@/lib/types'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { Trash2, ChevronDown, ChevronUp, ZoomIn, ZoomOut, X } from 'lucide-react'
+import { Trash2, ChevronDown, ChevronUp } from 'lucide-react'
+import PatternViewer from '@/components/PatternViewer'
 
 const DEV_USER_ID    = '00000000-0000-0000-0000-000000000001'
 const DEV_PROFILE_ID = '00000000-0000-0000-0000-000000000002'
@@ -16,9 +17,8 @@ export default function HistoryPage() {
   const [loading, setLoading]   = useState(true)
   const [expanded, setExpanded] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
-  const [patternSvgs, setPatternSvgs]   = useState<Record<string, string | 'loading'>>({})
+  const [patternSvgs, setPatternSvgs]     = useState<Record<string, string | 'loading'>>({})
   const [activePreview, setActivePreview] = useState<string | null>(null)
-  const [zoom, setZoom] = useState(100)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -45,7 +45,6 @@ export default function HistoryPage() {
 
   const draftPattern = async (design: string) => {
     setActivePreview(design)
-    setZoom(100)
     if (patternSvgs[design] && patternSvgs[design] !== 'loading') return
     setPatternSvgs(prev => ({ ...prev, [design]: 'loading' }))
     try {
@@ -263,48 +262,19 @@ export default function HistoryPage() {
                     </div>
                   )}
 
-                  {/* SVG 預覽 */}
+                  {/* SVG 預覽 — 共用 PatternViewer（含手機自動縮放） */}
                   {activePreview && (
-                    <div className="border border-stone-200 rounded-xl overflow-hidden bg-white">
-                      {/* Toolbar */}
-                      <div className="flex items-center justify-between px-3 py-2.5 border-b border-stone-100">
-                        <span className="text-xs font-semibold text-stone-800 capitalize">
-                          {activePreview}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          {patternSvgs[activePreview] && patternSvgs[activePreview] !== 'loading' && (
-                            <div className="flex items-center gap-1">
-                              <button onClick={() => setZoom(z => Math.max(30, z - 15))}
-                                className="w-7 h-7 rounded-lg border border-stone-200 flex items-center justify-center hover:bg-stone-50">
-                                <ZoomOut size={13} className="text-stone-600" />
-                              </button>
-                              <span className="text-xs text-stone-500 w-8 text-center">{zoom}%</span>
-                              <button onClick={() => setZoom(z => Math.min(300, z + 15))}
-                                className="w-7 h-7 rounded-lg border border-stone-200 flex items-center justify-center hover:bg-stone-50">
-                                <ZoomIn size={13} className="text-stone-600" />
-                              </button>
-                            </div>
-                          )}
-                          <button onClick={() => setActivePreview(null)}
-                            className="w-7 h-7 rounded-lg border border-stone-200 flex items-center justify-center hover:bg-stone-50">
-                            <X size={13} className="text-stone-500" />
-                          </button>
-                        </div>
+                    patternSvgs[activePreview] === 'loading' ? (
+                      <div className="flex items-center justify-center py-10 gap-2 bg-stone-50 rounded-xl border border-stone-200">
+                        <div className="w-5 h-5 border-2 border-stone-200 border-t-stone-700 rounded-full animate-spin" />
+                        <span className="text-stone-400 text-sm">{lang === 'zh' ? '產圖中…' : 'Drafting…'}</span>
                       </div>
-
-                      {/* SVG content */}
-                      <div className="overflow-auto p-3 bg-stone-50" style={{ maxHeight: '60vh' }}>
-                        {patternSvgs[activePreview] === 'loading' ? (
-                          <div className="flex items-center justify-center py-12 gap-2">
-                            <div className="w-5 h-5 border-2 border-stone-200 border-t-stone-700 rounded-full animate-spin" />
-                            <span className="text-stone-400 text-sm">{lang === 'zh' ? '產圖中…' : 'Drafting…'}</span>
-                          </div>
-                        ) : (
-                          <div style={{ zoom: zoom / 100 }}
-                            dangerouslySetInnerHTML={{ __html: patternSvgs[activePreview] as string }} />
-                        )}
-                      </div>
-                    </div>
+                    ) : patternSvgs[activePreview] ? (
+                      <PatternViewer
+                        svg={patternSvgs[activePreview] as string}
+                        designName={activePreview}
+                      />
+                    ) : null
                   )}
                 </div>
               )}
