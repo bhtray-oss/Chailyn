@@ -2,12 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Fashion Design Token ─────────────────────────────────────────────────── */
 :root {
-  --accent: #b8935f;
-  --tab-height: 64px;
+  --ink:        #0C0A09;   /* near-black headline */
+  --ink-soft:   #3D3530;   /* secondary text */
+  --muted:      #8C7B72;   /* caption / placeholder */
+  --border:     #E5DDD6;   /* subtle warm border */
+  --surface:    #FFFFFF;   /* card background */
+  --bg:         #F7F5F2;   /* page background ivory */
+  --gold:       #B8935F;   /* champagne gold accent */
+  --gold-light: #F5EDE0;   /* gold tint background */
+  --accent:     #B8935F;   /* legacy compat */
+  --tab-height: 60px;
+
+  --font-display: var(--font-cormorant), 'Georgia', 'Times New Roman', serif;
+  --font-body:    var(--font-dm-sans), system-ui, -apple-system, sans-serif;
 }
 
-/* ── iOS Safe Area ─────────────────────────────────────────────────────────── */
+/* ── iOS Safe Area ────────────────────────────────────────────────────────── */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   :root {
     --safe-bottom: env(safe-area-inset-bottom);
@@ -15,12 +27,26 @@
   }
 }
 
-/* ── iPhone tap 優化 ────────────────────────────────────────────────────────── */
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* Serif display heading utility */
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* ── iPhone tap 優化 ──────────────────────────────────────────────────────── */
 * {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* 防止 iOS 表單輸入自動縮放（font-size < 16px 會觸發縮放） */
+/* 防止 iOS 表單輸入自動縮放 */
 input, textarea, select {
   font-size: 16px !important;
 }
@@ -36,23 +62,28 @@ html {
   -webkit-overflow-scrolling: touch;
 }
 
-/* ── FreeSewing SVG viewer ──────────────────────────────────────────────────── */
+/* ── FreeSewing SVG viewer ────────────────────────────────────────────────── */
 .freesewing-svg-wrap svg {
   max-width: 100%;
   height: auto;
 }
 
-/* ── 隱藏捲軸（橫向 scroll 用）──────────────────────────────────────────────── */
+/* ── 隱藏捲軸 ─────────────────────────────────────────────────────────────── */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ── Bottom Tab Bar 高度補償（避免內容被遮住） ──────────────────────────────── */
+/* ── Bottom Tab Bar 高度補償 ──────────────────────────────────────────────── */
 .has-bottom-tab {
   padding-bottom: calc(var(--tab-height) + env(safe-area-inset-bottom, 0px) + 1rem);
 }
-
 @media (min-width: 768px) {
-  .has-bottom-tab {
-    padding-bottom: 2rem;
-  }
+  .has-bottom-tab { padding-bottom: 2rem; }
+}
+
+/* ── Fashion gold divider ─────────────────────────────────────────────────── */
+.gold-divider {
+  width: 2rem;
+  height: 1px;
+  background: var(--gold);
+  display: inline-block;
 }

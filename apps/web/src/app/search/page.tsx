@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { searchApi } from '@/lib/api'
 import type { CatalogSearchResult } from '@/lib/api'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { Search, Loader2 } from 'lucide-react'
 
 const GARMENT_TYPE_KEYS = ['', 'top', 'bottom', 'outerwear', 'block', 'lingerie'] as const
 const FABRIC_WEIGHT_KEYS = ['', 'light', 'medium', 'heavy'] as const
@@ -11,12 +12,12 @@ const DIFFICULTY_STARS: Record<number, string> = { 1: '★', 2: '★★', 3: '�
 
 export default function SearchPage() {
   const { t, lang } = useLanguage()
-  const [query, setQuery]         = useState('')
-  const [results, setResults]     = useState<CatalogSearchResult[]>([])
-  const [loading, setLoading]     = useState(false)
-  const [searched, setSearched]   = useState(false)
-  const [gtype, setGtype]         = useState('')
-  const [fweight, setFweight]     = useState('')
+  const [query, setQuery]       = useState('')
+  const [results, setResults]   = useState<CatalogSearchResult[]>([])
+  const [loading, setLoading]   = useState(false)
+  const [searched, setSearched] = useState(false)
+  const [gtype, setGtype]       = useState('')
+  const [fweight, setFweight]   = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   const presetQueries = [
@@ -59,25 +60,37 @@ export default function SearchPage() {
 
   return (
     <div className="max-w-4xl mx-auto">
+
+      {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-stone-900 mb-2">{t('search.title')}</h1>
-        <p className="text-stone-500">{t('search.subtitle')}</p>
+        <p className="text-[10px] tracking-[0.3em] uppercase text-[var(--muted)] mb-2">
+          {lang === 'zh' ? '語意搜尋' : 'Semantic Search'}
+        </p>
+        <h1 className="font-display text-3xl text-[var(--ink)]">{t('search.title')}</h1>
+        <p className="text-sm text-[var(--muted)] mt-1">{t('search.subtitle')}</p>
       </div>
 
       {/* Search box */}
-      <div className="flex gap-3 mb-4">
+      <div className="flex gap-0 mb-4 border border-[var(--border)] bg-[var(--surface)]">
+        <div className="flex items-center pl-4 text-[var(--muted)]">
+          <Search size={16} strokeWidth={1.5} />
+        </div>
         <input
           ref={inputRef}
           value={query}
           onChange={e => setQuery(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && doSearch()}
           placeholder={t('search.placeholder')}
-          className="flex-1 border border-stone-300 rounded-xl px-4 py-3 text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          className="flex-1 px-3 py-3 text-sm text-[var(--ink)] placeholder:text-[var(--muted)] bg-transparent focus:outline-none"
         />
         <button
           onClick={() => doSearch()}
           disabled={loading || !query.trim()}
-          className="px-6 py-3 bg-stone-900 text-white font-medium rounded-xl hover:bg-stone-700 disabled:opacity-40 transition-colors"
+          className="px-6 py-3 text-xs tracking-widest uppercase font-medium transition-all disabled:opacity-40"
+          style={{
+            background: 'var(--ink)',
+            color: 'var(--surface)',
+          }}
         >
           {loading ? t('search.searching') : t('search.btn')}
         </button>
@@ -90,11 +103,12 @@ export default function SearchPage() {
             <button
               key={id}
               onClick={() => setGtype(id)}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                gtype === id
-                  ? 'bg-stone-900 text-white'
-                  : 'bg-white border border-stone-200 text-stone-600 hover:bg-stone-50'
-              }`}
+              className="px-3 py-1 text-xs tracking-wide uppercase font-medium transition-colors"
+              style={{
+                background: gtype === id ? 'var(--ink)' : 'transparent',
+                color:      gtype === id ? 'var(--surface)' : 'var(--muted)',
+                border:     '1px solid ' + (gtype === id ? 'var(--ink)' : 'var(--border)'),
+              }}
             >{gtypeLabel(id)}</button>
           ))}
         </div>
@@ -103,11 +117,12 @@ export default function SearchPage() {
             <button
               key={id}
               onClick={() => setFweight(id)}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                fweight === id
-                  ? 'bg-amber-600 text-white'
-                  : 'bg-white border border-stone-200 text-stone-600 hover:bg-stone-50'
-              }`}
+              className="px-3 py-1 text-xs tracking-wide uppercase font-medium transition-colors"
+              style={{
+                background: fweight === id ? 'var(--gold)' : 'transparent',
+                color:      fweight === id ? 'var(--surface)' : 'var(--muted)',
+                border:     '1px solid ' + (fweight === id ? 'var(--gold)' : 'var(--border)'),
+              }}
             >{fweightLabel(id)}</button>
           ))}
         </div>
@@ -116,13 +131,14 @@ export default function SearchPage() {
       {/* Preset queries */}
       {!searched && (
         <div>
-          <p className="text-xs text-stone-400 mb-3">{t('search.quickTry')}</p>
+          <p className="text-[10px] tracking-[0.2em] uppercase text-[var(--muted)] mb-3">{t('search.quickTry')}</p>
           <div className="flex flex-wrap gap-2">
             {presetQueries.map(q => (
               <button
                 key={q}
                 onClick={() => { setQuery(q); doSearch(q) }}
-                className="px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-sm text-stone-600 hover:bg-stone-50 transition-colors"
+                className="px-3 py-1.5 text-xs text-[var(--ink-soft)] hover:bg-[var(--gold-light)] transition-colors"
+                style={{ border: '1px solid var(--border)' }}
               >
                 {q}
               </button>
@@ -131,25 +147,27 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* Results */}
+      {/* Loading */}
       {loading && (
-        <div className="flex items-center justify-center h-40 text-stone-400">
-          <div className="text-center">
-            <div className="text-3xl animate-spin mb-2">⟳</div>
-            <p className="text-sm">{t('search.matching')}</p>
+        <div className="flex items-center justify-center h-40 text-[var(--muted)]">
+          <div className="text-center flex flex-col items-center gap-3">
+            <Loader2 size={20} strokeWidth={1.5} className="animate-spin text-[var(--gold)]" />
+            <p className="text-xs tracking-widest uppercase">{t('search.matching')}</p>
           </div>
         </div>
       )}
 
+      {/* No results */}
       {searched && !loading && results.length === 0 && (
-        <div className="text-center py-16 text-stone-400">
-          <p className="text-lg mb-1">{t('search.noResults')}</p>
-          <p className="text-sm">{t('search.noResultsHint')}</p>
+        <div className="text-center py-16 text-[var(--muted)]">
+          <p className="text-sm font-medium text-[var(--ink-soft)] mb-1">{t('search.noResults')}</p>
+          <p className="text-xs">{t('search.noResultsHint')}</p>
         </div>
       )}
 
+      {/* Results */}
       {results.length > 0 && !loading && (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[var(--border)] mt-6">
           {results.map(item => (
             <SearchResultCard key={item.fs_design_id} item={item} />
           ))}
@@ -182,39 +200,43 @@ function SearchResultCard({ item }: { item: CatalogSearchResult }) {
   const description = item.description_zh
 
   return (
-    <div className="bg-white border border-stone-200 rounded-2xl p-4 hover:shadow-md transition-shadow">
+    <div className="bg-[var(--surface)] p-5 flex flex-col gap-3 hover:bg-[var(--gold-light)] transition-colors">
       {/* Header */}
-      <div className="flex items-start justify-between mb-2">
-        <span className="font-semibold text-stone-800 capitalize text-base">{item.name}</span>
-        <div className="flex flex-col items-end gap-1">
-          <div className="flex items-center gap-1.5">
-            <div className="w-16 h-1.5 bg-stone-100 rounded-full overflow-hidden">
-              <div className="h-full bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
-            </div>
-            <span className="text-xs text-stone-400">{pct}%</span>
+      <div className="flex items-start justify-between">
+        <span className="font-display text-xl text-[var(--ink)] capitalize">{item.name}</span>
+        <div className="flex items-center gap-1.5 mt-1">
+          <div className="w-12 h-[2px] bg-[var(--border)] overflow-hidden">
+            <div className="h-full bg-[var(--gold)]" style={{ width: `${pct}%` }} />
           </div>
+          <span className="text-[10px] text-[var(--muted)] tracking-wide">{pct}%</span>
         </div>
       </div>
 
       {/* Description */}
       {description && (
-        <p className="text-xs text-stone-500 mb-3 leading-relaxed">{description}</p>
+        <p className="text-xs text-[var(--muted)] leading-relaxed">{description}</p>
       )}
 
       {/* Meta chips */}
-      <div className="flex flex-wrap gap-1.5 mb-3">
+      <div className="flex flex-wrap gap-1.5">
         {item.garment_type && (
-          <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+          <span
+            className="text-[10px] tracking-wide px-2 py-0.5 uppercase"
+            style={{ background: 'var(--gold-light)', color: 'var(--gold)', border: '1px solid var(--border)' }}
+          >
             {typeLabel(item.garment_type)}
           </span>
         )}
         {item.fabric_weight && (
-          <span className="text-xs bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full">
+          <span
+            className="text-[10px] tracking-wide px-2 py-0.5 uppercase text-[var(--muted)]"
+            style={{ border: '1px solid var(--border)' }}
+          >
             {weightLabel(item.fabric_weight)}
           </span>
         )}
         {item.difficulty && (
-          <span className="text-xs text-amber-500 px-1">
+          <span className="text-xs text-[var(--gold)] px-1">
             {DIFFICULTY_STARS[item.difficulty] ?? ''}
           </span>
         )}
@@ -222,9 +244,13 @@ function SearchResultCard({ item }: { item: CatalogSearchResult }) {
 
       {/* Tags */}
       {item.tags && item.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1 mb-3">
+        <div className="flex flex-wrap gap-1">
           {item.tags.slice(0, 4).map(tag => (
-            <span key={tag} className="text-xs bg-stone-50 text-stone-500 border border-stone-200 px-1.5 py-0.5 rounded">
+            <span
+              key={tag}
+              className="text-[10px] text-[var(--muted)] px-1.5 py-0.5"
+              style={{ border: '1px solid var(--border)' }}
+            >
               {tag}
             </span>
           ))}
@@ -235,7 +261,8 @@ function SearchResultCard({ item }: { item: CatalogSearchResult }) {
       <a
         href="/pattern"
         onClick={() => { sessionStorage.setItem('autoSelectDesign', item.fs_design_id) }}
-        className="block text-center text-xs font-medium py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-700 transition-colors mt-1"
+        className="mt-auto text-[10px] tracking-widest uppercase text-center py-2 font-medium transition-opacity hover:opacity-70"
+        style={{ background: 'var(--ink)', color: 'var(--surface)' }}
       >
         {t('search.draftThis')}
       </a>

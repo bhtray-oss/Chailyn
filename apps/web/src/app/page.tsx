@@ -2,67 +2,107 @@
 
 import Link from 'next/link'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { Camera, Scissors, Ruler, Sparkles, Scan, Layers } from 'lucide-react'
 
 export default function Home() {
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
 
   const features = [
-    { icon: '📸', title: t('home.f1.title'), desc: t('home.f1.desc'), href: '/analyze',  cta: t('home.f1.cta') },
-    { icon: '📐', title: t('home.f2.title'), desc: t('home.f2.desc'), href: '/pattern',  cta: t('home.f2.cta') },
-    { icon: '👤', title: t('home.f3.title'), desc: t('home.f3.desc'), href: '/profile',  cta: t('home.f3.cta') },
+    {
+      icon: <Camera size={20} strokeWidth={1.5} />,
+      title: t('home.f1.title'),
+      desc:  t('home.f1.desc'),
+      href:  '/analyze',
+      cta:   t('home.f1.cta'),
+    },
+    {
+      icon: <Scissors size={20} strokeWidth={1.5} />,
+      title: t('home.f2.title'),
+      desc:  t('home.f2.desc'),
+      href:  '/pattern',
+      cta:   t('home.f2.cta'),
+    },
+    {
+      icon: <Ruler size={20} strokeWidth={1.5} />,
+      title: t('home.f3.title'),
+      desc:  t('home.f3.desc'),
+      href:  '/profile',
+      cta:   t('home.f3.cta'),
+    },
   ]
 
   const whyItems = [
-    { bg: 'bg-amber-100', color: 'text-amber-700', icon: '🎨', title: t('home.engine.title'), desc: t('home.engine.desc') },
-    { bg: 'bg-blue-100',  color: 'text-blue-700',  icon: '⚡', title: t('home.ai.title'),     desc: t('home.ai.desc') },
-    { bg: 'bg-green-100', color: 'text-green-700', icon: '👗', title: t('home.output.title'), desc: t('home.output.desc') },
+    { icon: <Layers   size={18} strokeWidth={1.5} />, title: t('home.engine.title'), desc: t('home.engine.desc') },
+    { icon: <Scan     size={18} strokeWidth={1.5} />, title: t('home.ai.title'),     desc: t('home.ai.desc')     },
+    { icon: <Scissors size={18} strokeWidth={1.5} />, title: t('home.output.title'), desc: t('home.output.desc') },
   ]
 
   const stats = [
     { num: '15+',    label: t('home.stat.patterns') },
     { num: '18',     label: t('home.stat.measurements') },
-    { num: '< 30 s', label: t('home.stat.time') },
+    { num: '< 30s',  label: t('home.stat.time') },
   ]
 
   return (
-    <div className="py-12">
-      {/* Hero */}
-      <div className="text-center mb-16">
-        <h1 className="text-xl md:text-2xl font-bold tracking-tight text-stone-900 mb-3">
-          {t('home.hero.title')}
+    <div className="pt-8 pb-4">
+
+      {/* ── Hero ─────────────────────────────────────────────────────── */}
+      <div className="text-center mb-16 px-2">
+        {/* 細金線裝飾 */}
+        <div className="flex items-center justify-center gap-3 mb-6">
+          <span className="h-px w-10 bg-[var(--border)]" />
+          <span className="text-[10px] tracking-[0.3em] uppercase text-[var(--muted)]">
+            {lang === 'zh' ? 'AI × 時尚設計' : 'AI × Fashion Design'}
+          </span>
+          <span className="h-px w-10 bg-[var(--border)]" />
+        </div>
+
+        {/* 主標題 — Cormorant Garamond */}
+        <h1 className="font-display text-4xl md:text-5xl text-[var(--ink)] mb-5 leading-tight">
+          {lang === 'zh'
+            ? <>服裝分析<br /><span style={{ color: 'var(--gold)' }}>×</span> 個人化打版</>
+            : <>Garment Analysis<br /><span style={{ color: 'var(--gold)' }}>×</span> Personal Patterns</>
+          }
         </h1>
-        <p className="text-sm md:text-base text-stone-500 max-w-xl mx-auto">
+
+        <p className="text-sm text-[var(--muted)] max-w-sm mx-auto leading-relaxed">
           {t('home.hero.desc')}
         </p>
-        <div className="mt-8 flex justify-center gap-4">
+
+        {/* CTA 按鈕 */}
+        <div className="mt-8 flex justify-center gap-3">
           <Link
             href="/analyze"
-            className="px-6 py-3 bg-stone-900 text-white rounded-lg font-medium hover:bg-stone-700 transition-colors"
+            className="px-6 py-2.5 text-sm tracking-widest uppercase font-medium text-white transition-opacity hover:opacity-80"
+            style={{ background: 'var(--ink)' }}
           >
-            {t('home.hero.upload')}
+            {lang === 'zh' ? '上傳照片' : 'Upload'}
           </Link>
           <Link
             href="/pattern"
-            className="px-6 py-3 border border-stone-300 text-stone-700 rounded-lg font-medium hover:bg-stone-100 transition-colors"
+            className="px-6 py-2.5 text-sm tracking-widest uppercase font-medium transition-colors hover:bg-[var(--gold-light)]"
+            style={{ border: '1px solid var(--border)', color: 'var(--ink-soft)' }}
           >
-            {t('home.hero.browse')}
+            {lang === 'zh' ? '版型庫' : 'Patterns'}
           </Link>
         </div>
       </div>
 
-      {/* Feature cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* ── Feature Cards ─────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[var(--border)]">
         {features.map((f) => (
           <div
             key={f.href}
-            className="bg-white border border-stone-200 rounded-xl p-6 flex flex-col gap-3 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-[var(--surface)] p-6 flex flex-col gap-4 group hover:bg-[var(--gold-light)] transition-colors"
           >
-            <div className="text-3xl">{f.icon}</div>
-            <h2 className="font-semibold text-stone-900 text-lg">{f.title}</h2>
-            <p className="text-stone-500 text-sm leading-relaxed flex-1">{f.desc}</p>
+            <div className="text-[var(--gold)]">{f.icon}</div>
+            <div>
+              <h2 className="font-medium text-[var(--ink)] text-sm tracking-wide mb-2">{f.title}</h2>
+              <p className="text-[var(--muted)] text-xs leading-relaxed">{f.desc}</p>
+            </div>
             <Link
               href={f.href}
-              className="text-sm font-medium text-amber-700 hover:text-amber-900 transition-colors"
+              className="mt-auto text-xs tracking-widest uppercase text-[var(--gold)] hover:opacity-70 transition-opacity"
             >
               {f.cta} →
             </Link>
@@ -70,31 +110,38 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Why Chailyn */}
-      <div className="mt-24 pt-12 border-t border-stone-200">
-        <h2 className="text-2xl font-bold text-center mb-12">{t('home.why')}</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
-          {whyItems.map((w) => (
-            <div key={w.title} className="flex flex-col gap-4">
-              <div className={`h-10 w-10 ${w.bg} rounded-lg flex items-center justify-center text-xl ${w.color}`}>
-                {w.icon}
-              </div>
-              <h3 className="font-bold text-lg">{w.title}</h3>
-              <p className="text-stone-500 text-sm leading-relaxed">{w.desc}</p>
+      {/* ── Why Chailyn ───────────────────────────────────────────────── */}
+      <div className="mt-20 pt-10 border-t border-[var(--border)]">
+        <div className="text-center mb-10">
+          <span className="text-[10px] tracking-[0.3em] uppercase text-[var(--muted)]">
+            {t('home.why')}
+          </span>
+        </div>
+        <div className="grid md:grid-cols-3 gap-8">
+          {whyItems.map((w, i) => (
+            <div key={i} className="flex flex-col gap-3">
+              <div className="text-[var(--gold)]">{w.icon}</div>
+              <div className="h-px w-6 bg-[var(--border)]" />
+              <h3 className="text-sm font-medium text-[var(--ink)]">{w.title}</h3>
+              <p className="text-xs text-[var(--muted)] leading-relaxed">{w.desc}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Quick stats */}
-      <div className="mt-16 grid grid-cols-3 gap-6 text-center">
-        {stats.map((s) => (
-          <div key={s.label} className="py-6">
-            <div className="text-2xl font-bold text-stone-900">{s.num}</div>
-            <div className="text-sm text-stone-500 mt-1">{s.label}</div>
+      {/* ── Stats ─────────────────────────────────────────────────────── */}
+      <div className="mt-16 grid grid-cols-3 border-t border-[var(--border)]">
+        {stats.map((s, i) => (
+          <div
+            key={i}
+            className={`py-8 text-center ${i < 2 ? 'border-r border-[var(--border)]' : ''}`}
+          >
+            <div className="font-display text-3xl text-[var(--ink)]">{s.num}</div>
+            <div className="text-[10px] tracking-widest uppercase text-[var(--muted)] mt-2">{s.label}</div>
           </div>
         ))}
       </div>
+
     </div>
   )
 }
