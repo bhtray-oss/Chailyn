@@ -2,6 +2,7 @@ export type Lang = 'zh' | 'en'
 
 const zh = {
   // ── Nav ────────────────────────────────────────────────────────────────────
+  'nav.home':            '首頁',
   'nav.analyze':         '分析照片',
   'nav.history':         '分析歷史',
   'nav.recommendations': '設計建議',
@@ -9,6 +10,11 @@ const zh = {
   'nav.pattern':         '版型',
   'nav.wardrobe':        '衣櫃',
   'nav.profile':         '身材檔案',
+  'nav.tab.analyze':     '分析',
+  'nav.tab.pattern':     '打版',
+  'nav.tab.wardrobe':    '衣櫃',
+  'nav.tab.profile':     '我的',
+  'nav.more':            '更多',
 
   // ── Analyze page ───────────────────────────────────────────────────────────
   'analyze.title':         '服裝照片分析',
@@ -281,6 +287,18 @@ const zh = {
   'pattern.previewBtn':       '預覽',
   'pattern.loading':          '打版中…',
   'pattern.seamShort':        '放縫',
+  // Mood Fabrics tab
+  'pattern.tab.fs':           'FreeSewing',
+  'pattern.tab.mood':         'Mood Fabrics',
+  'pattern.mood.subtitle':    '20 件精選免費版型 · PDF 下載',
+  'pattern.mood.loading':     '載入版型庫…',
+  'pattern.mood.download':    '免費下載版型 PDF',
+  'pattern.mood.selectHint':  '← 選擇版型查看詳情',
+  'pattern.mood.difficulty':  '難度',
+  'pattern.mood.fabric':      '布料重量',
+  'pattern.mood.season':      '季節',
+  'pattern.mood.tags':        '標籤',
+  'pattern.mood.free':        '免費',
 
   // ── PatternViewer component ──────────────────────────────────────────────────
   'viewer.fallback':          '版型預覽',
@@ -304,6 +322,7 @@ const zh = {
 
 const en: typeof zh = {
   // ── Nav ────────────────────────────────────────────────────────────────────
+  'nav.home':            'Home',
   'nav.analyze':         'Analyze',
   'nav.history':         'History',
   'nav.recommendations': 'Design Tips',
@@ -311,6 +330,11 @@ const en: typeof zh = {
   'nav.pattern':         'Pattern',
   'nav.wardrobe':        'Wardrobe',
   'nav.profile':         'Body Profile',
+  'nav.tab.analyze':     'Analyze',
+  'nav.tab.pattern':     'Draft',
+  'nav.tab.wardrobe':    'Wardrobe',
+  'nav.tab.profile':     'Profile',
+  'nav.more':            'More',
 
   // ── Analyze page ───────────────────────────────────────────────────────────
   'analyze.title':         'Garment Analysis',
@@ -583,6 +607,18 @@ const en: typeof zh = {
   'pattern.previewBtn':       'Preview',
   'pattern.loading':          'Drafting…',
   'pattern.seamShort':        'SA',
+  // Mood Fabrics tab
+  'pattern.tab.fs':           'FreeSewing',
+  'pattern.tab.mood':         'Mood Fabrics',
+  'pattern.mood.subtitle':    '20 curated free patterns · PDF download',
+  'pattern.mood.loading':     'Loading catalog…',
+  'pattern.mood.download':    'Download Free PDF Pattern',
+  'pattern.mood.selectHint':  '← Select a pattern to view details',
+  'pattern.mood.difficulty':  'Difficulty',
+  'pattern.mood.fabric':      'Fabric weight',
+  'pattern.mood.season':      'Season',
+  'pattern.mood.tags':        'Tags',
+  'pattern.mood.free':        'Free',
 
   // ── PatternViewer component ──────────────────────────────────────────────────
   'viewer.fallback':          'Pattern Preview',

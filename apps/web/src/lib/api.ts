@@ -104,19 +104,19 @@ export const jobApi = {
       body: JSON.stringify({ photo_id: photoId, user_id: userId }),
     }),
 
-  /** 查詢 Job 狀態（前端每 2 秒輪詢一次） */
+  /** 查詢 Job 狀態（前端每 1 秒輪詢一次） */
   poll: (jobId: string) =>
     request<AnalysisJob>(`/analyses/jobs/${jobId}`),
 
   /**
    * 輪詢直到完成或失敗，回傳最終 Job。
-   * intervalMs  輪詢間隔（ms），預設 2000
+   * intervalMs  輪詢間隔（ms），預設 1000（1 秒，讓結果盡快呈現）
    * timeoutMs   最長等待時間（ms），預設 120000（2 分鐘）
    */
   waitUntilDone: async (
     jobId: string,
     onUpdate?: (job: AnalysisJob) => void,
-    intervalMs = 2000,
+    intervalMs = 1000,
     timeoutMs  = 120_000,
   ): Promise<AnalysisJob> => {
     const deadline = Date.now() + timeoutMs
@@ -158,12 +158,37 @@ export const historyApi = {
 }
 
 // ─── Patterns ─────────────────────────────────────────────────────────────────
+export interface CatalogItem {
+  id:             string
+  source:         string          // 'freesewing' | 'mood_fabrics'
+  fs_design_id:   string | null
+  name:           string
+  family:         string | null
+  gender_hint:    string | null
+  difficulty:     number | null
+  garment_type:   string | null
+  fabric_weight:  string | null
+  description_zh: string | null
+  description_en: string | null
+  tags:           string[] | null
+  season:         string[] | null
+  skill_notes_zh: string | null
+  download_url:   string | null
+  thumbnail_url:  string | null
+  is_active:      boolean
+}
+
 export const patternApi = {
   listDesigns: () =>
     request<{ designs: string[] }>('/patterns/designs'),
 
-  listCatalog: (family?: string) =>
-    request(`/patterns/catalog/list${family ? `?family=${family}` : ''}`),
+  listCatalog: (params?: { family?: string; source?: string }) => {
+    const qs = new URLSearchParams()
+    if (params?.family) qs.set('family', params.family)
+    if (params?.source) qs.set('source', params.source)
+    const q = qs.toString()
+    return request<CatalogItem[]>(`/patterns/catalog/list${q ? `?${q}` : ''}`)
+  },
 
   draft: (params: {
     userId: string
@@ -326,15 +351,18 @@ export const bomApi = {
 
 // ─── Search ───────────────────────────────────────────────────────────────────
 export interface CatalogSearchResult {
-  fs_design_id:  string
-  name:          string
+  fs_design_id:   string
+  name:           string
   description_zh: string | null
-  garment_type:  string | null
-  fabric_weight: string | null
-  difficulty:    number
-  tags:          string[] | null
-  season:        string[] | null
-  score:         number
+  description_en: string | null
+  garment_type:   string | null
+  fabric_weight:  string | null
+  difficulty:     number
+  tags:           string[] | null
+  season:         string[] | null
+  score:          number
+  source:         string | null          // 'freesewing' | 'mood_fabrics'
+  download_url:   string | null          // Mood Fabrics PDF page URL
 }
 
 export const searchApi = {
