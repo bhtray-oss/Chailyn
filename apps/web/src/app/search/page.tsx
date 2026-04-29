@@ -4,9 +4,9 @@ import { useState, useRef } from 'react'
 import { searchApi } from '@/lib/api'
 import type { CatalogSearchResult } from '@/lib/api'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { Search, Loader2 } from 'lucide-react'
+import { Search, Loader2, ExternalLink } from 'lucide-react'
 
-const GARMENT_TYPE_KEYS = ['', 'top', 'bottom', 'outerwear', 'block', 'lingerie'] as const
+const GARMENT_TYPE_KEYS = ['', 'dress', 'top', 'bottom', 'outerwear', 'suit', 'block', 'lingerie'] as const
 const FABRIC_WEIGHT_KEYS = ['', 'light', 'medium', 'heavy'] as const
 const DIFFICULTY_STARS: Record<number, string> = { 1: '★', 2: '★★', 3: '★★★', 4: '★★★★' }
 
@@ -27,9 +27,11 @@ export default function SearchPage() {
 
   const gtypeLabel = (id: string) => {
     if (id === '')          return t('type.all')
+    if (id === 'dress')     return lang === 'zh' ? '洋裝' : 'Dress'
     if (id === 'top')       return t('type.top')
     if (id === 'bottom')    return t('type.bottom')
     if (id === 'outerwear') return t('type.outerwear')
+    if (id === 'suit')      return lang === 'zh' ? '套裝' : 'Suit'
     if (id === 'block')     return t('type.block')
     if (id === 'lingerie')  return t('type.lingerie')
     return id
@@ -180,6 +182,7 @@ export default function SearchPage() {
 function SearchResultCard({ item }: { item: CatalogSearchResult }) {
   const { t, lang } = useLanguage()
   const pct = Math.round((item.score ?? 0) * 100)
+  const isMood = item.source === 'mood_fabrics'
 
   const weightLabel = (w: string) => {
     if (w === 'light')  return t('weight.light')
@@ -189,23 +192,39 @@ function SearchResultCard({ item }: { item: CatalogSearchResult }) {
   }
 
   const typeLabel = (tp: string) => {
+    if (tp === 'dress')     return lang === 'zh' ? '洋裝' : 'Dress'
     if (tp === 'top')       return t('type.top')
     if (tp === 'bottom')    return t('type.bottom')
     if (tp === 'outerwear') return t('type.outerwear')
+    if (tp === 'suit')      return lang === 'zh' ? '套裝' : 'Suit'
     if (tp === 'block')     return t('type.block')
     if (tp === 'lingerie')  return t('type.lingerie')
     return tp
   }
 
-  const description = item.description_zh
+  const description = lang === 'zh'
+    ? (item.description_zh ?? item.description_en)
+    : (item.description_en ?? item.description_zh)
 
   return (
     <div className="bg-[var(--surface)] p-5 flex flex-col gap-3 hover:bg-[var(--gold-light)] transition-colors">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <span className="font-display text-xl text-[var(--ink)] capitalize">{item.name}</span>
-        <div className="flex items-center gap-1.5 mt-1">
-          <div className="w-12 h-[2px] bg-[var(--border)] overflow-hidden">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <span className="font-display text-lg text-[var(--ink)] capitalize block leading-tight">{item.name}</span>
+          {/* Source badge */}
+          {isMood && (
+            <span
+              className="inline-block mt-1 text-[9px] tracking-widest uppercase px-1.5 py-0.5 text-[var(--gold)]"
+              style={{ border: '1px solid var(--border)', background: 'var(--gold-light)' }}
+            >
+              Mood Fabrics
+            </span>
+          )}
+        </div>
+        {/* Score bar */}
+        <div className="flex items-center gap-1.5 mt-1 flex-shrink-0">
+          <div className="w-10 h-[2px] bg-[var(--border)] overflow-hidden">
             <div className="h-full bg-[var(--gold)]" style={{ width: `${pct}%` }} />
           </div>
           <span className="text-[10px] text-[var(--muted)] tracking-wide">{pct}%</span>
@@ -257,15 +276,30 @@ function SearchResultCard({ item }: { item: CatalogSearchResult }) {
         </div>
       )}
 
-      {/* Action */}
-      <a
-        href="/pattern"
-        onClick={() => { sessionStorage.setItem('autoSelectDesign', item.fs_design_id) }}
-        className="mt-auto text-[10px] tracking-widest uppercase text-center py-2 font-medium transition-opacity hover:opacity-70"
-        style={{ background: 'var(--ink)', color: 'var(--surface)' }}
-      >
-        {t('search.draftThis')}
-      </a>
+      {/* Action — Mood: open PDF page; FreeSewing: draft */}
+      <div className="mt-auto">
+        {isMood && item.download_url ? (
+          <a
+            href={item.download_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-1.5 text-[10px] tracking-widest uppercase text-center py-2 font-medium transition-opacity hover:opacity-70"
+            style={{ background: 'var(--gold)', color: 'var(--ink)' }}
+          >
+            <ExternalLink size={11} strokeWidth={2} />
+            {lang === 'zh' ? '免費下載版型' : 'Download Free PDF'}
+          </a>
+        ) : (
+          <a
+            href="/pattern"
+            onClick={() => { sessionStorage.setItem('autoSelectDesign', item.fs_design_id) }}
+            className="block text-[10px] tracking-widest uppercase text-center py-2 font-medium transition-opacity hover:opacity-70"
+            style={{ background: 'var(--ink)', color: 'var(--surface)' }}
+          >
+            {t('search.draftThis')}
+          </a>
+        )}
+      </div>
     </div>
   )
 }

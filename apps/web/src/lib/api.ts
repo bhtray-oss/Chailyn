@@ -326,15 +326,18 @@ export const bomApi = {
 
 // ─── Search ───────────────────────────────────────────────────────────────────
 export interface CatalogSearchResult {
-  fs_design_id:  string
-  name:          string
+  fs_design_id:   string
+  name:           string
   description_zh: string | null
-  garment_type:  string | null
-  fabric_weight: string | null
-  difficulty:    number
-  tags:          string[] | null
-  season:        string[] | null
-  score:         number
+  description_en: string | null
+  garment_type:   string | null
+  fabric_weight:  string | null
+  difficulty:     number
+  tags:           string[] | null
+  season:         string[] | null
+  score:          number
+  source:         string | null          // 'freesewing' | 'mood_fabrics'
+  download_url:   string | null          // Mood Fabrics PDF page URL
 }
 
 export const searchApi = {
