@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { dxfApi, bomApi } from '@/lib/api'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { ZoomIn, ZoomOut, RotateCcw } from 'lucide-react'
+import { ZoomIn, ZoomOut, RotateCcw, Loader2 } from 'lucide-react'
 
 interface Props {
   svg:         string
@@ -11,7 +11,6 @@ interface Props {
   instanceId?: string
 }
 
-// 手機自動縮小至 35%，桌機 100%
 const getInitialZoom = () =>
   typeof window !== 'undefined' && window.innerWidth < 768 ? 35 : 100
 
@@ -23,7 +22,6 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
   const [bom, setBom]               = useState<import('@/lib/api').BomResponse | null>(null)
   const [bomLoading, setBomLoading] = useState(false)
 
-  // SVG 換新時重設縮放
   useEffect(() => { setZoom(getInitialZoom()) }, [svg])
 
   const handleDxf = async () => {
@@ -64,78 +62,83 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
   }
 
   return (
-    <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
+    <div style={{ border: '1px solid var(--border)', background: 'var(--surface)' }}>
 
       {/* ── Row 1：標題 + Zoom 控制 ─────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-3 py-2.5 border-b border-stone-100">
-        <span className="text-sm font-semibold text-stone-700 capitalize truncate mr-2">
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--border)]">
+        <span className="text-sm font-medium text-[var(--ink)] capitalize truncate mr-2">
           {designName ?? t('viewer.fallback')}
         </span>
 
-        {/* Zoom 控制 — 大按鈕，適合觸控 */}
         <div className="flex items-center gap-1 flex-shrink-0">
           <button
             onClick={() => setZoom(z => Math.max(20, z - 10))}
-            className="w-9 h-9 flex items-center justify-center rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-50 active:bg-stone-100 transition-colors"
+            className="w-8 h-8 flex items-center justify-center text-[var(--muted)] hover:text-[var(--ink)] transition-colors"
+            style={{ border: '1px solid var(--border)' }}
             aria-label="縮小"
           >
-            <ZoomOut size={16} />
+            <ZoomOut size={14} strokeWidth={1.5} />
           </button>
 
-          {/* 縮放百分比 — 點擊重設 */}
           <button
             onClick={() => setZoom(getInitialZoom())}
-            className="flex items-center gap-0.5 px-2 h-9 rounded-xl hover:bg-stone-50 active:bg-stone-100 transition-colors"
+            className="flex items-center gap-1 px-2 h-8 hover:bg-[var(--gold-light)] transition-colors"
             title="重設縮放"
           >
-            <span className="text-xs font-medium text-stone-500 tabular-nums w-8 text-center">
-              {zoom}%
-            </span>
-            <RotateCcw size={10} className="text-stone-300" />
+            <span className="text-xs text-[var(--muted)] tabular-nums w-8 text-center">{zoom}%</span>
+            <RotateCcw size={9} className="text-[var(--border)]" />
           </button>
 
           <button
             onClick={() => setZoom(z => Math.min(300, z + 10))}
-            className="w-9 h-9 flex items-center justify-center rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-50 active:bg-stone-100 transition-colors"
+            className="w-8 h-8 flex items-center justify-center text-[var(--muted)] hover:text-[var(--ink)] transition-colors"
+            style={{ border: '1px solid var(--border)' }}
             aria-label="放大"
           >
-            <ZoomIn size={16} />
+            <ZoomIn size={14} strokeWidth={1.5} />
           </button>
         </div>
       </div>
 
-      {/* ── Row 2：操作按鈕列（水平捲動）────────────────────────────────── */}
+      {/* ── Row 2：操作按鈕列 ────────────────────────────────────────────── */}
       {instanceId && (
-        <div className="flex items-center gap-2 px-3 py-2 border-b border-stone-100 overflow-x-auto scrollbar-hide">
+        <div className="flex items-center gap-1.5 px-4 py-2 border-b border-[var(--border)] overflow-x-auto scrollbar-hide">
           <a
             href={`/pattern?redraft=${instanceId}`}
-            className="flex-shrink-0 px-3 py-1.5 text-xs font-medium bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-700 rounded-lg border border-amber-200 transition-colors whitespace-nowrap"
+            className="flex-shrink-0 px-3 py-1.5 text-[10px] tracking-widest uppercase font-medium transition-colors whitespace-nowrap"
+            style={{
+              border: '1px solid var(--gold)',
+              color: 'var(--gold)',
+            }}
           >
-            ↻ {t('viewer.fallback') === '版型' ? 'Redraft' : 'Redraft'}
+            ↻ Redraft
           </a>
 
           <button
             onClick={handleBom}
-            className={`flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors whitespace-nowrap ${
-              bomOpen
-                ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
-                : 'bg-stone-100 hover:bg-stone-200 text-stone-700 border-stone-200'
-            }`}
+            className="flex-shrink-0 px-3 py-1.5 text-[10px] tracking-widest uppercase font-medium transition-colors whitespace-nowrap"
+            style={{
+              border:     '1px solid var(--border)',
+              background: bomOpen ? 'var(--ink)' : 'transparent',
+              color:      bomOpen ? 'var(--surface)' : 'var(--muted)',
+            }}
           >
-            {bomLoading ? '…' : t('viewer.bom')}
+            {bomLoading ? <Loader2 size={10} className="animate-spin inline" /> : t('viewer.bom')}
           </button>
 
           <button
             onClick={handleDxf}
             disabled={dxfLoading}
-            className="flex-shrink-0 px-3 py-1.5 text-xs font-medium bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg border border-stone-200 transition-colors disabled:opacity-50 whitespace-nowrap"
+            className="flex-shrink-0 px-3 py-1.5 text-[10px] tracking-widest uppercase font-medium text-[var(--muted)] hover:text-[var(--ink)] transition-colors whitespace-nowrap disabled:opacity-50"
+            style={{ border: '1px solid var(--border)' }}
           >
-            {dxfLoading ? t('viewer.dxfLoading') : '↓ DXF'}
+            {dxfLoading ? '…' : '↓ DXF'}
           </button>
 
           <button
             onClick={handleDownloadSvg}
-            className="flex-shrink-0 px-3 py-1.5 text-xs font-medium bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg border border-stone-200 transition-colors whitespace-nowrap"
+            className="flex-shrink-0 px-3 py-1.5 text-[10px] tracking-widest uppercase font-medium text-[var(--muted)] hover:text-[var(--ink)] transition-colors whitespace-nowrap"
+            style={{ border: '1px solid var(--border)' }}
           >
             ↓ SVG
           </button>
@@ -144,13 +147,13 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
 
       {/* ── SVG 顯示區 ──────────────────────────────────────────────────── */}
       <div
-        className="overflow-auto bg-stone-50"
+        className="overflow-auto"
         style={{
           maxHeight: '65vh',
-          WebkitOverflowScrolling: 'touch',   // iOS 流暢滾動
+          background: 'var(--bg)',
+          WebkitOverflowScrolling: 'touch',
         } as React.CSSProperties}
       >
-        {/* 使用 CSS zoom（影響 layout，不留空白）替代 transform:scale */}
         <div
           className="freesewing-svg-wrap p-2"
           style={{ zoom: zoom / 100 }}
@@ -158,15 +161,15 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
         />
       </div>
 
-      <p className="px-3 py-1.5 text-[10px] text-stone-300 border-t border-stone-100 text-center">
+      <p className="px-3 py-1.5 text-[10px] text-[var(--muted)] border-t border-[var(--border)] text-center tracking-wide">
         {t('viewer.footer')}
       </p>
 
       {/* ── BOM 面板 ────────────────────────────────────────────────────── */}
       {bomOpen && (
-        <div className="border-t border-stone-200 bg-stone-50">
-          <div className="px-3 py-2.5 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-stone-700">{t('viewer.bomTitle')}</h3>
+        <div className="border-t border-[var(--border)]" style={{ background: 'var(--bg)' }}>
+          <div className="px-4 py-3 flex items-center justify-between border-b border-[var(--border)]">
+            <p className="text-[10px] tracking-[0.2em] uppercase text-[var(--muted)]">{t('viewer.bomTitle')}</p>
             {instanceId && (
               <button
                 onClick={async () => {
@@ -176,7 +179,7 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
                     setBom(await bomApi.get(instanceId!))
                   } finally { setBomLoading(false) }
                 }}
-                className="text-xs text-stone-400 hover:text-stone-700 active:text-stone-900"
+                className="text-[10px] tracking-widest uppercase text-[var(--muted)] hover:text-[var(--ink)] transition-colors"
               >
                 {t('viewer.bomRegen')}
               </button>
@@ -184,29 +187,32 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
           </div>
 
           {bomLoading && (
-            <div className="px-3 pb-3 text-xs text-stone-400">{t('viewer.bomLoading')}</div>
+            <div className="px-4 py-3 flex items-center gap-2 text-xs text-[var(--muted)]">
+              <Loader2 size={12} strokeWidth={1.5} className="animate-spin text-[var(--gold)]" />
+              {t('viewer.bomLoading')}
+            </div>
           )}
 
           {bom && !bomLoading && (
-            <div className="px-3 pb-4 space-y-3">
+            <div className="px-4 py-4 space-y-4">
               {Object.entries(BOM_CATEGORY_KEYS).map(([cat, labelKey]) => {
                 const items = bom.groups[cat]
                 if (!items?.length) return null
                 return (
                   <div key={cat}>
-                    <div className="text-[10px] font-semibold uppercase tracking-widest text-stone-400 mb-1">
+                    <p className="text-[10px] tracking-[0.2em] uppercase text-[var(--muted)] mb-2">
                       {t(labelKey)}
-                    </div>
+                    </p>
                     <table className="w-full text-xs">
                       <tbody>
                         {items.map(item => (
-                          <tr key={item.id} className="border-b border-stone-100 last:border-0">
-                            <td className="py-1.5 text-stone-700">{item.name_zh}</td>
-                            <td className="py-1.5 text-right text-stone-800 font-medium w-14">
+                          <tr key={item.id} className="border-b border-[var(--border)] last:border-0">
+                            <td className="py-1.5 text-[var(--ink-soft)]">{item.name_zh}</td>
+                            <td className="py-1.5 text-right text-[var(--ink)] font-medium w-14">
                               {item.qty_value} {item.qty_unit}
                             </td>
                             {item.width_mm && (
-                              <td className="py-1.5 text-right text-stone-400 w-16 text-[11px]">
+                              <td className="py-1.5 text-right text-[var(--muted)] w-16 text-[11px]">
                                 {t('viewer.widthUnit')} {item.width_mm / 10}cm
                               </td>
                             )}
@@ -217,7 +223,7 @@ export default function PatternViewer({ svg, designName, instanceId }: Props) {
                   </div>
                 )
               })}
-              <p className="text-xs text-stone-400 pt-1">
+              <p className="text-xs text-[var(--muted)] pt-1">
                 {bom.total} · {t('viewer.bomTotal')}
               </p>
             </div>
