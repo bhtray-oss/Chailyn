@@ -58,9 +58,9 @@ async def text_query(
     # 若 embed 欄位尚未建立，退回關鍵字搜尋
     result = await db.execute(
         text(f"""
-            SELECT fs_design_id, name, description_zh, description_en,
+            SELECT fs_design_id, name, description_zh,
                    garment_type, fabric_weight, difficulty, tags, season,
-                   source, download_url,
+                   source,
                    CASE
                      WHEN embed IS NOT NULL
                      THEN 1 - (embed <=> CAST(:vec AS vector))
@@ -102,9 +102,9 @@ async def similar_by_analysis(
         vec_str = "[" + ",".join(str(v) for v in row.cut_embed) + "]"
         catalog = await db.execute(
             text("""
-                SELECT fs_design_id, name, description_zh, description_en,
+                SELECT fs_design_id, name, description_zh,
                        garment_type, fabric_weight, difficulty, tags,
-                       source, download_url,
+                       source,
                        1 - (embed <=> CAST(:vec AS vector)) AS score
                 FROM pattern_catalog
                 WHERE is_active AND embed IS NOT NULL
@@ -122,9 +122,9 @@ async def similar_by_analysis(
             return []
         catalog = await db.execute(
             text("""
-                SELECT fs_design_id, name, description_zh, description_en,
+                SELECT fs_design_id, name, description_zh,
                        garment_type, fabric_weight, difficulty, tags,
-                       source, download_url, 0 AS score
+                       source, 0 AS score
                 FROM pattern_catalog
                 WHERE fs_design_id = ANY(:ids) AND is_active
             """),
