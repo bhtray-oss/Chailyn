@@ -74,18 +74,29 @@ CREATE INDEX ON ai_analyses USING ivfflat (cut_vector vector_cosine_ops) WITH (l
 -- 版型目錄
 CREATE TABLE pattern_catalog (
   id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  source          TEXT DEFAULT 'freesewing',
+  source          TEXT DEFAULT 'freesewing',   -- 'freesewing' | 'mood_fabrics'
   fs_design_id    TEXT,
   name            TEXT NOT NULL,
   family          TEXT,
   gender_hint     TEXT,
   difficulty      INTEGER,
+  garment_type    TEXT,                         -- dress/top/bottom/outerwear/suit/block/lingerie
+  fabric_weight   TEXT,                         -- light/medium/heavy
+  description_zh  TEXT,
+  description_en  TEXT,
+  tags            TEXT[] DEFAULT '{}',
+  season          TEXT[],
+  skill_notes_zh  TEXT,
+  download_url    TEXT,                         -- Mood Fabrics PDF page URL
   options_schema  JSONB DEFAULT '{}',
   thumbnail_url   TEXT,
+  embed           vector(384),
   is_active       BOOLEAN DEFAULT true,
   created_at      TIMESTAMPTZ DEFAULT now()
 );
 CREATE INDEX ON pattern_catalog (family);
+CREATE INDEX ON pattern_catalog (garment_type);
+CREATE INDEX ON pattern_catalog (source);
 CREATE INDEX ON pattern_catalog (fs_design_id);
 
 -- 版型實例

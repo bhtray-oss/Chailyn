@@ -84,12 +84,19 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-stone-900 mb-2">{t('profile.title')}</h1>
-      <p className="text-stone-500 mb-8">{t('profile.subtitle')}</p>
+
+      {/* Header */}
+      <div className="mb-8">
+        <p className="text-[10px] tracking-[0.3em] uppercase text-[var(--muted)] mb-2">
+          {lang === 'zh' ? '身材數據' : 'Measurements'}
+        </p>
+        <h1 className="font-display text-3xl text-[var(--ink)]">{t('profile.title')}</h1>
+        <p className="text-sm text-[var(--muted)] mt-1">{t('profile.subtitle')}</p>
+      </div>
 
       {/* Label selector */}
       <div className="mb-6">
-        <label className="block text-xs font-semibold uppercase tracking-widest text-stone-400 mb-2">
+        <label className="block text-[10px] tracking-[0.2em] uppercase text-[var(--muted)] mb-3">
           {t('profile.labelTitle')}
         </label>
         <div className="flex gap-2 flex-wrap">
@@ -97,11 +104,12 @@ export default function ProfilePage() {
             <button
               key={l}
               onClick={() => setLabel(l)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                label === l
-                  ? 'bg-stone-900 text-white'
-                  : 'bg-white border border-stone-300 text-stone-600 hover:bg-stone-50'
-              }`}
+              className="px-4 py-1.5 text-xs tracking-wide uppercase font-medium transition-colors"
+              style={{
+                background: label === l ? 'var(--ink)' : 'transparent',
+                color:      label === l ? 'var(--surface)' : 'var(--muted)',
+                border:     '1px solid ' + (label === l ? 'var(--ink)' : 'var(--border)'),
+              }}
             >
               {l}
             </button>
@@ -114,15 +122,15 @@ export default function ProfilePage() {
 
       {/* Derived measurements */}
       {Object.keys(derived).length > 0 && (
-        <div className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4">
-          <h3 className="text-xs font-semibold uppercase tracking-widest text-amber-600 mb-3">
+        <div className="mt-6 p-4" style={{ background: 'var(--gold-light)', border: '1px solid var(--border)' }}>
+          <h3 className="text-[10px] tracking-[0.2em] uppercase text-[var(--gold)] mb-3">
             {t('profile.derived.title')}
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {Object.entries(derived).map(([key, val]) => (
-              <div key={key} className="flex justify-between text-sm">
-                <span className="text-stone-500">{DERIVED_LABELS[key] ? t(DERIVED_LABELS[key]) : key}</span>
-                <span className="text-stone-800 font-medium">{val.toFixed(1)}</span>
+              <div key={key} className="flex justify-between text-xs">
+                <span className="text-[var(--muted)]">{DERIVED_LABELS[key] ? t(DERIVED_LABELS[key]) : key}</span>
+                <span className="text-[var(--ink)] font-medium">{val.toFixed(1)}</span>
               </div>
             ))}
           </div>
@@ -131,7 +139,7 @@ export default function ProfilePage() {
 
       {/* Notes */}
       <div className="mt-6">
-        <label className="block text-xs font-semibold uppercase tracking-widest text-stone-400 mb-2">
+        <label className="block text-[10px] tracking-[0.2em] uppercase text-[var(--muted)] mb-3">
           {t('profile.notes')}
         </label>
         <textarea
@@ -139,7 +147,8 @@ export default function ProfilePage() {
           onChange={e => setNotes(e.target.value)}
           placeholder={t('profile.notesPlaceholder')}
           rows={2}
-          className="w-full border border-stone-300 rounded-lg px-3 py-2 text-sm text-stone-700 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+          className="w-full px-3 py-2 text-sm text-[var(--ink)] placeholder:text-[var(--muted)] resize-none focus:outline-none focus:border-[var(--gold)] transition-colors"
+          style={{ border: '1px solid var(--border)', background: 'var(--surface)' }}
         />
       </div>
 
@@ -148,44 +157,49 @@ export default function ProfilePage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="px-6 py-2.5 bg-stone-900 text-white rounded-lg font-medium hover:bg-stone-700 disabled:opacity-50 transition-colors"
+          className="px-6 py-2.5 text-xs tracking-widest uppercase font-medium transition-opacity hover:opacity-80 disabled:opacity-50"
+          style={{ background: 'var(--ink)', color: 'var(--surface)' }}
         >
           {saving ? t('profile.saving') : t('profile.save')}
         </button>
-        {saved  && <span className="text-green-600 text-sm">{t('profile.saved')}</span>}
-        {error  && <span className="text-red-600 text-sm">{error}</span>}
+        {saved  && <span className="text-xs tracking-wide text-[var(--gold)]">{t('profile.saved')}</span>}
+        {error  && <span className="text-xs text-red-600">{error}</span>}
       </div>
 
-      <p className="mt-4 text-xs text-stone-400">{t('profile.hint')}</p>
+      <p className="mt-4 text-xs text-[var(--muted)]">{t('profile.hint')}</p>
 
       {/* Saved profiles list */}
       {profiles.length > 0 && (
         <div className="mt-10">
-          <h2 className="text-base font-semibold text-stone-700 mb-4">{t('profile.savedList')}</h2>
-          <div className="space-y-3">
+          <div className="h-px bg-[var(--border)] mb-6" />
+          <p className="text-[10px] tracking-[0.3em] uppercase text-[var(--muted)] mb-4">{t('profile.savedList')}</p>
+          <div className="border-t border-[var(--border)]">
             {profiles.map((p) => (
-              <div key={p.id} className="bg-white border border-stone-200 rounded-xl p-4">
+              <div key={p.id} className="border-b border-[var(--border)] py-4">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-stone-800">{p.label}</span>
-                    <span className="text-xs bg-stone-100 text-stone-500 px-2 py-0.5 rounded-full">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-[var(--ink)]">{p.label}</span>
+                    <span
+                      className="text-[10px] tracking-wide px-2 py-0.5 text-[var(--muted)]"
+                      style={{ border: '1px solid var(--border)' }}
+                    >
                       v{p.version}
                     </span>
                   </div>
-                  <span className="text-xs text-stone-400">
+                  <span className="text-xs text-[var(--muted)]">
                     {new Date(p.created_at).toLocaleDateString(lang === 'zh' ? 'zh-TW' : 'en-US')}
                   </span>
                 </div>
-                <div className="grid grid-cols-3 gap-x-4 gap-y-1 text-xs text-stone-500">
+                <div className="grid grid-cols-3 gap-x-4 gap-y-1 text-xs text-[var(--muted)]">
                   {Object.entries(p.measurements).slice(0, 6).map(([k, v]) => (
                     <span key={k}>{k}: {mm2cm(v)}cm</span>
                   ))}
                 </div>
                 {p.notes && (
-                  <p className="mt-2 text-xs text-stone-400 italic">{p.notes}</p>
+                  <p className="mt-2 text-xs text-[var(--muted)] italic">{p.notes}</p>
                 )}
                 {p.derived_measurements && Object.keys(p.derived_measurements).length > 0 && (
-                  <div className="mt-2 pt-2 border-t border-stone-100 grid grid-cols-3 gap-x-4 gap-y-1 text-xs text-amber-600">
+                  <div className="mt-2 pt-2 border-t border-[var(--border)] grid grid-cols-3 gap-x-4 gap-y-1 text-xs text-[var(--gold)]">
                     {Object.entries(p.derived_measurements).map(([k, v]) => (
                       <span key={k}>{DERIVED_LABELS[k] ? t(DERIVED_LABELS[k]) : k}: {mm2cm(v)}cm</span>
                     ))}

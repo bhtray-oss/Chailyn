@@ -158,12 +158,37 @@ export const historyApi = {
 }
 
 // ─── Patterns ─────────────────────────────────────────────────────────────────
+export interface CatalogItem {
+  id:             string
+  source:         string          // 'freesewing' | 'mood_fabrics'
+  fs_design_id:   string | null
+  name:           string
+  family:         string | null
+  gender_hint:    string | null
+  difficulty:     number | null
+  garment_type:   string | null
+  fabric_weight:  string | null
+  description_zh: string | null
+  description_en: string | null
+  tags:           string[] | null
+  season:         string[] | null
+  skill_notes_zh: string | null
+  download_url:   string | null
+  thumbnail_url:  string | null
+  is_active:      boolean
+}
+
 export const patternApi = {
   listDesigns: () =>
     request<{ designs: string[] }>('/patterns/designs'),
 
-  listCatalog: (family?: string) =>
-    request(`/patterns/catalog/list${family ? `?family=${family}` : ''}`),
+  listCatalog: (params?: { family?: string; source?: string }) => {
+    const qs = new URLSearchParams()
+    if (params?.family) qs.set('family', params.family)
+    if (params?.source) qs.set('source', params.source)
+    const q = qs.toString()
+    return request<CatalogItem[]>(`/patterns/catalog/list${q ? `?${q}` : ''}`)
+  },
 
   draft: (params: {
     userId: string
@@ -326,15 +351,18 @@ export const bomApi = {
 
 // ─── Search ───────────────────────────────────────────────────────────────────
 export interface CatalogSearchResult {
-  fs_design_id:  string
-  name:          string
+  fs_design_id:   string
+  name:           string
   description_zh: string | null
-  garment_type:  string | null
-  fabric_weight: string | null
-  difficulty:    number
-  tags:          string[] | null
-  season:        string[] | null
-  score:         number
+  description_en: string | null
+  garment_type:   string | null
+  fabric_weight:  string | null
+  difficulty:     number
+  tags:           string[] | null
+  season:         string[] | null
+  score:          number
+  source:         string | null          // 'freesewing' | 'mood_fabrics'
+  download_url:   string | null          // Mood Fabrics PDF page URL
 }
 
 export const searchApi = {

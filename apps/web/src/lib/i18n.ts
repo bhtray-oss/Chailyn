@@ -287,6 +287,18 @@ const zh = {
   'pattern.previewBtn':       '預覽',
   'pattern.loading':          '打版中…',
   'pattern.seamShort':        '放縫',
+  // Mood Fabrics tab
+  'pattern.tab.fs':           'FreeSewing',
+  'pattern.tab.mood':         'Mood Fabrics',
+  'pattern.mood.subtitle':    '20 件精選免費版型 · PDF 下載',
+  'pattern.mood.loading':     '載入版型庫…',
+  'pattern.mood.download':    '免費下載版型 PDF',
+  'pattern.mood.selectHint':  '← 選擇版型查看詳情',
+  'pattern.mood.difficulty':  '難度',
+  'pattern.mood.fabric':      '布料重量',
+  'pattern.mood.season':      '季節',
+  'pattern.mood.tags':        '標籤',
+  'pattern.mood.free':        '免費',
 
   // ── PatternViewer component ──────────────────────────────────────────────────
   'viewer.fallback':          '版型預覽',
@@ -595,6 +607,18 @@ const en: typeof zh = {
   'pattern.previewBtn':       'Preview',
   'pattern.loading':          'Drafting…',
   'pattern.seamShort':        'SA',
+  // Mood Fabrics tab
+  'pattern.tab.fs':           'FreeSewing',
+  'pattern.tab.mood':         'Mood Fabrics',
+  'pattern.mood.subtitle':    '20 curated free patterns · PDF download',
+  'pattern.mood.loading':     'Loading catalog…',
+  'pattern.mood.download':    'Download Free PDF Pattern',
+  'pattern.mood.selectHint':  '← Select a pattern to view details',
+  'pattern.mood.difficulty':  'Difficulty',
+  'pattern.mood.fabric':      'Fabric weight',
+  'pattern.mood.season':      'Season',
+  'pattern.mood.tags':        'Tags',
+  'pattern.mood.free':        'Free',
 
   // ── PatternViewer component ──────────────────────────────────────────────────
   'viewer.fallback':          'Pattern Preview',

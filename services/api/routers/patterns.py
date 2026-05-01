@@ -349,17 +349,21 @@ async def sample_pattern(req: SampleRequest):
 @router.get("/catalog/list")
 async def list_catalog(
     family: Optional[str] = None,
+    source: Optional[str] = None,
     db: AsyncSession = Depends(get_db),
 ):
+    filters, params = ["is_active"], {}
     if family:
-        result = await db.execute(
-            text("SELECT * FROM pattern_catalog WHERE family = :f AND is_active ORDER BY name"),
-            {"f": family},
-        )
-    else:
-        result = await db.execute(
-            text("SELECT * FROM pattern_catalog WHERE is_active ORDER BY family, name")
-        )
+        filters.append("family = :family")
+        params["family"] = family
+    if source:
+        filters.append("source = :source")
+        params["source"] = source
+    where = " AND ".join(filters)
+    result = await db.execute(
+        text(f"SELECT * FROM pattern_catalog WHERE {where} ORDER BY garment_type, name"),
+        params,
+    )
     return [dict(r._mapping) for r in result.fetchall()]
 
 
