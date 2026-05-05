@@ -1,9 +1,11 @@
 'use client'
 
 import { useLanguage, LanguageProvider } from '@/contexts/LanguageContext'
+import { useAuth }     from '@/contexts/AuthContext'
 import { usePathname } from 'next/navigation'
-import { ReactNode } from 'react'
-import { Home, Camera, Clock, Sparkles, MoreHorizontal, Search } from 'lucide-react'
+import { useRouter }   from 'next/navigation'
+import { ReactNode, useState, useRef, useEffect } from 'react'
+import { Home, Camera, Clock, Sparkles, MoreHorizontal, Search, LogIn, LogOut, User, Crown } from 'lucide-react'
 
 // ── 底部 Tab 定義 ────────────────────────────────────────────────────────────
 const MORE_PATHS = ['/profile', '/pattern', '/wardrobe', '/search', '/more']
@@ -15,6 +17,110 @@ const TABS = [
   { href: '/recommendations',Icon: Sparkles,      labelZh: '建議', labelEn: 'Tips'    },
   { href: '/more',           Icon: MoreHorizontal,labelZh: '更多', labelEn: 'More'    },
 ] as const
+
+// ── User Menu (TopBar) ────────────────────────────────────────────────────────
+function UserMenu() {
+  const { user, isLoggedIn, isLoading, logout } = useAuth()
+  const { lang }  = useLanguage()
+  const router    = useRouter()
+  const [open, setOpen] = useState(false)
+  const menuRef   = useRef<HTMLDivElement>(null)
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  if (isLoading) {
+    return <div className="w-8 h-8 rounded-full bg-[#E5DDD6] animate-pulse" />
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <a
+        href="/auth/login"
+        className="flex items-center gap-1.5 text-[10px] tracking-widest uppercase font-medium px-3 py-1.5 border transition-all"
+        style={{ borderColor: 'var(--gold)', color: 'var(--gold)' }}
+      >
+        <LogIn size={12} strokeWidth={2} />
+        {lang === 'zh' ? '登入' : 'Sign In'}
+      </a>
+    )
+  }
+
+  const initials = (user?.display_name ?? user?.email ?? 'U')
+    .slice(0, 2).toUpperCase()
+  const isPro = user?.subscription_tier === 'pro'
+
+  return (
+    <div ref={menuRef} className="relative">
+      {/* Avatar button */}
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="relative flex items-center justify-center w-8 h-8 text-[11px] font-semibold tracking-wide select-none transition-opacity hover:opacity-80"
+        style={{
+          background: isPro ? 'var(--gold, #C9A96E)' : '#E5DDD6',
+          color:      isPro ? '#fff' : '#3D3530',
+          borderRadius: 0,
+        }}
+        aria-label="使用者選單"
+      >
+        {initials}
+        {/* Pro crown badge */}
+        {isPro && (
+          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 flex items-center justify-center bg-[#0C0A09]">
+            <Crown size={8} color="var(--gold, #C9A96E)" />
+          </span>
+        )}
+      </button>
+
+      {/* Dropdown */}
+      {open && (
+        <div
+          className="absolute right-0 top-full mt-1 w-48 bg-white border border-[#E5DDD6] shadow-lg z-50 py-1"
+          onClick={() => setOpen(false)}
+        >
+          {/* User info row */}
+          <div className="px-3 py-2 border-b border-[#E5DDD6]">
+            <p className="text-xs font-medium text-[#0C0A09] truncate">{user?.display_name}</p>
+            <p className="text-[10px] text-[#8C7B72] truncate">{user?.email}</p>
+            {isPro && (
+              <span className="inline-flex items-center gap-1 mt-1 text-[9px] tracking-widest uppercase font-semibold"
+                style={{ color: 'var(--gold, #C9A96E)' }}>
+                <Crown size={9} /> Pro
+              </span>
+            )}
+          </div>
+
+          {/* Menu items */}
+          <a href="/profile"
+            className="flex items-center gap-2 px-3 py-2 text-xs text-[#3D3530] hover:bg-[#F7F5F2] transition-colors">
+            <User size={13} /> {lang === 'zh' ? '身材管理' : 'My Profile'}
+          </a>
+          <a href="/subscription"
+            className="flex items-center gap-2 px-3 py-2 text-xs text-[#3D3530] hover:bg-[#F7F5F2] transition-colors">
+            <Crown size={13} /> {lang === 'zh' ? '訂閱方案' : 'Subscription'}
+          </a>
+
+          <div className="border-t border-[#E5DDD6] mt-1 pt-1">
+            <button
+              onClick={async () => { await logout(); router.push('/') }}
+              className="flex items-center gap-2 w-full px-3 py-2 text-xs text-[#8C7B72] hover:text-[#0C0A09] hover:bg-[#F7F5F2] transition-colors"
+            >
+              <LogOut size={13} /> {lang === 'zh' ? '登出' : 'Sign Out'}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
 
 // ── 頂部 Header ──────────────────────────────────────────────────────────────
 function TopBar() {
@@ -45,7 +151,7 @@ function TopBar() {
           </a>
 
           {/* 桌機導航 */}
-          <nav className="hidden md:flex items-center gap-6 text-xs tracking-widest uppercase text-[#8C7B72] ml-4">
+          <nav className="hidden md:flex items-center gap-6 text-xs tracking-widest uppercase font-semibold text-[#8C7B72] ml-4">
             <a href="/analyze"         className="hover:text-[#0C0A09] transition-colors">{lang === 'zh' ? '分析' : 'Analyze'}</a>
             <a href="/history"         className="hover:text-[#0C0A09] transition-colors">{lang === 'zh' ? '歷史' : 'History'}</a>
             <a href="/recommendations" className="hover:text-[#0C0A09] transition-colors" style={{ color: 'var(--gold)' }}>{lang === 'zh' ? '建議' : 'Tips'}</a>
@@ -70,6 +176,9 @@ function TopBar() {
             <span className="opacity-30 font-light">|</span>
             <span style={{ opacity: lang === 'en' ? 1 : 0.5 }}>EN</span>
           </button>
+
+          {/* 使用者選單 */}
+          <UserMenu />
         </div>
       </div>
     </header>
@@ -117,7 +226,7 @@ function BottomTabBar() {
               />
               <span
                 className="text-[9px] tracking-wider uppercase"
-                style={{ fontFamily: 'var(--font-body)', fontWeight: active ? 600 : 400 }}
+                style={{ fontFamily: 'var(--font-body)', fontWeight: active ? 700 : 600 }}
               >
                 {label}
               </span>
