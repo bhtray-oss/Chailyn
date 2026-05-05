@@ -311,6 +311,34 @@ ANTHROPIC_API_KEY=sk-ant-...
 Source: *Patternmaking for Fashion Design, 5th Ed.* (Helen Joseph-Armstrong)
 Module: `services/api/services/patternmaking_rules.py`
 
+### 9.0 Module Architecture (10 Sections)
+
+| Section | Symbol | Contents |
+|---------|--------|----------|
+| A | `ARMSTRONG_PRINCIPLES` | Three core principles (P1 Dart / P2 Fullness / P3 Contour) |
+| B | `CONTOUR_GUIDELINES` | 7 Contour Guide Pattern lines with standard mm values |
+| C | `KNIT_PATTERN_ADJUSTMENTS` | Ch 27 stretch-factor pattern reduction by knit grade |
+| D | `DART_POINT_OFFSET_MM` | Dart geometry: cup sizes, 9 dart positions, width scaling |
+| E | `compute_fullness_width_mm()` | Slash-and-spread width formulas; pleat/tuck constants |
+| F | `YOKE_RULES` / `FLANGE_RULES` | Ch 8 yoke & flange construction dimensions |
+| G | `STYLELINE_RULES` | Princess / armhole princess / panel / empire / yoke lines |
+| H | `PANT_LENGTH_DERIVATIVES` | Ch 26 shorts→capri lengths; 14 pant fit problem codes |
+| I | `GRAINLINE_RULES` / `NOTCH_RULES` | Pattern symbols and marking standards |
+| J | `detect_required_armstrong_principles()` | Decision tree: visual features → principle set |
+
+**Key functions for `auto_pattern_maker.py`:**
+```python
+from services.patternmaking_rules import (
+    detect_required_armstrong_principles,   # → which P1/P2/P3 apply
+    get_contour_guidelines_for_design,      # → which of 7 guidelines needed
+    compute_contour_6_mm,                   # → strapless combined excess (mm)
+    compute_fullness_width_mm,              # → slash-and-spread dimensions
+    get_knit_pattern_adjustment,            # → stretch-factor reductions
+    compute_pattern_adjustments_for_knit,   # → flat dict of all reductions
+    dart_width_at_distance,                 # → dart width scaling by distance
+)
+```
+
 ### 9.1 Silhouette Classification (Armstrong)
 
 | Code | Chinese | Description |
@@ -379,7 +407,53 @@ Module: `services/api/services/patternmaking_rules.py`
 | `super_stretch` | 100% | 連身緊身衣、萊卡 | 30% |
 | `rib_knit` | 100% | 領口/袖口羅紋 | 25% |
 
-### 9.7 Claude Vision Output Fields (Updated)
+### 9.7 Contour Guide Pattern — 7 Guidelines (Ch 9)
+
+| # | Name | Direction | Standard Removal | Applies To |
+|---|------|-----------|-----------------|------------|
+| 1 | Cutout Necklines | BP → mid-neck | **6.35 mm (1/4″)** | cutout neckline, surplice, strapless |
+| 2 | Cutout Armholes | BP → shoulder tip (+bias offset) | **12.7 mm (1/2″)** | cutout armhole, tank, strapless |
+| 3 | Armhole Ease Elim. | armhole curve → BP | **6.35 mm (1/4″)** | strapless, cutout armhole |
+| 4 | Empire Styleline | waist→BP direction | **19 mm (3/4″)** total / 9.5 mm per dart leg | empire, bra top, corset |
+| 5 | Between Busts | CF squared → BP | **19 mm (3/4″)** total / 9.5 mm per side | strapless, deep V, bra top |
+| 6 | Strapless Combined | BP → mid-shoulder | G1+G2+G3 − 3.2 mm (≈22 mm) | strapless, bustier, tube top |
+| 7 | Back Bodice | varies | chart per design | strapless, backless, low back |
+
+Semi-fit garments use **3/16″ (4.76 mm)** per dart leg for Guidelines 4 & 5 (half of standard).
+
+### 9.8 Knit Stretch-Factor Pattern Reductions (Ch 27)
+
+For knits with **18–25% stretch** (moderate_stretch grade). For **25–50%** add 3.2 mm to each.
+
+| Location | Remove / Raise (mm) |
+|----------|---------------------|
+| Neckline raise | 6.35 (1/4″) |
+| Side seams (each) remove | 6.35 (1/4″) |
+| Armhole raise | 12.7 (1/2″) |
+| Dart points raise | 6.35 (1/4″) |
+| Hem / waistline remove | 6.35 (1/4″) |
+| Sleeve biceps raise | 12.7 (1/2″) |
+| Sleeve underarm seam remove | 6.35 (1/4″) |
+| Sleeve hem remove | 6.35 (1/4″) |
+| Elbow dart reposition up | 6.35 (1/4″) |
+| Crotch raise (trouser) | 12.7 (1/2″) |
+| Crotch raise (slack/jean) | 6.35 (1/4″) |
+
+Stretch direction rule: max stretch should **encircle** figure for tops/dresses/pants (filling/crosswise); go **up-and-down** for bodysuits/leotards/skiwear (warp/lengthwise).
+
+### 9.9 Added Fullness Ratios (Ch 7)
+
+| Ratio | Added | Total (26″ waist example) | Effect |
+|-------|-------|--------------------------|--------|
+| 1.5× | 50% | 39″ | 自然抽褶，輕薄布料 |
+| 2.0× | 100% | 52″ | 中等豐盈，標準抽褶/圓裙 |
+| 2.5× | 150% | 65″ | 豐富波浪感 |
+| 3.0× | 200% | 78″ | 極豐盈，舞台/燈籠袖 |
+
+Gather control notches: **13 mm (1/2″)** outside first and last slash line.
+Slashes: 1 slash per ~32 mm (1.25″) of added fullness (`compute_fullness_width_mm()` auto-computes).
+
+### 9.10 Claude Vision Output Fields (Updated)
 
 新版 `claude_vision.py` 多了以下欄位：
 - `garment_category`: `top | bottom | outerwear | lingerie | block | dress`
