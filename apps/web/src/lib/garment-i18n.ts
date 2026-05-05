@@ -181,14 +181,16 @@ export const FIBRE_MAP: [string, string][] = [
   ['彈力纖維', 'Elastane'],     ['彈力素材', 'Elastane'],
   ['人造絲',   'Rayon'],        ['莫代爾',   'Modal'],
   ['天絲',     'Tencel'],       ['銅氨絲',   'Cupro'],
-  ['嫘縈',     'Rayon'],        ['黏膠纖維', 'Viscose'],
-  ['黏膠',     'Viscose'],      ['錦綸',     'Nylon'],
+  ['嫘縈',     'Rayon'],        ['黏膠纖維', 'Viscose'],      ['金屬纖維', 'Metallic Fiber'],
+  ['黏膠',     'Viscose'],      ['粘膠',     'Viscose'],
+  ['錦綸',     'Nylon'],
   ['尼龍',     'Nylon'],        ['氨綸',     'Spandex'],
   ['聚酯',     'Polyester'],    ['羊毛',     'Wool'],
   ['蠶絲',     'Silk'],         ['亞麻',     'Linen'],
   ['棉質',     'Cotton'],       ['純棉',     'Cotton'],
   ['棉',       'Cotton'],       ['麻',       'Linen'],
-  ['絲',       'Silk'],         ['其他',     'Other'],
+  ['絲',       'Silk'],         ['緞',       'Satin'],
+  ['綢',       'Silk'],         ['其他',     'Other'],
 ]
 
 export function fibreEN(zh: string): string {
@@ -231,9 +233,11 @@ export const FABRIC_NAME_MAP: [string, string][] = [
   ['混紡斜紋',         'Blended Twill'],
   ['雙面緞面布',       'Double-faced Satin'],
   ['杜邦緞',           'Dupont Satin'],
+  ['絲緞',             'Silk Satin'],
   ['緞面布',           'Satin Fabric'],
   ['羅紋針織棉',       'Cotton Rib Knit'],
   ['聚酯混紡平織布',   'Polyester Blend Woven'],
+  ['聚酯仿毛料',       'Polyester Faux Wool'],
   ['針織棉',           'Jersey Cotton'],
   ['彈力棉',           'Stretch Cotton'],
   ['純棉布',           'Cotton Fabric'],
@@ -247,7 +251,6 @@ export const FABRIC_NAME_MAP: [string, string][] = [
   ['薄型喬其紗',       'Light Georgette'],
   ['喬其紗',           'Georgette'],
   ['雪紡',             'Chiffon'],
-  ['聚酯仿毛料',       'Polyester Faux Wool'],
   ['仿毛料',           'Faux Wool'],
   ['緞面',             'Satin'],
   ['絲絨',             'Velvet'],
@@ -260,6 +263,8 @@ export const FABRIC_NAME_MAP: [string, string][] = [
   ['府綢',             'Poplin'],
   ['帆布',             'Canvas'],
   ['牛仔布',           'Denim'],
+  ['面料',             'Fabric'],
+  ['布料',             'Fabric'],
   ['薄型',             'Lightweight'],
   ['重磅',             'Heavyweight'],
   ['棉質',             'Cotton'],
@@ -285,6 +290,8 @@ export function translateFabricName(raw: string): string {
   return result
     .replace(/或/g, ' or ')
     .replace(/及|和/g, ' & ')
+    // Strip any CJK characters that couldn't be translated
+    .replace(/[一-鿿㐀-䶿]+/g, '')
     // Normalise spaces around slashes and clean up multi-spaces
     .replace(/\s*\/\s*/g, ' / ')
     .replace(/\s{2,}/g, ' ')
