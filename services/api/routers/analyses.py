@@ -210,7 +210,8 @@ async def list_user_analyses(
                 j.created_at,
                 j.finished_at,
                 p.mime_type,
-                p.file_size_kb
+                p.file_size_kb,
+                p.visibility
             FROM analysis_jobs j
             JOIN garment_photos p ON p.id = j.photo_id
             WHERE j.user_id = :uid
@@ -276,6 +277,36 @@ async def delete_analysis_job(
     )
     await db.commit()
     return {"deleted": str(job_id)}
+
+
+# ─── 更新分析可見性（公開 / 私人） ────────────────────────────────────────────
+class VisibilityUpdate(BaseModel):
+    visibility: str  # 'public' | 'private'
+    user_id: uuid.UUID
+
+@router.patch("/photo/{photo_id}/visibility")
+async def update_visibility(
+    photo_id: uuid.UUID,
+    body: VisibilityUpdate,
+    db: AsyncSession = Depends(get_db),
+):
+    """切換照片分析結果的公開 / 私人狀態。"""
+    if body.visibility not in ("public", "private"):
+        raise HTTPException(400, "visibility 必須為 'public' 或 'private'")
+
+    result = await db.execute(
+        text("SELECT id FROM garment_photos WHERE id = :id AND user_id = :uid"),
+        {"id": str(photo_id), "uid": str(body.user_id)},
+    )
+    if not result.fetchone():
+        raise HTTPException(404, "找不到照片記錄或無權限修改")
+
+    await db.execute(
+        text("UPDATE garment_photos SET visibility = :vis WHERE id = :id"),
+        {"vis": body.visibility, "id": str(photo_id)},
+    )
+    await db.commit()
+    return {"photo_id": str(photo_id), "visibility": body.visibility}
 
 
 # ─── 取得分析結果 ─────────────────────────────────────────────────────────────

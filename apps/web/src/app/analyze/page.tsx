@@ -6,7 +6,17 @@ import { analysisApi, jobApi, patternApi, recommendationsApi } from '@/lib/api'
 import type { GarmentAnalysis } from '@/lib/types'
 import type { AnalysisJob, RecommendationsResult } from '@/lib/api'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { Camera, Loader2, Sparkles, Check, Ruler, Layers, Palette, Lightbulb, ShoppingBag, Clock, Wind } from 'lucide-react'
+import {
+  hasCJK, biField,
+  translateFabricName, translateComposition,
+  prettyLabel, formatSleeve,
+  SILHOUETTE_LABEL, EASE_LABEL, WAIST_LABEL, COLLAR_LABEL,
+} from '@/lib/garment-i18n'
+import { Camera, Loader2, Sparkles, Check, Ruler, Layers, Palette, Lightbulb, ShoppingBag, Clock, Wind, BookOpen } from 'lucide-react'
+import MeasurementChart from '@/components/MeasurementChart'
+import ArmstrongDraftPanel, { type DraftedAsset } from '@/components/ArmstrongDraftPanel'
+import DownloadBar from '@/components/DownloadBar'
+import type { ArmstrongDraftResult } from '@/lib/api'
 
 const DEV_USER_ID    = '00000000-0000-0000-0000-000000000001'
 const DEV_PROFILE_ID = '00000000-0000-0000-0000-000000000002'
@@ -37,6 +47,14 @@ export default function AnalyzePage() {
   // 展開上傳區
   const [showUploadZone, setShowUploadZone] = useState(false)
   const uploadZoneRef = useRef<HTMLDivElement>(null)
+
+  // Armstrong 分析面板
+  const [showArmstrong, setShowArmstrong] = useState(false)
+  const armstrongRef = useRef<HTMLDivElement>(null)
+
+  // Download center — populated when Armstrong panel finishes drafting
+  const [dlFormula,   setDlFormula]   = useState<ArmstrongDraftResult | null>(null)
+  const [dlAssets,    setDlAssets]    = useState<DraftedAsset[]>([])
 
   // 推薦狀態
   const [recs, setRecs]           = useState<RecommendationsResult | null>(null)
@@ -98,7 +116,10 @@ export default function AnalyzePage() {
     setPatternSvgs({})
     setActivePreview(null)
     setRecs(null)
+    setShowArmstrong(false)
     setShowUploadZone(false)
+    setDlFormula(null)
+    setDlAssets([])
 
     try {
       setStep('uploading')
@@ -246,7 +267,8 @@ export default function AnalyzePage() {
                 onClick={() => {
                   setStep('upload'); setPreview(null); setAnalysis(null)
                   setJobStatus(''); setActivePreview(null); setPatternSvgs({})
-                  setRecs(null); setShowUploadZone(false)
+                  setRecs(null); setShowArmstrong(false); setShowUploadZone(false)
+                  setDlFormula(null); setDlAssets([])
                 }}
                 className="text-xs px-4 py-1.5 text-[var(--muted)] hover:text-[var(--ink)] transition-colors"
                 style={{ border: '1px solid var(--border)' }}
@@ -278,38 +300,72 @@ export default function AnalyzePage() {
             )}
 
             <div className="flex flex-col gap-4">
-              <AnalysisCard title={t('card.fabric')}>
-                <Row label={t('row.primary')}      value={analysis.fabric?.primary?.name} />
-                <Row label={t('row.composition')}  value={analysis.fabric?.primary?.composition_estimate} />
-                <Row label={t('row.weight')}       value={(analysis.fabric?.primary as any)?.weight} />
-                <Row label={t('row.drape')}        value={analysis.fabric?.primary?.drape != null ? `${analysis.fabric.primary.drape}/10` : null} />
-                <Row label={t('row.thickness')}    value={analysis.fabric?.primary?.thickness != null ? `${analysis.fabric.primary.thickness}/10` : null} />
-              </AnalysisCard>
+              {/* ── Derived display values ──────────────────────────────── */}
+              {(() => {
+                const primary    = analysis.fabric?.primary as any
+                const fabricName = (() => {
+                  const raw = biField(primary, 'name', lang)
+                  if (!raw) return null
+                  return lang === 'en' && hasCJK(raw) ? translateFabricName(raw) : raw
+                })()
+                const composition = (() => {
+                  const raw = biField(primary, 'composition_estimate', lang)
+                             ?? biField(primary, 'composition', lang)
+                  if (!raw) return null
+                  return lang === 'en' && hasCJK(raw) ? translateComposition(raw) : raw
+                })()
+                const silhouette = prettyLabel(analysis.cut?.silhouette, SILHOUETTE_LABEL, lang)
+                const ease       = prettyLabel((analysis.cut as any)?.fit_ease ?? (analysis.cut as any)?.ease_estimate, EASE_LABEL, lang)
+                const waist      = prettyLabel((analysis.cut as any)?.waist_treatment, WAIST_LABEL, lang)
+                const garmentTypeRaw = biField(analysis, 'garment_type_detail', lang)
+                const garmentType = lang === 'en' && garmentTypeRaw && hasCJK(garmentTypeRaw)
+                  ? undefined
+                  : garmentTypeRaw
+                const collar = (() => {
+                  const col = analysis.components?.collar
+                  const code = typeof col === 'object' && col !== null
+                    ? (col as any).type ?? (col as any).description
+                    : col as string | null
+                  return prettyLabel(code, COLLAR_LABEL, lang)
+                })()
+                const sleeve = formatSleeve(analysis.components?.sleeves, lang)
 
-              <AnalysisCard title={t('card.cut')}>
-                <Row label={t('row.silhouette')} value={analysis.cut?.silhouette} />
-                <Row label={t('row.ease')}       value={(analysis.cut as any)?.fit_ease ?? (analysis.cut as any)?.ease_estimate} />
-                <Row label={t('row.waist')}      value={(analysis.cut as any)?.waist_treatment} />
-                <Row label={t('row.type')}       value={(analysis as any)?.garment_type_detail} />
-              </AnalysisCard>
+                return (
+                  <>
+                    <AnalysisCard title={t('card.fabric')}>
+                      <Row label={t('row.primary')}     value={fabricName} />
+                      <Row label={t('row.composition')} value={composition} />
+                      <Row label={t('row.weight')}      value={primary?.weight} />
+                      <Row label={t('row.drape')}       value={primary?.drape    != null ? `${primary.drape}/10`    : null} />
+                      <Row label={t('row.thickness')}   value={primary?.thickness != null ? `${primary.thickness}/10` : null} />
+                    </AnalysisCard>
 
-              <AnalysisCard title={t('card.components')}>
-                <Row label={t('row.collar')} value={
-                  typeof analysis.components?.collar === 'object' && analysis.components.collar !== null
-                    ? (analysis.components.collar as any).type ?? (analysis.components.collar as any).description
-                    : analysis.components?.collar as string | null
-                } />
-                <Row label={t('row.sleeve')} value={
-                  typeof analysis.components?.sleeves === 'object' && analysis.components.sleeves !== null
-                    ? `${(analysis.components.sleeves as any).type ?? ''} ${(analysis.components.sleeves as any).length ?? ''}`.trim()
-                    : analysis.components?.sleeves as string | null
-                } />
-                <Row label={t('row.difficulty')} value={
-                  (analysis as any)?.difficulty_estimate
-                    ? '★'.repeat((analysis as any).difficulty_estimate)
-                    : null
-                } />
-              </AnalysisCard>
+                    <AnalysisCard title={t('card.cut')}>
+                      <Row label={t('row.silhouette')} value={silhouette} />
+                      <Row label={t('row.ease')}       value={ease} />
+                      <Row label={t('row.waist')}      value={waist} />
+                      {garmentType && <Row label={t('row.type')} value={garmentType} />}
+                      {!garmentType && lang === 'en' && (
+                        <Row label={t('row.type')} value={
+                          <span className="text-[var(--muted)] italic text-xs">
+                            Re-analyze photo for English description
+                          </span>
+                        } />
+                      )}
+                    </AnalysisCard>
+
+                    <AnalysisCard title={t('card.components')}>
+                      <Row label={t('row.collar')}     value={collar} />
+                      <Row label={t('row.sleeve')}     value={sleeve} />
+                      <Row label={t('row.difficulty')} value={
+                        (analysis as any)?.difficulty_estimate
+                          ? '★'.repeat((analysis as any).difficulty_estimate)
+                          : null
+                      } />
+                    </AnalysisCard>
+                  </>
+                )
+              })()}
 
               {/* 推薦版型 */}
               <AnalysisCard title={t('card.patterns')}>
@@ -472,6 +528,66 @@ export default function AnalyzePage() {
               )}
             </div>
           )}
+
+          {/* ── Armstrong 量體 + 版型公式 + 打版圖面 ────────────────────────── */}
+          <div className="mt-10">
+            {/* Toggle button */}
+            <button
+              onClick={() => {
+                setShowArmstrong(s => !s)
+                if (!showArmstrong)
+                  setTimeout(() => armstrongRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80)
+              }}
+              className="w-full flex items-center justify-between px-5 py-4 transition-colors hover:bg-[var(--gold-light)]"
+              style={{ border: '1px solid var(--border)', background: 'var(--surface)' }}
+            >
+              <div className="flex items-center gap-3">
+                <BookOpen size={16} strokeWidth={1.5} className="text-[var(--gold)]" />
+                <div className="text-left">
+                  <p className="text-xs font-medium tracking-widest uppercase text-[var(--ink-soft)]">
+                    {lang === 'zh' ? 'Armstrong 打版分析' : 'Armstrong Pattern Analysis'}
+                  </p>
+                  <p className="text-[10px] text-[var(--muted)] mt-0.5">
+                    {lang === 'zh'
+                      ? '量體表 · 版型公式 · 衣樣打版圖面'
+                      : 'Measurement Chart · Draft Formulas · Bodice Diagram'}
+                  </p>
+                </div>
+              </div>
+              <span className="text-[10px] tracking-widest uppercase font-medium px-3 py-1.5 transition-colors"
+                    style={{
+                      border: '1px solid var(--border)',
+                      background: showArmstrong ? 'var(--ink)' : 'transparent',
+                      color: showArmstrong ? 'var(--surface)' : 'var(--ink-soft)',
+                    }}>
+                {showArmstrong ? (lang === 'zh' ? '收起' : 'Collapse') : (lang === 'zh' ? '展開' : 'Expand')}
+              </span>
+            </button>
+
+            {/* Armstrong content */}
+            {showArmstrong && (
+              <div ref={armstrongRef} className="mt-4 space-y-6">
+                <MeasurementChart measurements={DEV_MEASUREMENTS} />
+                <ArmstrongDraftPanel
+                  measurements={DEV_MEASUREMENTS}
+                  analysis={analysis}
+                  onAssetsReady={(formula, assets) => {
+                    setDlFormula(formula)
+                    setDlAssets(assets)
+                  }}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* ── 下載中心 Download Center ─────────────────────────────────────── */}
+          {/* Always visible after analysis — auto-loads formula, user triggers pattern draft */}
+          <div className="mt-6">
+            <DownloadBar
+              measurements={DEV_MEASUREMENTS}
+              analysis={analysis}
+            />
+          </div>
 
           {/* ── 為你量身推薦 CTA ─────────────────────────────────────────────── */}
           {!recs && (
@@ -707,7 +823,7 @@ function AnalysisCard({ title, children }: { title: string; children: React.Reac
   )
 }
 
-function Row({ label, value }: { label: string; value: string | number | null | undefined }) {
+function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex justify-between text-sm">
       <span className="text-[var(--muted)]">{label}</span>

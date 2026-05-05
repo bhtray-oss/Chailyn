@@ -20,6 +20,8 @@ export async function GET(_req: NextRequest, { params }: Params) {
       new Date(a!.created_at as string).getTime()
     )
     .slice(0, 100)
+    // Ensure visibility field is always present
+    .map(j => ({ ...j, visibility: (j!.visibility as string) ?? 'private' }))
 
   return NextResponse.json(jobs)
 }

@@ -18,6 +18,16 @@ const DEV_MEASUREMENTS: Record<string, number> = {
   neck: 350, inseam: 750, biceps: 300, wrist: 155, height: 1630,
 }
 
+// ── Shared translation helpers (imported from garment-i18n) ──────────────────
+import {
+  hasCJK as hasCJK_r,
+  biField, translateFabricName, translateComposition,
+  prettyLabel, SILHOUETTE_LABEL,
+} from '@/lib/garment-i18n'
+
+const SILHOUETTE_LABEL_R = SILHOUETTE_LABEL
+// ─────────────────────────────────────────────────────────────────────────────
+
 function cacheKey(analysisId: string) { return `recs_${analysisId}` }
 function saveCache(analysisId: string, data: RecommendationsResult) {
   try { localStorage.setItem(cacheKey(analysisId), JSON.stringify(data)) } catch { /* ignore */ }
@@ -68,11 +78,11 @@ export default function RecommendationsPage() {
       setRecs(result)
       saveCache(selected.analysis_id, result)
     } catch (e: any) {
-      setGenError(e.message ?? '生成失敗，請再試一次')
+      setGenError(e.message ?? (lang === 'zh' ? '生成失敗，請再試一次' : 'Generation failed. Please try again.'))
     } finally {
       setGenerating(false)
     }
-  }, [selected])
+  }, [selected, lang])
 
   const analysis = selected?.result as GarmentAnalysis | undefined
 
@@ -145,7 +155,12 @@ export default function RecommendationsPage() {
                     </div>
                     <div className="p-2">
                       <p className="text-xs font-medium text-[var(--ink)] truncate">
-                        {(a as any)?.garment_type_detail ?? (a as any)?.garment_category ?? t('misc.garment')}
+                        {(() => {
+                          const v = biField(a, 'garment_type_detail', lang)
+                          if (v && !hasCJK_r(v)) return v
+                          if (lang === 'en') return (a as any)?.garment_category ?? t('misc.garment')
+                          return v ?? t('misc.garment')
+                        })()}
                       </p>
                       <p className="text-[10px] text-[var(--muted)] mt-0.5">
                         {new Date(item.created_at).toLocaleDateString(lang === 'zh' ? 'zh-TW' : 'en-US', { month: 'short', day: 'numeric' })}
@@ -186,25 +201,37 @@ export default function RecommendationsPage() {
               <div className="flex-1">
                 <p className="text-white/50 text-[10px] tracking-[0.3em] uppercase mb-2">{t('rec.summary')}</p>
                 <p className="font-display text-2xl text-white mb-3">
-                  {(analysis as any)?.garment_type_detail ?? (analysis as any)?.garment_category ?? t('misc.garment')}
+                  {(() => {
+                    const v = biField(analysis, 'garment_type_detail', lang)
+                    if (v && !hasCJK_r(v)) return v
+                    if (lang === 'en') return (analysis as any)?.garment_category ?? t('misc.garment')
+                    return v ?? t('misc.garment')
+                  })()}
                 </p>
 
                 {/* Meta chips — ivory-on-dark */}
                 <div className="flex flex-wrap gap-2 mb-5">
-                  {analysis.fabric?.primary?.name && (
-                    <span
-                      className="text-[10px] tracking-wide px-2 py-0.5 text-white/70"
-                      style={{ border: '1px solid rgba(255,255,255,0.2)' }}
-                    >
-                      {analysis.fabric.primary.name}
-                    </span>
-                  )}
+                  {analysis.fabric?.primary && (() => {
+                    const nameRaw = biField(analysis.fabric.primary, 'name', lang)
+                    const fabricName = lang === 'en' && nameRaw && hasCJK_r(nameRaw)
+                      ? translateFabricName(nameRaw)
+                      : nameRaw
+                    return fabricName ? (
+                      <span
+                        className="text-[10px] tracking-wide px-2 py-0.5 text-white/70"
+                        style={{ border: '1px solid rgba(255,255,255,0.2)' }}
+                      >
+                        {fabricName}
+                      </span>
+                    ) : null
+                  })()}
                   {analysis.cut?.silhouette && (
                     <span
                       className="text-[10px] tracking-wide px-2 py-0.5 text-white/70"
                       style={{ border: '1px solid rgba(255,255,255,0.2)' }}
                     >
-                      {analysis.cut.silhouette}
+                      {SILHOUETTE_LABEL_R[analysis.cut.silhouette]?.[lang]
+                        ?? analysis.cut.silhouette.replace(/_/g, ' ')}
                     </span>
                   )}
                   {(analysis.closest_freesewing_patterns ?? [])[0]?.design && (

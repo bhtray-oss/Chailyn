@@ -21,15 +21,43 @@ async function request<T>(
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
+export interface AuthUserResponse {
+  id:               string
+  email:            string
+  display_name:     string
+  role:             string
+  subscription_tier: string
+}
+
+export interface AuthTokenResponse {
+  access_token:  string
+  token_type:    string
+  expires_in:    number
+  user:          AuthUserResponse
+}
+
 export const authApi = {
-  register: (email: string, displayName: string) =>
-    request('/auth/register', {
+  /** Called by AuthContext directly via fetch('/api/auth/login') — kept for completeness */
+  login: (email: string, password: string) =>
+    request<AuthTokenResponse>('/api/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, display_name: displayName }),
+      body: JSON.stringify({ email, password }),
+    }),
+
+  register: (email: string, password: string, displayName: string) =>
+    request<AuthTokenResponse>('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, display_name: displayName }),
     }),
 
   getUser: (userId: string) =>
-    request(`/auth/user/${userId}`),
+    request<AuthUserResponse>(`/auth/user/${userId}`),
+
+  /** Get current user from Bearer token */
+  me: (accessToken: string) =>
+    request<AuthUserResponse>('/api/auth/me', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }),
 }
 
 // ─── Body Profiles ────────────────────────────────────────────────────────────
@@ -141,6 +169,7 @@ export interface AnalysisHistoryItem {
   finished_at:  string
   mime_type:    string
   file_size_kb: number
+  visibility:   'public' | 'private'
 }
 
 export const historyApi = {
@@ -155,6 +184,17 @@ export const historyApi = {
   /** 刪除一筆分析記錄 */
   delete: (jobId: string, userId: string) =>
     request(`/analyses/jobs/${jobId}?user_id=${userId}`, { method: 'DELETE' }),
+
+  /** 切換分析可見性 */
+  setVisibility: (photoId: string, userId: string, visibility: 'public' | 'private') =>
+    request<{ photo_id: string; visibility: string }>(
+      `/analyses/photo/${photoId}/visibility`,
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visibility, user_id: userId }),
+      },
+    ),
 }
 
 // ─── Patterns ─────────────────────────────────────────────────────────────────
@@ -427,4 +467,56 @@ export interface VersionEntry {
   created_at:         string
   parent_instance_id: string | null
   has_svg:            boolean
+}
+
+// ─── Armstrong Draft ──────────────────────────────────────────────────────────
+export interface ArmstrongFormulaRow {
+  ch:       string
+  ref:      string
+  zh:       string
+  en:       string
+  formula:  string
+  val_in:   number
+  val_mm:   number
+  note:     string
+  warning?: boolean
+}
+
+export interface ArmstrongPoint {
+  x: number
+  y: number
+}
+
+export interface ArmstrongMeasurements {
+  m5_cf_length:        number
+  m6_full_length:      number
+  m7_shoulder_slope:   number
+  m9_bust_depth:       number
+  m10_bust_span:       number
+  m11_side_length:     number
+  m13_shoulder_len:    number
+  m14_across_shoulder: number
+  m15_across_chest:    number
+  m16_across_back:     number
+  m17_bust_arc:        number
+  m18_back_arc:        number
+  m19_waist_arc:       number
+  m20_dart_placement:  number
+  hip_arc:             number
+  hip_depth:           number
+  cb_length:           number
+}
+
+export interface ArmstrongDraftResult {
+  armstrong_measurements: ArmstrongMeasurements
+  formula_rows:   ArmstrongFormulaRow[]
+  front_points:   Record<string, ArmstrongPoint>
+  back_points:    Record<string, ArmstrongPoint | number>
+  warnings:       string[]
+  bw_diff:        number
+}
+
+export const armstrongApi = {
+  getDraft: (userId: string) =>
+    request<ArmstrongDraftResult>(`/armstrong/draft?user_id=${userId}`),
 }
