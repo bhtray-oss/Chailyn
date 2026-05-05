@@ -8,7 +8,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import analyses, body_profiles, patterns, auth, search, bom, catalog, garmentcode
+from routers import analyses, body_profiles, patterns, auth, search, bom, catalog, garmentcode, armstrong
+from routers import subscriptions, apple_notifications
 
 
 def _warmup_embedding_model():
@@ -59,6 +60,9 @@ app.include_router(search.router,        prefix="/search",   tags=["search"])
 app.include_router(bom.router,           prefix="/bom",      tags=["bom"])
 app.include_router(catalog.router,       prefix="/catalog",      tags=["catalog"])
 app.include_router(garmentcode.router,   prefix="/garmentcode",  tags=["garmentcode"])
+app.include_router(armstrong.router,         prefix="/armstrong",      tags=["armstrong"])
+app.include_router(subscriptions.router,     prefix="/subscriptions",  tags=["subscriptions"])
+app.include_router(apple_notifications.router, prefix="/apple",         tags=["apple"])
 
 
 @app.get("/health")

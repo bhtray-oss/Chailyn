@@ -284,6 +284,61 @@ async def get_version_history(
     }
 
 
+# ─── Armstrong 公式打版（BPD-2026-02 style）────────────────────────────────────
+
+class ArmstrongDraftRequest(BaseModel):
+    """
+    Armstrong 5th Ed. 量測值（cm），供 armstrong_bodice.py 計算所有打版點位。
+    BPD-2026-02 Missy 12 預設值已填入。
+    """
+    # Ch.2 標準量測（cm）
+    m5_cf_length_cm: float = 41.9
+    m6_full_length_cm: float = 43.2
+    m7_shoulder_slope_cm: float = 14.6
+    m9_bust_depth_cm: float = 24.8
+    m10_bust_span_cm: float = 9.5
+    m11_side_length_cm: float = 40.6
+    m13_shoulder_len_cm: float = 12.7
+    m14_across_shoulder_cm: float = 39.4
+    m15_across_chest_cm: float = 17.8
+    m16_across_back_cm: float = 18.4
+    m17_bust_arc_cm: float = 45.7
+    m18_back_arc_cm: float = 44.5
+    m19_waist_arc_cm: float = 35.6
+    m20_dart_placement_cm: float = 8.3
+    hip_arc_cm: float = 49.5
+    hip_depth_cm: float = 17.8
+    cb_length_cm: float = 40.0
+    skirt_length_cm: float = 72.4
+
+    # 方領
+    sq_nk_width_half_cm: Optional[float] = 15.9   # 6.25"
+    sq_nk_depth_cm: Optional[float] = 7.0          # 2.75"
+
+    # 箱褶
+    box_pleat_visible_cm: float = 7.6
+    box_pleat_underlay_cm: float = 7.6
+    box_pleat_count_front: int = 2
+    box_pleat_count_back: int = 2
+    box_pleat_press_depth_cm: float = 15.2
+
+    style_code: str = "BPD-2026-02"
+
+
+@router.post("/armstrong-draft")
+async def armstrong_draft(req: ArmstrongDraftRequest):
+    """
+    Armstrong 5th Ed. 公式完整打版。
+    回傳前後片所有點位座標（英吋）、公主線、方領、箱褶、QC 標準。
+    不存入 DB；供前端展示打版草圖或交給 pattern-engine 繪製。
+    """
+    from services.armstrong_bodice import from_cm, draft_bpd_2026_02
+
+    m = from_cm(req.model_dump())
+    result = draft_bpd_2026_02(m)
+    return result
+
+
 # ─── DXF 匯出 ────────────────────────────────────────────────────────────────
 @router.get("/dxf/{instance_id}")
 async def export_dxf(
