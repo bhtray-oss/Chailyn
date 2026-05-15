@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { profileApi } from '@/lib/api'
 import MeasurementForm from '@/components/MeasurementForm'
 import type { Measurements } from '@/lib/types'
@@ -46,6 +46,7 @@ export default function ProfilePage() {
   const [error, setError]               = useState<string | null>(null)
   const [profiles, setProfiles]         = useState<Profile[]>([])
   const [derived, setDerived]           = useState<Record<string, number>>({})
+  const initialLoadedRef                = useRef(false)
 
   useEffect(() => {
     const chest    = measurements.chest
@@ -62,7 +63,23 @@ export default function ProfilePage() {
 
   useEffect(() => {
     profileApi.list(DEV_USER_ID)
-      .then((data: unknown) => setProfiles(data as Profile[]))
+      .then((data: unknown) => {
+        const profs = data as Profile[]
+        setProfiles(profs)
+        // Pre-populate form with most recent profile on first load only
+        if (!initialLoadedRef.current && profs.length > 0) {
+          initialLoadedRef.current = true
+          const latest = profs[0]
+          // Stored in mm → convert to cm for form display
+          const cms: Measurements = {}
+          for (const [k, v] of Object.entries(latest.measurements)) {
+            cms[k as keyof Measurements] = v / 10
+          }
+          setMeasurements(cms)
+          if (latest.label) setLabel(latest.label)
+          if (latest.notes) setNotes(latest.notes)
+        }
+      })
       .catch(() => {})
   }, [saved])
 

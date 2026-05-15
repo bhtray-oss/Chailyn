@@ -11,9 +11,11 @@ export const UPLOADS_DIR   = path.join(BASE_DIR, 'uploads')
 export const JOBS_DIR      = path.join(BASE_DIR, 'standalone', 'jobs')
 export const PROFILES_DIR  = path.join(BASE_DIR, 'standalone', 'profiles')
 export const PATTERNS_DIR  = path.join(BASE_DIR, 'standalone', 'patterns')
+export const USERS_DIR     = path.join(BASE_DIR, 'standalone', 'users')
+export const BOM_DIR       = path.join(BASE_DIR, 'standalone', 'bom')
 
 // 確保所有目錄存在
-for (const dir of [UPLOADS_DIR, JOBS_DIR, PROFILES_DIR, PATTERNS_DIR]) {
+for (const dir of [UPLOADS_DIR, JOBS_DIR, PROFILES_DIR, PATTERNS_DIR, USERS_DIR, BOM_DIR]) {
   fs.mkdirSync(dir, { recursive: true })
 }
 

@@ -176,12 +176,54 @@ function WardrobeCard({
   onToggleHistory: () => void
 }) {
   const { t, lang } = useLanguage()
+  const [thumbUrl, setThumbUrl] = useState<string | null>(null)
+  const [thumbLoading, setThumbLoading] = useState(item.has_svg)
+
+  useEffect(() => {
+    if (!item.has_svg) return
+    let blobUrl: string | null = null
+    fetch(`/api/patterns/${item.id}`)
+      .then(r => r.json())
+      .then(d => {
+        if (!d.svg_data) return
+        const blob = new Blob([d.svg_data], { type: 'image/svg+xml' })
+        blobUrl = URL.createObjectURL(blob)
+        setThumbUrl(blobUrl)
+      })
+      .catch(() => {})
+      .finally(() => setThumbLoading(false))
+    return () => { if (blobUrl) URL.revokeObjectURL(blobUrl) }
+  }, [item.id, item.has_svg])
+
   const dateStr = new Date(item.created_at).toLocaleDateString(lang === 'zh' ? 'zh-TW' : 'en-US', {
     year: 'numeric', month: 'short', day: 'numeric',
   })
 
   return (
     <div className="bg-[var(--surface)] flex flex-col">
+
+      {/* ── SVG thumbnail ── */}
+      <div
+        className="w-full border-b"
+        style={{ height: 110, background: 'var(--bg)', borderColor: 'var(--border)', overflow: 'hidden' }}
+      >
+        {thumbUrl ? (
+          <img
+            src={thumbUrl}
+            alt={item.design}
+            style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+          />
+        ) : thumbLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <Loader2 size={14} strokeWidth={1.5} className="animate-spin" style={{ color: 'var(--border)' }} />
+          </div>
+        ) : (
+          <div className="flex items-center justify-center h-full" style={{ opacity: 0.2 }}>
+            <Scissors size={28} strokeWidth={1} style={{ color: 'var(--ink)' }} />
+          </div>
+        )}
+      </div>
+
       <div className="px-4 pt-4 pb-3 flex-1">
         <div className="flex items-start justify-between">
           <div>
