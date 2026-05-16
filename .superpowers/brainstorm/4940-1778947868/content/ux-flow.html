@@ -1,0 +1,65 @@
+<h2>Where does the AI → Pattern Parameters feature live?</h2>
+<p class="subtitle">After Claude Vision analyses the photo, how does the user go from "analysis result" to "pattern with AI-suggested options"?</p>
+
+<div class="options">
+
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Smart Draft button on the Analyze page</h3>
+      <p>On the existing <code>/analyze</code> page, after analysis completes, show a prominent <strong>"Auto-Draft with AI Params"</strong> button. Clicking it immediately generates the best-matching pattern SVG using all AI-detected options (collar style, ease, SA, etc.). The result appears on the same page with a collapsible "params used" summary.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Zero extra navigation — stays on one page</li>
+          <li>Tightest photo → pattern loop</li>
+          <li>Least new UI to build</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>User can't tweak params before drafting</li>
+          <li>Analyze page already has a lot going on</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>AI Parameters Bridge Panel (inline on Analyze page)</h3>
+      <p>After analysis, an expandable <strong>"AI Pattern Parameters"</strong> panel appears below the analysis cards. It shows each detected parameter (design choice, collar style, ease level, SA, etc.) as editable chips/dropdowns. User reviews and adjusts, then clicks <strong>"Draft with These Settings"</strong>. The SVG appears below.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>User sees and can correct AI decisions</li>
+          <li>Transparent — shows the mapping logic</li>
+          <li>Still one-page experience</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>More complex UI to build</li>
+          <li>Analyze page gets even longer</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>"Import from Photo" on the Pattern page</h3>
+      <p>The existing <code>/pattern</code> page gets an <strong>"Import from Analysis"</strong> button. Clicking it opens a selector of recent analyses. Choosing one pre-fills the design selector and all option fields with AI-suggested values. User can then tweak everything before drafting as normal.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Cleanest separation of concerns</li>
+          <li>Full power of the Pattern page options</li>
+          <li>User can combine multiple analyses</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Two-page navigation (analyze → pattern)</li>
+          <li>Less "magical" — more manual steps</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:24px">Pick the UX flow that feels most right for Chailyn's users. You can mix ideas in the terminal too.</p>

@@ -1,0 +1,84 @@
+<h2>Three Implementation Approaches</h2>
+<p class="subtitle">All three end at the same place: <code>SmartDraftPanel</code> on Analyze page → edit params → redirect to <code>/pattern</code> with a saved instance. The difference is how deep the option mapping goes and where intelligence lives.</p>
+
+<div class="options">
+
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Thin Bridge — wire up what already exists</h3>
+      <p>Add a <code>SmartDraftPanel</code> component to the Analyze page that calls the existing <code>/patterns/auto-draft</code> endpoint (already powered by <code>auto_pattern_maker.py</code>). Render whatever options come back as editable fields. On confirm, save the instance and redirect to <code>/pattern?redraft=...</code>.</p>
+      <p><strong>Option coverage:</strong> only what <code>_build_options()</code> currently handles — collarStyle/cuffStyle for simon/simone, kangarooPocket for huey, waistbandWidth for sandy/waralee, elasticWidth for paco. Other designs get SA + ease only.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Smallest diff — mostly frontend work</li>
+          <li>Working in ~1 day</li>
+          <li>No new backend endpoints</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Sparse options for 10 of 15 designs</li>
+          <li>Can't show what options were available but not mapped</li>
+          <li>Technical debt — mapping stays incomplete</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Expanded Rule Mapper — recommended ✦</h3>
+      <p>Significantly expand <code>_build_options()</code> in <code>auto_pattern_maker.py</code> to cover all 15 designs with their key FreeSewing options. Add a dedicated endpoint <code>POST /analyses/{id}/draft-params</code> that returns a full <code>DraftParamsResponse</code> (design, all options, Armstrong metrics, alternatives). <code>SmartDraftPanel</code> renders all options as editable dropdowns/inputs with AI badges.</p>
+      <p><strong>Option coverage:</strong> All major options for all 15 designs — sleeveStyle, pocketStyle, hemStyle, waistbandWidth, paperless, SA, plus design-specific knobs. Each option shows its source: <em>AI-detected</em> vs <em>default</em>.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Full coverage — no design left behind</li>
+          <li>Deterministic, transparent mapping logic</li>
+          <li>No added API cost (pure code)</li>
+          <li>Armstrong metrics already calculated — just expose them</li>
+          <li>Clean API contract for future features</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Need to map options for 15 designs (~2–3 days)</li>
+          <li>FreeSewing option schemas must be documented per design</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>AI-Driven Extraction — second Claude call</h3>
+      <p>After Vision analysis, fire a second Claude API call (text only, no image) that reads the structured analysis JSON and directly outputs FreeSewing option key-value pairs: <code>{"collarStyle": "classic", "cuffStyle": "frenchCuff", "sleeveLength": 580, ...}</code>. Claude knows the FreeSewing option schema from a system prompt and can fill options a rule-mapper might miss (e.g. inferred pleat depth, button count).</p>
+      <p><strong>Option coverage:</strong> Potentially any FreeSewing option — Claude reasons from the analysis JSON without hard-coded rules. Can handle unusual combinations that fall through rule gaps.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Highest accuracy for edge cases</li>
+          <li>No need to enumerate every design's options manually</li>
+          <li>Can handle designs added later automatically</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Extra API call = extra latency (1–2s) + cost per analysis</li>
+          <li>Non-deterministic — can produce different options for same photo</li>
+          <li>Harder to debug and explain to users why a value was chosen</li>
+          <li>Overkill given the rule system is already 80% there</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top:24px;padding:16px;background:#f9f6f0;border:1px solid #e8e0d0">
+  <div class="label">Why B is recommended</div>
+  <p style="font-size:13px;margin-top:8px;color:#555">
+    <code>auto_pattern_maker.py</code> is already well-structured — <code>_DESIGN_OPTION_MAP</code> just needs expanding.
+    The Armstrong metrics are already computed and just need a UI surface.
+    Rule-based mapping is transparent (user can see <em>why</em> each option was chosen),
+    free to run, and deterministic. Approach C could be added later as a fallback
+    for options that rules miss.
+  </p>
+</div>
+
+<p class="subtitle" style="margin-top:16px">Pick an approach or tell me your thoughts in the terminal.</p>

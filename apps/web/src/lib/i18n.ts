@@ -318,6 +318,32 @@ const zh = {
 
   // ── Misc ───────────────────────────────────────────────────────────────────
   'misc.garment':        '服裝',
+
+  // ── Smart Draft Panel ──────────────────────────────────────────────────────
+  'smartDraft.title':         'AI 版型參數',
+  'smartDraft.subtitle':      'AI 推薦設計 · 版型選項 · Armstrong 計算',
+  'smartDraft.expand':        '展開',
+  'smartDraft.collapse':      '收起',
+  'smartDraft.design':        'AI 推薦設計',
+  'smartDraft.options':       '版型選項',
+  'smartDraft.aiBadge':       '✦ AI',
+  'smartDraft.defaultBadge':  '預設',
+  'smartDraft.armstrong':     'Armstrong 打版計算',
+  'smartDraft.draft':         'Draft with These Settings',
+  'smartDraft.reset':         '恢復 AI 建議值',
+  'smartDraft.drafting':      '打版中…',
+  'smartDraft.redirecting':   '跳轉至版型工具…',
+  'smartDraft.error':         '打版失敗，請重試',
+  'smartDraft.noMeasure':     '尚無身材數據，將使用預設尺寸',
+  'smartDraft.confidence':    '信心分數',
+  'smartDraft.reasoning':     'AI 判斷依據',
+  'smartDraft.armHipWaist':   '臀腰差',
+  'smartDraft.armFrontDart':  '前省',
+  'smartDraft.armBackDart':   '後省',
+  'smartDraft.armCup':        '罩杯',
+  'smartDraft.armSleeve':     '袖長',
+  'smartDraft.armSize':       '美規尺寸',
+  'smartDraft.armEach':       '每省',
 }
 
 const en: typeof zh = {
@@ -638,6 +664,32 @@ const en: typeof zh = {
 
   // ── Misc ───────────────────────────────────────────────────────────────────
   'misc.garment':        'Garment',
+
+  // ── Smart Draft Panel ──────────────────────────────────────────────────────
+  'smartDraft.title':         'AI Pattern Parameters',
+  'smartDraft.subtitle':      'AI Design · Options · Armstrong Calculations',
+  'smartDraft.expand':        'Expand',
+  'smartDraft.collapse':      'Collapse',
+  'smartDraft.design':        'AI Recommended Design',
+  'smartDraft.options':       'Pattern Options',
+  'smartDraft.aiBadge':       '✦ AI',
+  'smartDraft.defaultBadge':  'default',
+  'smartDraft.armstrong':     'Armstrong Calculations',
+  'smartDraft.draft':         'Draft with These Settings',
+  'smartDraft.reset':         'Reset to AI Suggestions',
+  'smartDraft.drafting':      'Drafting…',
+  'smartDraft.redirecting':   'Redirecting to pattern tools…',
+  'smartDraft.error':         'Draft failed — please try again',
+  'smartDraft.noMeasure':     'No measurements saved — using default sizing',
+  'smartDraft.confidence':    'Confidence',
+  'smartDraft.reasoning':     'AI Reasoning',
+  'smartDraft.armHipWaist':   'Hip–waist diff',
+  'smartDraft.armFrontDart':  'Front dart',
+  'smartDraft.armBackDart':   'Back dart',
+  'smartDraft.armCup':        'Bust cup',
+  'smartDraft.armSleeve':     'Sleeve length',
+  'smartDraft.armSize':       'US size',
+  'smartDraft.armEach':       'each',
 }
 
 export const dict: Record<Lang, typeof zh> = { zh, en }

@@ -1,0 +1,850 @@
+INFO:     Started server process [27541]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 5602.99it/s]
+[startup] Embedding model warmed up ✓
+INFO:     127.0.0.1:53029 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53048 - "POST /patterns/draft HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53052 - "GET /analyses/user/00000000-0000-0000-0000-000000000001 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53054 - "POST /search/query HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 526, in _prepare_and_execute
+    prepared_stmt, attributes = await adapt_connection._prepare(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 773, in _prepare
+    prepared_stmt = await self._connection.prepare(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/asyncpg/connection.py", line 636, in prepare
+    return await self._prepare(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/asyncpg/connection.py", line 654, in _prepare
+    stmt = await self._get_statement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/asyncpg/connection.py", line 433, in _get_statement
+    statement = await self._protocol.prepare(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "asyncpg/protocol/protocol.pyx", line 166, in prepare
+asyncpg.exceptions.UndefinedColumnError: column "description_en" does not exist
+HINT:  Perhaps you meant to reference the column "pattern_catalog.description_zh".
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.ProgrammingError: <class 'asyncpg.exceptions.UndefinedColumnError'>: column "description_en" does not exist
+HINT:  Perhaps you meant to reference the column "pattern_catalog.description_zh".
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py", line 401, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 70, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 187, in __call__
+    raise exc
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/routers/search.py", line 59, in text_query
+    result = await db.execute(
+             ^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/ext/asyncio/session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2258, in _execute_internal
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.exc.ProgrammingError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.UndefinedColumnError'>: column "description_en" does not exist
+HINT:  Perhaps you meant to reference the column "pattern_catalog.description_zh".
+[SQL: 
+            SELECT fs_design_id, name, description_zh, description_en,
+                   garment_type, fabric_weight, difficulty, tags, season,
+                   source, download_url,
+                   CASE
+                     WHEN embed IS NOT NULL
+                     THEN 1 - (embed <=> CAST($1 AS vector))
+                     ELSE 0
+                   END AS score
+            FROM pattern_catalog
+            WHERE is_active 
+            ORDER BY
+              CASE WHEN embed IS NOT NULL THEN embed <=> CAST($1 AS vector) END ASC NULLS LAST,
+              name ASC
+            LIMIT $2
+        ]
+[parameters: ('[0.0059282234869897366,0.09676029533147812,0.02125023491680622,0.02009539119899273,0.09206391125917435,0.02990250289440155,0.07439573109149933,-0.011 ... (7715 characters truncated) ... 66,-0.027161376550793648,-0.03468133136630058,0.02652924507856369,-0.05646343156695366,-0.09425720572471619,0.06080465763807297,0.009805232286453247]', 3)]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+INFO:     127.0.0.1:53056 - "POST /search/query HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 526, in _prepare_and_execute
+    prepared_stmt, attributes = await adapt_connection._prepare(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 773, in _prepare
+    prepared_stmt = await self._connection.prepare(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/asyncpg/connection.py", line 636, in prepare
+    return await self._prepare(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/asyncpg/connection.py", line 654, in _prepare
+    stmt = await self._get_statement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/asyncpg/connection.py", line 433, in _get_statement
+    statement = await self._protocol.prepare(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "asyncpg/protocol/protocol.pyx", line 166, in prepare
+asyncpg.exceptions.UndefinedColumnError: column "description_en" does not exist
+HINT:  Perhaps you meant to reference the column "pattern_catalog.description_zh".
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.ProgrammingError: <class 'asyncpg.exceptions.UndefinedColumnError'>: column "description_en" does not exist
+HINT:  Perhaps you meant to reference the column "pattern_catalog.description_zh".
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py", line 401, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 70, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 187, in __call__
+    raise exc
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/routers/search.py", line 59, in text_query
+    result = await db.execute(
+             ^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/ext/asyncio/session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2258, in _execute_internal
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.exc.ProgrammingError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.UndefinedColumnError'>: column "description_en" does not exist
+HINT:  Perhaps you meant to reference the column "pattern_catalog.description_zh".
+[SQL: 
+            SELECT fs_design_id, name, description_zh, description_en,
+                   garment_type, fabric_weight, difficulty, tags, season,
+                   source, download_url,
+                   CASE
+                     WHEN embed IS NOT NULL
+                     THEN 1 - (embed <=> CAST($1 AS vector))
+                     ELSE 0
+                   END AS score
+            FROM pattern_catalog
+            WHERE is_active 
+            ORDER BY
+              CASE WHEN embed IS NOT NULL THEN embed <=> CAST($1 AS vector) END ASC NULLS LAST,
+              name ASC
+            LIMIT $2
+        ]
+[parameters: ('[0.0059282234869897366,0.09676029533147812,0.02125023491680622,0.02009539119899273,0.09206391125917435,0.02990250289440155,0.07439573109149933,-0.011 ... (7715 characters truncated) ... 66,-0.027161376550793648,-0.03468133136630058,0.02652924507856369,-0.05646343156695366,-0.09425720572471619,0.06080465763807297,0.009805232286453247]', 3)]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [27541]
+/opt/homebrew/Cellar/python@3.11/3.11.14_1/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+INFO:     Started server process [27987]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:53063 - "GET /health HTTP/1.1" 200 OK
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 6250.73it/s]
+[startup] Embedding model warmed up ✓
+INFO:     127.0.0.1:53066 - "POST /search/query HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 526, in _prepare_and_execute
+    prepared_stmt, attributes = await adapt_connection._prepare(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 773, in _prepare
+    prepared_stmt = await self._connection.prepare(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/asyncpg/connection.py", line 636, in prepare
+    return await self._prepare(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/asyncpg/connection.py", line 654, in _prepare
+    stmt = await self._get_statement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/asyncpg/connection.py", line 433, in _get_statement
+    statement = await self._protocol.prepare(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "asyncpg/protocol/protocol.pyx", line 166, in prepare
+asyncpg.exceptions.UndefinedColumnError: column "download_url" does not exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.ProgrammingError: <class 'asyncpg.exceptions.UndefinedColumnError'>: column "download_url" does not exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py", line 401, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 70, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 187, in __call__
+    raise exc
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/routers/search.py", line 59, in text_query
+    result = await db.execute(
+             ^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/ext/asyncio/session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2258, in _execute_internal
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.exc.ProgrammingError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.UndefinedColumnError'>: column "download_url" does not exist
+[SQL: 
+            SELECT fs_design_id, name, description_zh,
+                   garment_type, fabric_weight, difficulty, tags, season,
+                   source, download_url,
+                   CASE
+                     WHEN embed IS NOT NULL
+                     THEN 1 - (embed <=> CAST($1 AS vector))
+                     ELSE 0
+                   END AS score
+            FROM pattern_catalog
+            WHERE is_active 
+            ORDER BY
+              CASE WHEN embed IS NOT NULL THEN embed <=> CAST($1 AS vector) END ASC NULLS LAST,
+              name ASC
+            LIMIT $2
+        ]
+[parameters: ('[0.0059282234869897366,0.09676029533147812,0.02125023491680622,0.02009539119899273,0.09206391125917435,0.02990250289440155,0.07439573109149933,-0.011 ... (7715 characters truncated) ... 66,-0.027161376550793648,-0.03468133136630058,0.02652924507856369,-0.05646343156695366,-0.09425720572471619,0.06080465763807297,0.009805232286453247]', 3)]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+INFO:     127.0.0.1:53069 - "POST /search/query HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 526, in _prepare_and_execute
+    prepared_stmt, attributes = await adapt_connection._prepare(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 773, in _prepare
+    prepared_stmt = await self._connection.prepare(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/asyncpg/connection.py", line 636, in prepare
+    return await self._prepare(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/asyncpg/connection.py", line 654, in _prepare
+    stmt = await self._get_statement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/asyncpg/connection.py", line 433, in _get_statement
+    statement = await self._protocol.prepare(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "asyncpg/protocol/protocol.pyx", line 166, in prepare
+asyncpg.exceptions.UndefinedColumnError: column "download_url" does not exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.ProgrammingError: <class 'asyncpg.exceptions.UndefinedColumnError'>: column "download_url" does not exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py", line 401, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 70, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 187, in __call__
+    raise exc
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/routers/search.py", line 59, in text_query
+    result = await db.execute(
+             ^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/ext/asyncio/session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2258, in _execute_internal
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.exc.ProgrammingError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.UndefinedColumnError'>: column "download_url" does not exist
+[SQL: 
+            SELECT fs_design_id, name, description_zh,
+                   garment_type, fabric_weight, difficulty, tags, season,
+                   source, download_url,
+                   CASE
+                     WHEN embed IS NOT NULL
+                     THEN 1 - (embed <=> CAST($1 AS vector))
+                     ELSE 0
+                   END AS score
+            FROM pattern_catalog
+            WHERE is_active 
+            ORDER BY
+              CASE WHEN embed IS NOT NULL THEN embed <=> CAST($1 AS vector) END ASC NULLS LAST,
+              name ASC
+            LIMIT $2
+        ]
+[parameters: ('[0.03674586862325668,0.038856081664562225,0.003742910921573639,-0.017167942598462105,0.043430741876363754,0.07222083956003189,-0.029231591150164604,0 ... (7751 characters truncated) ... 4,0.01962062530219555,-0.011802895925939083,0.017546700313687325,0.012955757789313793,-0.08044304698705673,-0.02976106107234955,0.021943820640444756]', 3)]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+INFO:     127.0.0.1:53072 - "POST /search/query HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 526, in _prepare_and_execute
+    prepared_stmt, attributes = await adapt_connection._prepare(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 773, in _prepare
+    prepared_stmt = await self._connection.prepare(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/asyncpg/connection.py", line 636, in prepare
+    return await self._prepare(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/asyncpg/connection.py", line 654, in _prepare
+    stmt = await self._get_statement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/asyncpg/connection.py", line 433, in _get_statement
+    statement = await self._protocol.prepare(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "asyncpg/protocol/protocol.pyx", line 166, in prepare
+asyncpg.exceptions.UndefinedColumnError: column "download_url" does not exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.ProgrammingError: <class 'asyncpg.exceptions.UndefinedColumnError'>: column "download_url" does not exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py", line 401, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 70, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 187, in __call__
+    raise exc
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/routers/search.py", line 59, in text_query
+    result = await db.execute(
+             ^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/ext/asyncio/session.py", line 449, in execute
+    result = await greenlet_spawn(
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2258, in _execute_internal
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 585, in execute
+    self._adapt_connection.await_(
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 563, in _prepare_and_execute
+    self._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 513, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+  File "/Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/services/api/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 797, in _handle_exception
+    raise translated_error from error
+sqlalchemy.exc.ProgrammingError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.UndefinedColumnError'>: column "download_url" does not exist
+[SQL: 
+            SELECT fs_design_id, name, description_zh,
+                   garment_type, fabric_weight, difficulty, tags, season,
+                   source, download_url,
+                   CASE
+                     WHEN embed IS NOT NULL
+                     THEN 1 - (embed <=> CAST($1 AS vector))
+                     ELSE 0
+                   END AS score
+            FROM pattern_catalog
+            WHERE is_active 
+            ORDER BY
+              CASE WHEN embed IS NOT NULL THEN embed <=> CAST($1 AS vector) END ASC NULLS LAST,
+              name ASC
+            LIMIT $2
+        ]
+[parameters: ('[0.0059282234869897366,0.09676029533147812,0.02125023491680622,0.02009539119899273,0.09206391125917435,0.02990250289440155,0.07439573109149933,-0.011 ... (7715 characters truncated) ... 66,-0.027161376550793648,-0.03468133136630058,0.02652924507856369,-0.05646343156695366,-0.09425720572471619,0.06080465763807297,0.009805232286453247]', 3)]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [27987]
+/opt/homebrew/Cellar/python@3.11/3.11.14_1/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+INFO:     Started server process [28294]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s][ALoading weights: 100%|██████████| 199/199 [00:00<00:00, 4571.06it/s]
+Loading weights: 100%|██████████| 199/199 [00:00<00:00, 4628.78it/s]
+[startup] Embedding model warmed up ✓
+INFO:     127.0.0.1:53143 - "POST /search/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53154 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53156 - "POST /patterns/draft HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53159 - "GET /analyses/user/00000000-0000-0000-0000-000000000001 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53161 - "POST /search/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53163 - "GET /search/similar/00000000-0000-0000-0000-000000000099 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54034 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54037 - "POST /patterns/armstrong-draft HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:54041 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [28294]
+/opt/homebrew/Cellar/python@3.11/3.11.14_1/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

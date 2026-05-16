@@ -1,0 +1,116 @@
+<h2>What does the AI Parameters Panel show?</h2>
+<p class="subtitle">The backend already calculates two layers of data — which should the panel expose?</p>
+
+<div class="split">
+
+  <div class="mockup" data-choice="a" onclick="toggleSelect(this)" style="cursor:pointer">
+    <div class="mockup-header">Option A — FreeSewing Options Only</div>
+    <div class="mockup-body" style="font-size:13px;font-family:monospace">
+
+      <div style="margin-bottom:16px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#999;margin-bottom:6px">AI建議設計</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span style="background:#1a1a1a;color:#fff;padding:4px 12px;font-size:11px">✓ simon</span>
+          <span style="border:1px solid #ddd;padding:4px 12px;font-size:11px;color:#666">simone</span>
+          <span style="border:1px solid #ddd;padding:4px 12px;font-size:11px;color:#666">huey</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#999;margin-bottom:6px">版型選項</div>
+        <table style="width:100%;border-collapse:collapse">
+          <tr style="border-bottom:1px solid #eee">
+            <td style="padding:6px 0;color:#666">領型 collarStyle</td>
+            <td style="padding:6px 0;text-align:right">
+              <select style="border:1px solid #ddd;padding:2px 6px;font-size:12px">
+                <option selected>classic ✦ AI</option>
+                <option>band</option>
+                <option>none</option>
+              </select>
+            </td>
+          </tr>
+          <tr style="border-bottom:1px solid #eee">
+            <td style="padding:6px 0;color:#666">袖口 cuffStyle</td>
+            <td style="padding:6px 0;text-align:right">
+              <select style="border:1px solid #ddd;padding:2px 6px;font-size:12px">
+                <option selected>frenchCuff ✦ AI</option>
+                <option>classical</option>
+              </select>
+            </td>
+          </tr>
+          <tr style="border-bottom:1px solid #eee">
+            <td style="padding:6px 0;color:#666">縫份 sa</td>
+            <td style="padding:6px 0;text-align:right">
+              <input type="number" value="12" style="width:50px;border:1px solid #ddd;padding:2px 6px;font-size:12px"> mm
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;color:#666">鬆量 ease</td>
+            <td style="padding:6px 0;text-align:right">
+              <select style="border:1px solid #ddd;padding:2px 6px;font-size:12px">
+                <option>fitted</option>
+                <option selected>semi_fitted ✦ AI</option>
+                <option>relaxed</option>
+              </select>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="padding:8px 12px;background:#f9f6f0;border:1px solid #e8e0d0;font-size:11px;color:#888">
+        Confidence: 78% · 2 alternatives available
+      </div>
+
+      <button style="margin-top:12px;width:100%;padding:10px;background:#1a1a1a;color:#fff;border:none;font-size:11px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer">
+        Draft with These Settings →
+      </button>
+    </div>
+  </div>
+
+  <div class="mockup" data-choice="b" onclick="toggleSelect(this)" style="cursor:pointer">
+    <div class="mockup-header">Option B — Options + Armstrong Breakdown</div>
+    <div class="mockup-body" style="font-size:12px">
+
+      <div style="margin-bottom:14px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#999;margin-bottom:4px">AI建議設計</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span style="background:#1a1a1a;color:#fff;padding:4px 12px;font-size:11px">✓ simon <span style="opacity:.6">78%</span></span>
+          <span style="border:1px solid #ddd;padding:4px 12px;font-size:11px;color:#666">simone 52%</span>
+        </div>
+        <div style="font-size:11px;color:#a08050;margin-top:4px">領型 basic_shirt_collar + 袖型 set_in → Simon 最符合</div>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#999;margin-bottom:4px">版型選項 <span style="color:#c8a060">✦ AI建議</span></div>
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <tr style="border-bottom:1px solid #eee"><td style="padding:5px 0;color:#666">collarStyle</td><td style="text-align:right"><select style="border:1px solid #c8a060;padding:2px 4px"><option>classic ✦</option><option>band</option></select></td></tr>
+          <tr style="border-bottom:1px solid #eee"><td style="padding:5px 0;color:#666">cuffStyle</td><td style="text-align:right"><select style="border:1px solid #c8a060;padding:2px 4px"><option>frenchCuff ✦</option><option>classical</option></select></td></tr>
+          <tr style="border-bottom:1px solid #eee"><td style="padding:5px 0;color:#666">sa</td><td style="text-align:right"><input type="number" value="12" style="width:44px;border:1px solid #ddd;padding:2px 4px"> mm</td></tr>
+          <tr><td style="padding:5px 0;color:#666">ease</td><td style="text-align:right"><select style="border:1px solid #ddd;padding:2px 4px"><option selected>semi_fitted ✦</option><option>fitted</option></select></td></tr>
+        </table>
+      </div>
+
+      <details style="margin-bottom:12px">
+        <summary style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#a08050;cursor:pointer;margin-bottom:6px">Armstrong 打版計算 ▾</summary>
+        <table style="width:100%;border-collapse:collapse;font-size:11px;color:#666">
+          <tr style="border-bottom:1px solid #eee"><td style="padding:4px 0">臀腰差</td><td style="text-align:right">8.2"</td></tr>
+          <tr style="border-bottom:1px solid #eee"><td style="padding:4px 0">前省 × 2</td><td style="text-align:right">0.375" each</td></tr>
+          <tr style="border-bottom:1px solid #eee"><td style="padding:4px 0">後省 × 2</td><td style="text-align:right">0.875" each</td></tr>
+          <tr style="border-bottom:1px solid #eee"><td style="padding:4px 0">罩杯</td><td style="text-align:right">C cup (+0.375")</td></tr>
+          <tr><td style="padding:4px 0">美規尺寸</td><td style="text-align:right">Size 12</td></tr>
+        </table>
+      </details>
+
+      <button style="width:100%;padding:10px;background:#1a1a1a;color:#fff;border:none;font-size:11px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer">
+        Draft with These Settings →
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:20px">
+  <strong>A</strong> = clean and minimal — just the FreeSewing knobs that matter<br>
+  <strong>B</strong> = shows AI reasoning + Armstrong math in a collapsible section<br>
+  Click your preference or describe a blend in the terminal.
+</p>

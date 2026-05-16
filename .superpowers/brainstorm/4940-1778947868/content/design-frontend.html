@@ -1,0 +1,147 @@
+<h2>Design — Section 3: SmartDraftPanel UI</h2>
+<p class="subtitle">This panel appears on <code>/analyze</code> after analysis completes — below the existing pattern preview section. Full mockup below.</p>
+
+<div class="mockup">
+  <div class="mockup-header">/analyze page — SmartDraftPanel (expanded state)</div>
+  <div class="mockup-body" style="padding:0">
+
+    <!-- Toggle button row (collapsed state trigger) -->
+    <div style="display:flex;align-items:center;justify-content:between;padding:14px 20px;border-bottom:1px solid #e8e0cc;background:#fafaf8;cursor:pointer">
+      <div style="display:flex;align-items:center;gap:10px;flex:1">
+        <span style="color:#c8a060;font-size:16px">✦</span>
+        <div>
+          <div style="font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#555">AI Pattern Parameters</div>
+          <div style="font-size:10px;color:#aaa;margin-top:1px">AI 推薦設計 · 版型選項 · Armstrong 計算</div>
+        </div>
+      </div>
+      <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border:1px solid #1a1a1a;background:#1a1a1a;color:#fff">收起 ▲</span>
+    </div>
+
+    <div style="padding:20px">
+
+      <!-- Design selector -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:#aaa;margin-bottom:8px">AI 推薦設計</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button style="padding:6px 16px;background:#1a1a1a;color:#fff;border:none;font-size:12px;letter-spacing:.05em;cursor:pointer">
+            simon &nbsp;<span style="opacity:.6;font-size:10px">78%</span>
+          </button>
+          <button style="padding:6px 16px;border:1px solid #ddd;background:transparent;color:#888;font-size:12px;cursor:pointer">
+            simone &nbsp;<span style="font-size:10px">52%</span>
+          </button>
+          <button style="padding:6px 16px;border:1px solid #ddd;background:transparent;color:#888;font-size:12px;cursor:pointer">
+            huey &nbsp;<span style="font-size:10px">31%</span>
+          </button>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:#aaa;font-style:italic">
+          領型匹配：basic_shirt_collar · 袖型匹配：set_in · 信心分數：78%
+        </div>
+      </div>
+
+      <!-- Options table -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:#aaa;margin-bottom:8px">
+          版型選項 &nbsp;<span style="color:#c8a060">✦ 金邊 = AI 偵測</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <tr style="border-bottom:1px solid #f0ece4">
+            <td style="padding:9px 0;color:#555;width:40%">領型 collarStyle</td>
+            <td style="padding:9px 0;text-align:right">
+              <select style="border:1px solid #c8a060;padding:4px 8px;font-size:12px;color:#1a1a1a;background:#fffef8">
+                <option>classic</option>
+                <option>band</option>
+                <option>none</option>
+              </select>
+              <span style="font-size:9px;color:#c8a060;margin-left:4px">✦ AI</span>
+            </td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0ece4">
+            <td style="padding:9px 0;color:#555">袖口 cuffStyle</td>
+            <td style="padding:9px 0;text-align:right">
+              <select style="border:1px solid #c8a060;padding:4px 8px;font-size:12px;color:#1a1a1a;background:#fffef8">
+                <option>frenchCuff</option>
+                <option>classical</option>
+              </select>
+              <span style="font-size:9px;color:#c8a060;margin-left:4px">✦ AI</span>
+            </td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0ece4">
+            <td style="padding:9px 0;color:#555">縫份 sa</td>
+            <td style="padding:9px 0;text-align:right">
+              <input type="number" value="12" style="width:52px;border:1px solid #c8a060;padding:4px 6px;font-size:12px;text-align:right"> mm
+              <span style="font-size:9px;color:#c8a060;margin-left:4px">✦ AI</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:9px 0;color:#555">無紙模式 paperless</td>
+            <td style="padding:9px 0;text-align:right">
+              <select style="border:1px solid #ddd;padding:4px 8px;font-size:12px;color:#888">
+                <option>off</option>
+                <option>on</option>
+              </select>
+              <span style="font-size:9px;color:#aaa;margin-left:4px">預設</span>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Armstrong collapsible -->
+      <details style="margin-bottom:20px;border:1px solid #e8e0cc">
+        <summary style="padding:10px 14px;font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:#c8a060;cursor:pointer;background:#fdf9f3;list-style:none;display:flex;justify-content:space-between">
+          <span>Armstrong 打版計算</span>
+          <span>▾</span>
+        </summary>
+        <div style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;font-size:11px">
+          <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0ece4"><span style="color:#888">臀腰差</span><span>8.2"</span></div>
+          <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0ece4"><span style="color:#888">前省</span><span>×2 · 0.375" 每省</span></div>
+          <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0ece4"><span style="color:#888">後省</span><span>×2 · 0.875" 每省</span></div>
+          <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0ece4"><span style="color:#888">罩杯</span><span style="color:#c8a060">C cup (+0.375")</span></div>
+          <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0ece4"><span style="color:#888">袖長</span><span>22.25"</span></div>
+          <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:#888">美規尺寸</span><span>Size 12</span></div>
+        </div>
+      </details>
+
+      <!-- Action row -->
+      <div style="display:flex;align-items:center;gap:12px">
+        <button style="flex:1;padding:12px;background:#1a1a1a;color:#fff;border:none;font-size:11px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer">
+          ✦ &nbsp;Draft with These Settings
+        </button>
+        <button style="padding:12px 16px;border:1px solid #ddd;background:transparent;color:#888;font-size:11px;cursor:pointer">
+          Reset to Defaults
+        </button>
+      </div>
+
+      <!-- Loading / success state hint -->
+      <div style="margin-top:10px;font-size:11px;color:#aaa;text-align:center">
+        打版中… → 自動跳轉至 /pattern 版型工具頁面
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+  <div style="padding:14px;border:1px solid #e0d8cc;background:#fafaf8;font-size:12px">
+    <div class="label" style="margin-bottom:8px">Component states</div>
+    <div style="line-height:2;color:#666">
+      <div><code>idle</code> — toggle button only, not yet fetched</div>
+      <div><code>loading</code> — fetching draft-params from API</div>
+      <div><code>ready</code> — panel open, options editable</div>
+      <div><code>drafting</code> — "Draft" clicked, spinner shown</div>
+      <div><code>error</code> — fetch or draft failed, inline message</div>
+    </div>
+  </div>
+  <div style="padding:14px;border:1px solid #e0d8cc;background:#fafaf8;font-size:12px">
+    <div class="label" style="margin-bottom:8px">Frontend details</div>
+    <div style="line-height:2;color:#666">
+      <div>• Fetches params on first expand (lazy)</div>
+      <div>• Switching design re-renders options for that design</div>
+      <div>• Gold border = AI-sourced, grey = default</div>
+      <div>• "Reset to Defaults" restores AI-suggested values</div>
+      <div>• On draft success → <code>router.push('/pattern?redraft=...')</code></div>
+      <div>• Bilingual labels from <code>i18n.ts</code> <code>smartDraft.*</code> keys</div>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:20px">Does this UI look right? Any tweaks before I write the spec?</p>

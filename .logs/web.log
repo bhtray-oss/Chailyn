@@ -1,0 +1,163 @@
+
+> web@0.1.0 dev /Users/raysmacbook/Documents/Claude/Projects/Chailyn's FreeSewing APP Developing/03_程式碼專案/chailyn-app/apps/web
+> next dev -p 3000 -H 0.0.0.0
+
+  ▲ Next.js 14.2.5
+  - Local:        http://localhost:3000
+  - Network:      http://0.0.0.0:3000
+  - Environments: .env.local
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 1389ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1132ms (546 modules)
+ GET / 200 in 18ms
+ ✓ Compiled /profile in 237ms (556 modules)
+ GET /profile 200 in 293ms
+ ✓ Compiled /api/profiles/[id] in 85ms (322 modules)
+ GET /api/profiles/00000000-0000-0000-0000-000000000001 200 in 319ms
+ GET /api/profiles/00000000-0000-0000-0000-000000000001 200 in 6ms
+ ✓ Compiled /analyze in 245ms (565 modules)
+ GET /analyze 200 in 316ms
+ ✓ Compiled /history in 143ms (591 modules)
+ GET /history 200 in 174ms
+ ✓ Compiled /api/analyses/user/[userId] in 40ms (318 modules)
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 282ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 6ms
+ ✓ Compiled /api/analyses/photo/[photoId] in 38ms (320 modules)
+ GET /api/analyses/photo/a7bb702d-756c-4064-aea8-165713d8c91d 200 in 213ms
+ GET /api/analyses/photo/536d6557-a8c7-498b-a0ef-6dbd8977b680 200 in 214ms
+ GET /analyze 200 in 34ms
+ ✓ Compiled /pattern in 113ms (637 modules)
+ GET /pattern 200 in 138ms
+ ✓ Compiled /wardrobe in 118ms (646 modules)
+ GET /wardrobe 200 in 160ms
+ ✓ Compiled /api/patterns/user/[userId] in 41ms (334 modules)
+ GET /api/patterns/user/00000000-0000-0000-0000-000000000001 200 in 275ms
+ GET /api/patterns/user/00000000-0000-0000-0000-000000000001 200 in 16ms
+ ✓ Compiled /search in 132ms (656 modules)
+ GET /search 200 in 158ms
+ ✓ Compiled /recommendations in 127ms (664 modules)
+ GET /recommendations 200 in 156ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 8ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 4ms
+ ✓ Compiled /api/recommendations in 69ms (347 modules)
+ GET /analyze 200 in 50ms
+ POST /api/recommendations 200 in 837ms
+ ✓ Compiled /api/analyses/upload in 114ms (366 modules)
+ POST /api/analyses/upload?user_id=00000000-0000-0000-0000-000000000001 200 in 134ms
+ ✓ Compiled /api/analyses/jobs in 56ms (369 modules)
+ POST /api/analyses/jobs 200 in 25749ms
+ ✓ Compiled /api/analyses/jobs/[jobId] in 49ms (340 modules)
+ GET /api/analyses/jobs/3cc0a8bd-2320-449b-a7f0-6e7e1d74a8e1 200 in 223ms
+ ✓ Compiled /history in 164ms (618 modules)
+ GET /apple-touch-icon-precomposed.png 404 in 250ms
+ GET /apple-touch-icon.png 404 in 247ms
+ GET /history 200 in 248ms
+ GET /analyze 200 in 29ms
+ GET /analyze 200 in 17ms
+ GET /recommendations 200 in 17ms
+ ✓ Compiled /api/analyses/user/[userId] in 64ms (315 modules)
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 103ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 6ms
+ ✓ Compiled /api/analyses/photo/[photoId] in 65ms (317 modules)
+ GET /api/analyses/photo/9dcc6942-c50a-4951-be24-b30e0c8a8560 200 in 78ms
+ ✓ Compiled /api/recommendations in 58ms (320 modules)
+ POST /api/recommendations 200 in 18217ms
+ GET /recommendations 200 in 49ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 6ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 4ms
+ GET /analyze 200 in 21ms
+ ✓ Compiled /api/analyses/upload in 103ms (334 modules)
+ POST /api/analyses/upload?user_id=00000000-0000-0000-0000-000000000001 200 in 117ms
+ ✓ Compiled /api/analyses/jobs in 33ms (338 modules)
+ POST /api/analyses/jobs 200 in 26252ms
+ ✓ Compiled /api/analyses/jobs/[jobId] in 56ms (340 modules)
+ GET /api/analyses/jobs/9fb09265-3fc7-4c3f-b17b-ff5a8c629c25 200 in 67ms
+ ✓ Compiled /api/patterns/draft in 72ms (360 modules)
+ POST /api/patterns/draft 200 in 145ms
+ ✓ Compiled /api/recommendations in 58ms (362 modules)
+ POST /api/recommendations 200 in 20011ms
+ GET /recommendations 200 in 27ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 10ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 5ms
+ ✓ Compiled /api/analyses/photo/[photoId] in 50ms (359 modules)
+ GET /api/analyses/photo/600d67bb-16e2-4219-b0ed-821f67731197 200 in 62ms
+ ✓ Compiled /pattern in 74ms (370 modules)
+ GET /pattern 200 in 106ms
+ ✓ Compiled /search in 54ms (375 modules)
+ GET /search 200 in 88ms
+ GET /recommendations 200 in 20ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 7ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 8ms
+ ✓ Compiled /history in 60ms (382 modules)
+ GET /history 200 in 94ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 7ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 5ms
+ ✓ Compiled / in 140ms (321 modules)
+ GET / 200 in 208ms
+ GET / 200 in 11ms
+ GET /analyze 200 in 25ms
+ GET /history 200 in 16ms
+ ✓ Compiled /api/analyses/user/[userId] in 61ms (350 modules)
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 98ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 4ms
+ ✓ Compiled /search in 37ms (356 modules)
+ GET /search 200 in 82ms
+ GET /wardrobe 200 in 13ms
+ ✓ Compiled /api/patterns/user/[userId] in 90ms (358 modules)
+ GET /api/patterns/user/00000000-0000-0000-0000-000000000001 200 in 158ms
+ GET /api/patterns/user/00000000-0000-0000-0000-000000000001 200 in 16ms
+ ✓ Compiled /profile in 41ms (363 modules)
+ GET /profile 200 in 73ms
+ ✓ Compiled /api/profiles/[id] in 51ms (382 modules)
+ GET /api/profiles/00000000-0000-0000-0000-000000000001 200 in 65ms
+ GET /api/profiles/00000000-0000-0000-0000-000000000001 200 in 3ms
+ GET / 200 in 27ms
+ GET / 200 in 12ms
+ GET /history 200 in 16ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 13ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 12ms
+ ✓ Compiled /api/analyses/photo/[photoId] in 99ms (352 modules)
+ GET /api/analyses/photo/9dcc6942-c50a-4951-be24-b30e0c8a8560 200 in 119ms
+ GET /api/analyses/photo/a7bb702d-756c-4064-aea8-165713d8c91d 200 in 116ms
+ GET /api/analyses/photo/0200f19a-acc8-448c-abfc-2925ba48d932 200 in 117ms
+ GET /api/analyses/photo/536d6557-a8c7-498b-a0ef-6dbd8977b680 200 in 117ms
+ GET /api/analyses/photo/600d67bb-16e2-4219-b0ed-821f67731197 200 in 121ms
+ GET /api/analyses/photo/424b634e-8271-4087-8ff5-9971b544164a 200 in 5ms
+ GET /api/analyses/photo/80e8b604-7e2a-4895-98c0-ec1d5eb6f30f 200 in 10ms
+ GET /api/analyses/photo/caa0e0cd-5eb5-4969-bf6f-c5c556e19835 200 in 10ms
+ GET /api/analyses/photo/1c59be19-1584-4754-8b99-a2d710f3b614 200 in 11ms
+ GET /api/analyses/photo/fb9a8f5e-7641-45a2-b4d9-fa3326b8b688 200 in 11ms
+ GET /api/analyses/photo/97dd44ce-ae3b-48ec-8da2-682b74860f6a 200 in 11ms
+ GET /api/analyses/photo/badd3361-423b-452d-a259-fca59d5d9ca7 200 in 9ms
+ GET /api/analyses/photo/8aae6b7a-25bd-4d7e-b50c-c9541da83edd 200 in 14ms
+ GET /api/analyses/photo/476f9394-1074-49ca-b59e-008606fc91f9 200 in 14ms
+ GET /api/analyses/photo/b5dbfce4-4ab3-41a5-bdd4-eb92d7a7fee3 200 in 14ms
+ GET /api/analyses/photo/49a9ed8e-2c4a-4e80-aac7-6ccb04d65c95 200 in 13ms
+ GET /api/analyses/photo/1b21e7c0-d67c-479e-ba01-6ae4f1ffdbb8 200 in 15ms
+ GET /api/analyses/photo/7692a220-b01e-4444-a57a-0964e3fdff70 200 in 12ms
+ GET /api/analyses/photo/1885ee54-4b11-4ba7-9d63-8194792b2dde 200 in 18ms
+ GET /api/analyses/photo/318c94e9-5340-4e66-ab9b-e9c2bb28872f 200 in 18ms
+ GET /api/analyses/photo/1c90fd43-1674-458e-b8ca-6f5d2a8edf0f 200 in 17ms
+ GET /api/analyses/photo/e222d6e1-b734-4bfb-a533-057106d59646 200 in 13ms
+ GET /api/analyses/photo/1b9713c8-2ff0-4839-a2f2-f219dd163aa1 200 in 10ms
+ GET /recommendations 200 in 38ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 8ms
+ GET /api/analyses/user/00000000-0000-0000-0000-000000000001 200 in 10ms
+ GET /analyze 200 in 22ms
+ ✓ Compiled /search in 52ms (358 modules)
+ GET /search 200 in 84ms
+ ✓ Compiled /pattern in 83ms (363 modules)
+ GET /pattern 200 in 113ms
+ GET /wardrobe 200 in 24ms
+ ✓ Compiled /api/patterns/user/[userId] in 45ms (365 modules)
+ GET /api/patterns/user/00000000-0000-0000-0000-000000000001 200 in 125ms
+ GET /api/patterns/user/00000000-0000-0000-0000-000000000001 200 in 127ms
+ ✓ Compiled /profile in 63ms (370 modules)
+ GET /profile 200 in 89ms
+ ✓ Compiled /api/profiles/[id] in 72ms (389 modules)
+ GET /api/profiles/00000000-0000-0000-0000-000000000001 200 in 88ms
+ GET /api/profiles/00000000-0000-0000-0000-000000000001 200 in 88ms

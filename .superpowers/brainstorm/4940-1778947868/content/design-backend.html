@@ -1,0 +1,120 @@
+<h2>Design — Section 2: Backend</h2>
+<p class="subtitle">Two changes: expand the option mapper, add one new endpoint.</p>
+
+<div class="section">
+  <h3>① Expand <code>_build_options()</code> in <code>auto_pattern_maker.py</code></h3>
+  <p style="font-size:13px;color:#666;margin-bottom:12px">
+    The existing <code>_DESIGN_OPTION_MAP</code> only covers 5 designs shallowly. We expand it to cover all 15,
+    and we add a <strong>source tag</strong> per option so the frontend knows which values came from AI vs. defaults.
+  </p>
+
+  <table style="width:100%;border-collapse:collapse;font-size:12px">
+    <thead>
+      <tr style="background:#f5f0e8;text-align:left">
+        <th style="padding:8px 10px;border:1px solid #e0d8cc">Design</th>
+        <th style="padding:8px 10px;border:1px solid #e0d8cc">Option key</th>
+        <th style="padding:8px 10px;border:1px solid #e0d8cc">Mapped from Vision field</th>
+        <th style="padding:8px 10px;border:1px solid #e0d8cc">Source</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom:1px solid #eee">
+        <td style="padding:7px 10px;border:1px solid #eee;font-weight:600">simon / simone</td>
+        <td style="padding:7px 10px;border:1px solid #eee"><code>collarStyle</code></td>
+        <td style="padding:7px 10px;border:1px solid #eee"><code>components.collar.type</code> → classic / band / none</td>
+        <td style="padding:7px 10px;border:1px solid #eee;color:#c8a060">ai</td>
+      </tr>
+      <tr style="border-bottom:1px solid #eee">
+        <td style="padding:7px 10px;border:1px solid #eee;font-weight:600">simon / simone</td>
+        <td style="padding:7px 10px;border:1px solid #eee"><code>cuffStyle</code></td>
+        <td style="padding:7px 10px;border:1px solid #eee"><code>components.sleeves.cuff_type</code> → classical / frenchCuff</td>
+        <td style="padding:7px 10px;border:1px solid #eee;color:#c8a060">ai</td>
+      </tr>
+      <tr style="border-bottom:1px solid #eee">
+        <td style="padding:7px 10px;border:1px solid #eee;font-weight:600">huey / hugo</td>
+        <td style="padding:7px 10px;border:1px solid #eee"><code>kangarooPocket</code></td>
+        <td style="padding:7px 10px;border:1px solid #eee"><code>components.pockets.type != 'none'</code> → true/false</td>
+        <td style="padding:7px 10px;border:1px solid #eee;color:#c8a060">ai</td>
+      </tr>
+      <tr style="border-bottom:1px solid #eee">
+        <td style="padding:7px 10px;border:1px solid #eee;font-weight:600">carlita / carlton</td>
+        <td style="padding:7px 10px;border:1px solid #eee"><code>pockets</code></td>
+        <td style="padding:7px 10px;border:1px solid #eee"><code>components.pockets.type != 'none'</code> → true/false</td>
+        <td style="padding:7px 10px;border:1px solid #eee;color:#c8a060">ai</td>
+      </tr>
+      <tr style="border-bottom:1px solid #eee">
+        <td style="padding:7px 10px;border:1px solid #eee;font-weight:600">sandy / waralee</td>
+        <td style="padding:7px 10px;border:1px solid #eee"><code>waistbandWidth</code></td>
+        <td style="padding:7px 10px;border:1px solid #eee"><code>cut.waist_treatment</code> → 30mm elastic / 40mm dart</td>
+        <td style="padding:7px 10px;border:1px solid #eee;color:#c8a060">ai</td>
+      </tr>
+      <tr style="border-bottom:1px solid #eee">
+        <td style="padding:7px 10px;border:1px solid #eee;font-weight:600">paco / titan</td>
+        <td style="padding:7px 10px;border:1px solid #eee"><code>elasticWidth</code></td>
+        <td style="padding:7px 10px;border:1px solid #eee"><code>cut.waist_treatment == 'elastic'</code> → 25mm, else 0</td>
+        <td style="padding:7px 10px;border:1px solid #eee;color:#c8a060">ai</td>
+      </tr>
+      <tr style="border-bottom:1px solid #eee">
+        <td style="padding:7px 10px;border:1px solid #eee;font-weight:600">all designs</td>
+        <td style="padding:7px 10px;border:1px solid #eee"><code>sa</code></td>
+        <td style="padding:7px 10px;border:1px solid #eee"><code>craft_recommendations.seam_allowance_mm</code> (Claude suggests this)</td>
+        <td style="padding:7px 10px;border:1px solid #eee;color:#c8a060">ai</td>
+      </tr>
+      <tr>
+        <td style="padding:7px 10px;border:1px solid #eee;font-weight:600">all designs</td>
+        <td style="padding:7px 10px;border:1px solid #eee"><code>paperless</code></td>
+        <td style="padding:7px 10px;border:1px solid #eee">always false (user can toggle in panel)</td>
+        <td style="padding:7px 10px;border:1px solid #eee;color:#888">default</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:12px;color:#888;margin-top:8px">
+    Each option entry gets a <code>source: "ai" | "default"</code> field. The frontend uses this to render gold borders on AI-sourced options.
+  </p>
+</div>
+
+<div class="section">
+  <h3>② New response model <code>DraftParamsResponse</code></h3>
+  <div style="background:#1a1a1a;color:#e8e0cc;padding:16px;font-size:12px;font-family:monospace;line-height:1.7;border-radius:2px">
+<pre style="margin:0">{
+  "design":      "simon",
+  "confidence":  0.78,
+  "alternatives": [
+    { "design": "simone", "confidence": 0.52, "description_zh": "女版襯衫" }
+  ],
+  "options": {
+    "collarStyle": { "value": "classic",     "source": "ai",      "choices": ["classic","band","none"] },
+    "cuffStyle":   { "value": "frenchCuff",  "source": "ai",      "choices": ["classical","frenchCuff"] },
+    "sa":          { "value": 12,            "source": "ai" },
+    "paperless":   { "value": false,         "source": "default" }
+  },
+  "armstrong": {
+    "hip_waist_diff_in": 8.2,
+    "front_dart_count": 2,  "front_dart_intake_in": 0.375,
+    "back_dart_count":  2,  "back_dart_intake_in":  0.875,
+    "bust_cup": "C",        "cup_spread_in": 0.375,
+    "approx_us_size": 12,
+    "sleeve_length_in": 22.25,
+    "ease_level": "semi_fitted"
+  },
+  "reasoning": ["領型匹配：basic_shirt_collar", "袖型匹配：set_in", "綜合信心分數：78%"]
+}</pre>
+  </div>
+</div>
+
+<div class="section">
+  <h3>③ New endpoint</h3>
+  <div style="background:#f5f0e8;padding:14px 16px;font-size:13px;font-family:monospace;border:1px solid #e0d8cc">
+    <span style="color:#c8a060;font-weight:bold">GET</span> &nbsp;/analyses/<span style="color:#c8a060">{analysis_id}</span>/draft-params?profile_id=<span style="color:#c8a060">{uuid}</span>
+  </div>
+  <div style="font-size:12px;color:#666;margin-top:8px;line-height:1.7">
+    • Reads <code>ai_analyses</code> row (already exists) — no new DB table<br>
+    • Reads <code>body_profiles</code> measurements (mm) for the profile<br>
+    • Calls <code>build_draft_params(measurements_mm, analysis_result)</code><br>
+    • Returns <code>DraftParamsResponse</code> above<br>
+    • If analysis not found → 404. If profile not found → uses empty measurements + returns warning.
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:8px">Does this backend design look right? Any option mappings to add or remove?</p>

@@ -201,7 +201,7 @@ When expanded:
 
 **Behaviour:**
 - Fetches params lazily on first expand (not on page load)
-- Switching design choice re-renders options for the new design (re-calls `_build_options` via the endpoint with a `?design=` override — or client-side filter from alternatives)
+- Switching design choice re-renders options for the new design by re-calling `GET /analyses/{id}/draft-params?profile_id=...&design={chosen}` — the endpoint accepts an optional `design` query param that overrides the AI-ranked top choice. The endpoint runs `_build_options(chosen_design, analysis, arm, prefs)` and returns a fresh `DraftParamsResponse` for that design.
 - Gold border (`var(--gold)`) + "✦ AI" label for `source === "ai"` options
 - Grey border + "預設" label for `source === "default"` options
 - "Reset to Defaults" restores all fields to the original API-returned values

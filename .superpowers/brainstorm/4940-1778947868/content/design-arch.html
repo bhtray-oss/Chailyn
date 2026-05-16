@@ -1,0 +1,100 @@
+<h2>Design — Section 1: Architecture & Data Flow</h2>
+<p class="subtitle">What gets built, where it lives, and how data moves end-to-end.</p>
+
+<div class="mockup">
+  <div class="mockup-header">End-to-End Data Flow</div>
+  <div class="mockup-body">
+    <div style="display:flex;flex-direction:column;gap:0;font-size:12px">
+
+      <!-- Step 1 -->
+      <div style="display:flex;align-items:stretch;gap:0">
+        <div style="width:28px;display:flex;flex-direction:column;align-items:center">
+          <div style="width:24px;height:24px;border-radius:50%;background:#1a1a1a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;flex-shrink:0">1</div>
+          <div style="width:2px;flex:1;background:#e0d8cc;margin:4px 0"></div>
+        </div>
+        <div style="padding:0 0 20px 12px">
+          <div style="font-weight:600;color:#1a1a1a;margin-bottom:2px">Photo upload + async Vision analysis</div>
+          <div style="color:#888">已存在。<code>claude_vision.py</code> → <code>ai_analyses</code> 表 → structured JSON (collar, sleeve, silhouette, closest_patterns…)</div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div style="display:flex;align-items:stretch;gap:0">
+        <div style="width:28px;display:flex;flex-direction:column;align-items:center">
+          <div style="width:24px;height:24px;border-radius:50%;background:#c8a060;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;flex-shrink:0">2</div>
+          <div style="width:2px;flex:1;background:#e0d8cc;margin:4px 0"></div>
+        </div>
+        <div style="padding:0 0 20px 12px">
+          <div style="font-weight:600;color:#c8a060;margin-bottom:2px">NEW — GET /analyses/{id}/draft-params ✦</div>
+          <div style="color:#888">Frontend auto-calls after analysis completes. Backend reads analysis JSON + body_profile measurements (mm) → calls <code>build_draft_params()</code> → returns <code>DraftParamsResponse</code> with design, all options, Armstrong metrics, alternatives, source tags per option.</div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div style="display:flex;align-items:stretch;gap:0">
+        <div style="width:28px;display:flex;flex-direction:column;align-items:center">
+          <div style="width:24px;height:24px;border-radius:50%;background:#c8a060;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;flex-shrink:0">3</div>
+          <div style="width:2px;flex:1;background:#e0d8cc;margin:4px 0"></div>
+        </div>
+        <div style="padding:0 0 20px 12px">
+          <div style="font-weight:600;color:#c8a060;margin-bottom:2px">NEW — SmartDraftPanel component ✦</div>
+          <div style="color:#888">Expandable panel on <code>/analyze</code> page. Renders design selector (top 3 choices), editable option rows (AI-sourced = gold border, default = grey), collapsible Armstrong section. User tweaks, clicks "Draft".</div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div style="display:flex;align-items:stretch;gap:0">
+        <div style="width:28px;display:flex;flex-direction:column;align-items:center">
+          <div style="width:24px;height:24px;border-radius:50%;background:#1a1a1a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;flex-shrink:0">4</div>
+          <div style="width:2px;flex:1;background:#e0d8cc;margin:4px 0"></div>
+        </div>
+        <div style="padding:0 0 20px 12px">
+          <div style="font-weight:600;color:#1a1a1a;margin-bottom:2px">POST /patterns/draft (existing)</div>
+          <div style="color:#888">Panel sends design + measurements + edited options + SA. Returns <code>instance_id</code> + SVG. Pattern saved to <code>pattern_instances</code> table with <code>created_by_ai = true</code>.</div>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div style="display:flex;align-items:stretch;gap:0">
+        <div style="width:28px;display:flex;flex-direction:column;align-items:center">
+          <div style="width:24px;height:24px;border-radius:50%;background:#1a1a1a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;flex-shrink:0">5</div>
+        </div>
+        <div style="padding:0 0 0 12px">
+          <div style="font-weight:600;color:#1a1a1a;margin-bottom:2px">Redirect → /pattern?redraft={instance_id}</div>
+          <div style="color:#888">Existing pattern page loads the saved instance. User gets full toolset: redraft, DXF, SVG download, BOM, version history.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+  <div style="padding:16px;border:1px solid #e0d8cc;background:#fafaf8">
+    <div class="label" style="margin-bottom:10px">Files Changed / Added</div>
+    <div style="font-size:12px;line-height:1.9">
+      <div><span style="color:#c8a060">✦ NEW</span> &nbsp;<code>SmartDraftPanel.tsx</code></div>
+      <div><span style="color:#888">✎ edit</span> &nbsp;<code>auto_pattern_maker.py</code> — expand _DESIGN_OPTION_MAP (15 designs)</div>
+      <div><span style="color:#888">✎ edit</span> &nbsp;<code>routers/analyses.py</code> — add GET endpoint</div>
+      <div><span style="color:#888">✎ edit</span> &nbsp;<code>api.ts</code> — add analysisApi.getDraftParams()</div>
+      <div><span style="color:#888">✎ edit</span> &nbsp;<code>analyze/page.tsx</code> — mount SmartDraftPanel</div>
+      <div><span style="color:#888">✎ edit</span> &nbsp;<code>i18n.ts</code> — new smartDraft.* keys</div>
+    </div>
+  </div>
+
+  <div style="padding:16px;border:1px solid #e0d8cc;background:#fafaf8">
+    <div class="label" style="margin-bottom:10px">What's NOT changing</div>
+    <div style="font-size:12px;line-height:1.9;color:#888">
+      <div>• claude_vision.py — no new Vision call</div>
+      <div>• pattern engine — no changes</div>
+      <div>• /pattern page — no changes</div>
+      <div>• DB schema — no migration needed</div>
+      <div>• Existing ArmstrongDraftPanel — stays as-is</div>
+      <div>• Wardrobe / search pages — untouched</div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:20px">Does this architecture look right? Any pieces you'd add or remove before we go deeper?</p>
