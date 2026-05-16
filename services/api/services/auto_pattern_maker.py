@@ -381,8 +381,10 @@ def _build_annotated_options(
 
     # ── waistbandWidth (sandy, waralee) ─────────────────────────────────────
     if design_id in ("sandy", "waralee"):
-        wb = 30 if waist_tx == "elastic" else 40
-        opts["waistbandWidth"] = ai(wb)
+        if waist_tx == "elastic":
+            opts["waistbandWidth"] = ai(30)
+        else:
+            opts["waistbandWidth"] = default(40)
 
     # ── elasticWidth (paco, titan) ───────────────────────────────────────────
     if design_id in ("paco", "titan"):

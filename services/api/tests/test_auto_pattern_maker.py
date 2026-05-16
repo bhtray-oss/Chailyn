@@ -129,7 +129,19 @@ def test_sandy_dart_waistband():
     }
     opts = _build_annotated_options("sandy", analysis, _arm(), {})
     assert opts["waistbandWidth"]["value"] == 40
-    assert opts["waistbandWidth"]["source"] == "ai"
+    assert opts["waistbandWidth"]["source"] == "default"
+
+
+def test_sandy_no_waist_treatment_is_default():
+    """waistbandWidth falls back to source=default when Vision returns no waist_treatment."""
+    analysis = {
+        "components": {"collar": {}, "sleeves": {}},
+        "craft_recommendations": {},
+        "cut": {},  # no waist_treatment key
+    }
+    opts = _build_annotated_options("sandy", analysis, _arm(), {})
+    assert opts["waistbandWidth"]["value"] == 40
+    assert opts["waistbandWidth"]["source"] == "default"
 
 
 def test_paperless_always_default():
