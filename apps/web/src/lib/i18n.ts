@@ -344,6 +344,9 @@ const zh = {
   'smartDraft.armSleeve':     '袖長',
   'smartDraft.armSize':       '美規尺寸',
   'smartDraft.armEach':       '每省',
+  'smartDraft.loading':       '載入中…',
+  'smartDraft.on':            '開',
+  'smartDraft.off':           '關',
 }
 
 const en: typeof zh = {
@@ -690,6 +693,9 @@ const en: typeof zh = {
   'smartDraft.armSleeve':     'Sleeve length',
   'smartDraft.armSize':       'US size',
   'smartDraft.armEach':       'each',
+  'smartDraft.loading':       'Loading…',
+  'smartDraft.on':            'on',
+  'smartDraft.off':           'off',
 }
 
 export const dict: Record<Lang, typeof zh> = { zh, en }

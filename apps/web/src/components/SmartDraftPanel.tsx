@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { analysisApi, patternApi } from '@/lib/api'
 import type { DraftParamsResponse, OptionEntry } from '@/lib/api'
@@ -19,6 +19,7 @@ interface Props {
 export default function SmartDraftPanel({ analysisId, profileId = DEV_PROFILE_ID }: Props) {
   const { t } = useLanguage()
   const router = useRouter()
+  const fetchGenRef = useRef(0)
 
   const [open, setOpen]             = useState(false)
   const [state, setState]           = useState<PanelState>('idle')
@@ -28,10 +29,13 @@ export default function SmartDraftPanel({ analysisId, profileId = DEV_PROFILE_ID
   const [errorMsg, setErrorMsg]     = useState<string | null>(null)
 
   const fetchParams = useCallback(async (design?: string) => {
+    fetchGenRef.current += 1
+    const gen = fetchGenRef.current
     setState('loading')
     setErrorMsg(null)
     try {
       const data = await analysisApi.getDraftParams(analysisId, profileId, design)
+      if (gen !== fetchGenRef.current) return  // stale response — discard
       setParams(data)
       setActiveDesign(data.design)
       const initial: Record<string, string | number | boolean> = {}
@@ -41,6 +45,7 @@ export default function SmartDraftPanel({ analysisId, profileId = DEV_PROFILE_ID
       setEditedOpts(initial)
       setState('ready')
     } catch (e: unknown) {
+      if (gen !== fetchGenRef.current) return  // stale error — discard
       const msg = e instanceof Error ? e.message : String(e)
       setErrorMsg(msg)
       setState('error')
@@ -138,7 +143,7 @@ export default function SmartDraftPanel({ analysisId, profileId = DEV_PROFILE_ID
           {state === 'loading' && (
             <div className="flex items-center justify-center py-8 gap-2" style={{ color: 'var(--muted)' }}>
               <span className="animate-spin text-base" style={{ color: 'var(--gold)' }}>◌</span>
-              <span className="text-xs tracking-widest uppercase">Loading…</span>
+              <span className="text-xs tracking-widest uppercase">{t('smartDraft.loading')}</span>
             </div>
           )}
 
@@ -207,7 +212,7 @@ export default function SmartDraftPanel({ analysisId, profileId = DEV_PROFILE_ID
                       <div className="flex items-center gap-2">
                         {typeof entry.value === 'boolean' ? (
                           <select
-                            value={editedOpts[key] ? 'true' : 'false'}
+                            value={editedOpts[key] === true ? 'true' : 'false'}
                             onChange={e => handleOptionChange(key, e.target.value === 'true')}
                             disabled={state === 'drafting'}
                             className="text-xs px-2 py-1 disabled:opacity-50"
@@ -216,8 +221,8 @@ export default function SmartDraftPanel({ analysisId, profileId = DEV_PROFILE_ID
                               background: 'var(--surface)', color: 'var(--ink)',
                             }}
                           >
-                            <option value="true">on</option>
-                            <option value="false">off</option>
+                            <option value="true">{t('smartDraft.on')}</option>
+                            <option value="false">{t('smartDraft.off')}</option>
                           </select>
                         ) : entry.choices.length > 0 ? (
                           <select
