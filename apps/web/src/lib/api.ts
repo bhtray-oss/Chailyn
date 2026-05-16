@@ -132,16 +132,16 @@ export const analysisApi = {
   get: (analysisId: string) =>
     request(`/analyses/${analysisId}`),
 
-  getDraftParams: async (
+  getDraftParams: (
     analysisId: string,
     profileId: string,
     design?: string,
   ): Promise<DraftParamsResponse> => {
     const params = new URLSearchParams({ profile_id: profileId })
     if (design) params.set('design', design)
-    const res = await fetch(`${API_BASE}/analyses/${analysisId}/draft-params?${params}`)
-    if (!res.ok) throw new Error(`draft-params failed: ${res.status}`)
-    return res.json()
+    return request<DraftParamsResponse>(
+      `/analyses/${analysisId}/draft-params?${params}`
+    )
   },
 }
 
