@@ -11,7 +11,7 @@ auto_pattern_maker.py — AI 自動打版服務
 
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any, Literal, Optional, TypedDict
 
 from .patternmaking_rules import (
     DESIGN_RULES,
@@ -293,6 +293,111 @@ def _build_options(design_id: str, analysis: dict, arm: ArmstrongMetrics, prefs:
     fit_ease = _get(analysis, "cut", "fit_ease", default=arm.ease_level)
     if design_id in ("bella", "brian", "noble") and fit_ease == "fitted":
         opts["fitEase"] = "fitted"
+
+    return opts
+
+
+# ─── Annotated Options (parallel to _build_options, does NOT replace it) ─────
+
+class OptionEntry(TypedDict):
+    value: Any
+    source: Literal["ai", "default"]
+    choices: list  # empty list = free-form (int / bool)
+
+
+# Valid choices per design option (for dropdowns in the frontend)
+_OPTION_CHOICES: dict[str, list[str]] = {
+    "collarStyle": ["classic", "band", "none"],
+    "cuffStyle":   ["classical", "frenchCuff"],
+    "ease":        ["fitted", "semi_fitted", "relaxed", "oversized"],
+}
+
+# Maps collar Vision type → FreeSewing collarStyle value
+_COLLAR_TO_STYLE: dict[str, str] = {
+    "basic_shirt_collar": "classic",
+    "convertible":        "classic",
+    "mandarin":           "band",
+    "stand_collar":       "band",
+    "crew_neck":          "none",
+    "none":               "none",
+}
+
+# Maps cuff Vision type → FreeSewing cuffStyle value
+_CUFF_TO_STYLE: dict[str, str] = {
+    "basic_shirt_cuff": "classical",
+    "roll_up":          "classical",
+    "french_cuff":      "frenchCuff",
+    "ribbed":           "classical",
+    "elastic":          "classical",
+}
+
+
+def _build_annotated_options(
+    design_id: str,
+    analysis: dict,
+    arm: ArmstrongMetrics,
+    prefs: dict,
+) -> dict[str, OptionEntry]:
+    """
+    Returns options annotated with source ("ai" | "default") and valid choices.
+    Does NOT modify the existing _build_options() — this is a parallel function
+    used only by the new /analyses/{id}/draft-params endpoint.
+    """
+    opts: dict[str, OptionEntry] = {}
+
+    def ai(value: Any, key: str = "") -> OptionEntry:
+        return OptionEntry(value=value, source="ai", choices=_OPTION_CHOICES.get(key, []))
+
+    def default(value: Any, key: str = "") -> OptionEntry:
+        return OptionEntry(value=value, source="default", choices=_OPTION_CHOICES.get(key, []))
+
+    collar_type = _get(analysis, "components", "collar", "type", default="") or ""
+    cuff_type   = _get(analysis, "components", "sleeves", "cuff_type", default="") or ""
+    waist_tx    = _get(analysis, "cut", "waist_treatment", default="") or ""
+    pockets_raw = _get(analysis, "components", "pockets", default={}) or {}
+    pocket_type = pockets_raw.get("type", "none") if isinstance(pockets_raw, dict) else "none"
+    sa_rec      = _get(analysis, "craft_recommendations", "seam_allowance_mm", default=None)
+
+    # ── collarStyle (simon, simone) ──────────────────────────────────────────
+    if design_id in ("simon", "simone"):
+        collar_val = _COLLAR_TO_STYLE.get(collar_type)
+        if collar_val:
+            opts["collarStyle"] = ai(collar_val, "collarStyle")
+
+    # ── cuffStyle (simon, simone) ────────────────────────────────────────────
+    if design_id in ("simon", "simone"):
+        cuff_val = _CUFF_TO_STYLE.get(cuff_type)
+        if cuff_val:
+            opts["cuffStyle"] = ai(cuff_val, "cuffStyle")
+
+    # ── kangarooPocket (huey, hugo) ──────────────────────────────────────────
+    if design_id in ("huey", "hugo"):
+        has_pocket = pocket_type not in ("none", "", None)
+        opts["kangarooPocket"] = ai(has_pocket)
+
+    # ── pockets bool (carlita, carlton) ─────────────────────────────────────
+    if design_id in ("carlita", "carlton"):
+        has_pocket = pocket_type not in ("none", "", None)
+        opts["pockets"] = ai(has_pocket)
+
+    # ── waistbandWidth (sandy, waralee) ─────────────────────────────────────
+    if design_id in ("sandy", "waralee"):
+        wb = 30 if waist_tx == "elastic" else 40
+        opts["waistbandWidth"] = ai(wb)
+
+    # ── elasticWidth (paco, titan) ───────────────────────────────────────────
+    if design_id in ("paco", "titan"):
+        ew = 25 if waist_tx == "elastic" else 0
+        opts["elasticWidth"] = ai(ew)
+
+    # ── sa (all designs) ────────────────────────────────────────────────────
+    if sa_rec and isinstance(sa_rec, (int, float)):
+        opts["sa"] = ai(int(sa_rec))
+    else:
+        opts["sa"] = default(10)
+
+    # ── paperless (all designs) ─────────────────────────────────────────────
+    opts["paperless"] = default(False)
 
     return opts
 
