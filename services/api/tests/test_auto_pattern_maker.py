@@ -141,3 +141,30 @@ def test_paperless_always_default():
     opts = _build_annotated_options("simon", analysis, _arm(), {})
     assert opts["paperless"]["value"] is False
     assert opts["paperless"]["source"] == "default"
+
+
+def test_simone_collar_basic_shirt_collar():
+    """simone should use the same collar mapping as simon."""
+    analysis = {
+        "components": {
+            "collar":  {"type": "basic_shirt_collar"},
+            "sleeves": {"cuff_type": "basic_shirt_cuff"},
+        },
+        "craft_recommendations": {},
+        "cut": {},
+    }
+    opts = _build_annotated_options("simone", analysis, _arm(), {})
+    assert opts["collarStyle"]["value"] == "classic"
+    assert opts["collarStyle"]["source"] == "ai"
+
+
+def test_paco_non_elastic_waist_is_default():
+    """elasticWidth=0 for non-elastic paco waist should be source=default, not ai."""
+    analysis = {
+        "components": {"collar": {}, "sleeves": {}},
+        "craft_recommendations": {},
+        "cut": {"waist_treatment": "dart"},
+    }
+    opts = _build_annotated_options("paco", analysis, _arm(), {})
+    assert opts["elasticWidth"]["value"] == 0
+    assert opts["elasticWidth"]["source"] == "default"

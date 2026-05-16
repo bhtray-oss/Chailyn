@@ -309,23 +309,22 @@ class OptionEntry(TypedDict):
 _OPTION_CHOICES: dict[str, list[str]] = {
     "collarStyle": ["classic", "band", "none"],
     "cuffStyle":   ["classical", "frenchCuff"],
-    "ease":        ["fitted", "semi_fitted", "relaxed", "oversized"],
 }
 
 # Maps collar Vision type → FreeSewing collarStyle value
+# crew_neck / none are not valid simon collarStyle values — omit to avoid mis-annotation
 _COLLAR_TO_STYLE: dict[str, str] = {
     "basic_shirt_collar": "classic",
     "convertible":        "classic",
     "mandarin":           "band",
     "stand_collar":       "band",
-    "crew_neck":          "none",
-    "none":               "none",
 }
 
 # Maps cuff Vision type → FreeSewing cuffStyle value
 _CUFF_TO_STYLE: dict[str, str] = {
     "basic_shirt_cuff": "classical",
-    "roll_up":          "classical",
+    "roll_up":          "classical",   # Vision emits "roll_up"
+    "roll_up_cuff":     "classical",   # old _DESIGN_OPTION_MAP uses "roll_up_cuff"
     "french_cuff":      "frenchCuff",
     "ribbed":           "classical",
     "elastic":          "classical",
@@ -387,11 +386,18 @@ def _build_annotated_options(
 
     # ── elasticWidth (paco, titan) ───────────────────────────────────────────
     if design_id in ("paco", "titan"):
-        ew = 25 if waist_tx == "elastic" else 0
-        opts["elasticWidth"] = ai(ew)
+        if waist_tx == "elastic":
+            opts["elasticWidth"] = ai(25)
+        else:
+            opts["elasticWidth"] = default(0)
 
-    # ── sa (all designs) ────────────────────────────────────────────────────
-    if sa_rec and isinstance(sa_rec, (int, float)):
+    # ── sa (all designs): prefer explicit prefs, then Vision recommendation, then default ──
+    # sa_rec == 0 is treated as absent: physically a 0mm SA means raw/serged edge,
+    # which FreeSewing doesn't model — fall back to the per-garment default.
+    pref_sa = prefs.get("sa")
+    if pref_sa and isinstance(pref_sa, (int, float)) and pref_sa > 0:
+        opts["sa"] = default(int(pref_sa))  # caller-provided — treat as "default" (not AI)
+    elif sa_rec is not None and isinstance(sa_rec, (int, float)) and sa_rec > 0:
         opts["sa"] = ai(int(sa_rec))
     else:
         opts["sa"] = default(10)
