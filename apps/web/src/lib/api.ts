@@ -87,6 +87,29 @@ export const profileApi = {
     }),
 }
 
+// ─── Draft Parameters ─────────────────────────────────────────────────────────
+export interface OptionEntry {
+  value: string | number | boolean
+  source: 'ai' | 'default'
+  choices: string[]
+}
+
+export interface DraftParamsAlternative {
+  design: string
+  confidence: number
+  description_zh: string
+}
+
+export interface DraftParamsResponse {
+  design: string
+  confidence: number
+  alternatives: DraftParamsAlternative[]
+  options: Record<string, OptionEntry>
+  armstrong: Record<string, number | string>
+  reasoning: string[]
+  warning?: string
+}
+
 // ─── Analyses ─────────────────────────────────────────────────────────────────
 export const analysisApi = {
   uploadPhoto: async (userId: string, file: File) => {
@@ -108,6 +131,18 @@ export const analysisApi = {
 
   get: (analysisId: string) =>
     request(`/analyses/${analysisId}`),
+
+  getDraftParams: async (
+    analysisId: string,
+    profileId: string,
+    design?: string,
+  ): Promise<DraftParamsResponse> => {
+    const params = new URLSearchParams({ profile_id: profileId })
+    if (design) params.set('design', design)
+    const res = await fetch(`${API_BASE}/analyses/${analysisId}/draft-params?${params}`)
+    if (!res.ok) throw new Error(`draft-params failed: ${res.status}`)
+    return res.json()
+  },
 }
 
 // ─── Analysis Jobs（非同步輪詢） ───────────────────────────────────────────────
