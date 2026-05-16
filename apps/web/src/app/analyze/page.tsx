@@ -16,6 +16,7 @@ import { Camera, Loader2, Sparkles, Check, Ruler, Layers, Palette, Lightbulb, Sh
 import MeasurementChart from '@/components/MeasurementChart'
 import ArmstrongDraftPanel, { type DraftedAsset } from '@/components/ArmstrongDraftPanel'
 import DownloadBar from '@/components/DownloadBar'
+import SmartDraftPanel from '@/components/SmartDraftPanel'
 import type { ArmstrongDraftResult } from '@/lib/api'
 
 const DEV_USER_ID    = '00000000-0000-0000-0000-000000000001'
@@ -51,6 +52,9 @@ export default function AnalyzePage() {
   // Armstrong 分析面板
   const [showArmstrong, setShowArmstrong] = useState(false)
   const armstrongRef = useRef<HTMLDivElement>(null)
+
+  // AI Smart Draft — populated when analysis job completes
+  const [analysisId, setAnalysisId] = useState<string | null>(null)
 
   // Download center — populated when Armstrong panel finishes drafting
   const [dlFormula,   setDlFormula]   = useState<ArmstrongDraftResult | null>(null)
@@ -120,6 +124,7 @@ export default function AnalyzePage() {
     setShowUploadZone(false)
     setDlFormula(null)
     setDlAssets([])
+    setAnalysisId(null)
 
     try {
       setStep('uploading')
@@ -155,6 +160,7 @@ export default function AnalyzePage() {
       }
 
       setAnalysis(job.result as GarmentAnalysis)
+      if (job.analysis_id) setAnalysisId(job.analysis_id)
       setStep('result')
     } catch (e: any) {
       const msg: string = e.message ?? ''
@@ -268,7 +274,7 @@ export default function AnalyzePage() {
                   setStep('upload'); setPreview(null); setAnalysis(null)
                   setJobStatus(''); setActivePreview(null); setPatternSvgs({})
                   setRecs(null); setShowArmstrong(false); setShowUploadZone(false)
-                  setDlFormula(null); setDlAssets([])
+                  setDlFormula(null); setDlAssets([]); setAnalysisId(null)
                 }}
                 className="text-xs px-4 py-1.5 text-[var(--muted)] hover:text-[var(--ink)] transition-colors"
                 style={{ border: '1px solid var(--border)' }}
@@ -579,6 +585,13 @@ export default function AnalyzePage() {
               </div>
             )}
           </div>
+
+          {/* ── AI Smart Draft Panel ─────────────────────────────────────────── */}
+          {analysisId && (
+            <div className="mt-6">
+              <SmartDraftPanel analysisId={analysisId} />
+            </div>
+          )}
 
           {/* ── 下載中心 Download Center ─────────────────────────────────────── */}
           {/* Always visible after analysis — auto-loads formula, user triggers pattern draft */}
