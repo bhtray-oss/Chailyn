@@ -309,6 +309,75 @@ async def update_visibility(
     return {"photo_id": str(photo_id), "visibility": body.visibility}
 
 
+# ─── AI 打版參數推薦 ──────────────────────────────────────────────────────────
+@router.get("/{analysis_id}/draft-params")
+async def get_draft_params(
+    analysis_id: uuid.UUID,
+    profile_id: uuid.UUID,
+    design: str | None = None,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Returns AI-inferred FreeSewing options for a given analysis + body profile.
+    Each option includes value, source ('ai'|'default'), and valid choices list.
+    Optional ?design= overrides the AI's top-ranked design choice.
+    """
+    # 1. Load analysis JSON
+    result = await db.execute(
+        text("SELECT raw_output FROM ai_analyses WHERE id = :id"),
+        {"id": str(analysis_id)},
+    )
+    row = result.fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail=f"找不到分析結果: {analysis_id}")
+
+    analysis_json = row[0]  # already a dict (asyncpg parses JSONB)
+    if isinstance(analysis_json, str):
+        import json as _json
+        analysis_json = _json.loads(analysis_json)
+
+    # 2. Load body measurements (mm)
+    warning = None
+    meas_result = await db.execute(
+        text("SELECT measurements FROM body_profiles WHERE id = :id"),
+        {"id": str(profile_id)},
+    )
+    meas_row = meas_result.fetchone()
+    if meas_row:
+        measurements_mm = meas_row[0] or {}
+        if isinstance(measurements_mm, str):
+            import json as _json
+            measurements_mm = _json.loads(measurements_mm)
+    else:
+        measurements_mm = {}
+        warning = "no_measurements"
+
+    # 3. Run scorer + Armstrong
+    from services.auto_pattern_maker import build_draft_params, _build_annotated_options, calculate_armstrong_metrics
+
+    draft = build_draft_params(measurements_mm, analysis_json)
+
+    # 4. Resolve final design (AI top choice or user override)
+    chosen_design = design or draft.design
+
+    # 5. Build annotated options for chosen design
+    arm = calculate_armstrong_metrics(measurements_mm)
+    annotated_opts = _build_annotated_options(chosen_design, analysis_json, arm, {})
+
+    response: dict = {
+        "design":       chosen_design,
+        "confidence":   draft.confidence,
+        "alternatives": draft.alternatives,
+        "options":      annotated_opts,
+        "armstrong":    draft.armstrong,
+        "reasoning":    draft.reasoning,
+    }
+    if warning:
+        response["warning"] = warning
+
+    return response
+
+
 # ─── 取得分析結果 ─────────────────────────────────────────────────────────────
 @router.get("/{analysis_id}")
 async def get_analysis(
