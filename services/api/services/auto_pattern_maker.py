@@ -331,10 +331,9 @@ _CUFF_TO_STYLE: dict[str, str] = {
 }
 
 
-def _build_annotated_options(
+def build_annotated_options(
     design_id: str,
     analysis: dict,
-    arm: ArmstrongMetrics,
     prefs: dict,
 ) -> dict[str, OptionEntry]:
     """

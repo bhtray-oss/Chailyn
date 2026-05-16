@@ -1,18 +1,8 @@
-"""Tests for _build_annotated_options() in auto_pattern_maker.py"""
+"""Tests for build_annotated_options() in auto_pattern_maker.py"""
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from services.auto_pattern_maker import (
-    _build_annotated_options,
-    ArmstrongMetrics,
-)
-
-
-def _arm() -> ArmstrongMetrics:
-    """Minimal ArmstrongMetrics for testing."""
-    m = ArmstrongMetrics()
-    m.ease_level = "semi_fitted"
-    return m
+from services.auto_pattern_maker import build_annotated_options
 
 
 def test_simon_collar_basic_shirt_collar():
@@ -24,7 +14,7 @@ def test_simon_collar_basic_shirt_collar():
         "craft_recommendations": {"seam_allowance_mm": 10},
         "cut": {},
     }
-    opts = _build_annotated_options("simon", analysis, _arm(), {})
+    opts = build_annotated_options("simon", analysis, {})
     assert opts["collarStyle"]["value"] == "classic"
     assert opts["collarStyle"]["source"] == "ai"
     assert "classic" in opts["collarStyle"]["choices"]
@@ -39,7 +29,7 @@ def test_simon_collar_mandarin():
         "craft_recommendations": {},
         "cut": {},
     }
-    opts = _build_annotated_options("simon", analysis, _arm(), {})
+    opts = build_annotated_options("simon", analysis, {})
     assert opts["collarStyle"]["value"] == "band"
     assert opts["collarStyle"]["source"] == "ai"
 
@@ -53,7 +43,7 @@ def test_simon_cuff_french():
         "craft_recommendations": {},
         "cut": {},
     }
-    opts = _build_annotated_options("simon", analysis, _arm(), {})
+    opts = build_annotated_options("simon", analysis, {})
     assert opts["cuffStyle"]["value"] == "frenchCuff"
     assert opts["cuffStyle"]["source"] == "ai"
 
@@ -64,7 +54,7 @@ def test_sa_from_craft_recommendations():
         "craft_recommendations": {"seam_allowance_mm": 15},
         "cut": {},
     }
-    opts = _build_annotated_options("teagan", analysis, _arm(), {})
+    opts = build_annotated_options("teagan", analysis, {})
     assert opts["sa"]["value"] == 15
     assert opts["sa"]["source"] == "ai"
 
@@ -75,7 +65,7 @@ def test_sa_default_when_missing():
         "craft_recommendations": {},
         "cut": {},
     }
-    opts = _build_annotated_options("teagan", analysis, _arm(), {})
+    opts = build_annotated_options("teagan", analysis, {})
     assert opts["sa"]["value"] == 10
     assert opts["sa"]["source"] == "default"
 
@@ -90,7 +80,7 @@ def test_huey_pocket_detected():
         "craft_recommendations": {},
         "cut": {},
     }
-    opts = _build_annotated_options("huey", analysis, _arm(), {})
+    opts = build_annotated_options("huey", analysis, {})
     assert opts["kangarooPocket"]["value"] is True
     assert opts["kangarooPocket"]["source"] == "ai"
 
@@ -105,7 +95,7 @@ def test_huey_no_pocket():
         "craft_recommendations": {},
         "cut": {},
     }
-    opts = _build_annotated_options("huey", analysis, _arm(), {})
+    opts = build_annotated_options("huey", analysis, {})
     assert opts["kangarooPocket"]["value"] is False
     assert opts["kangarooPocket"]["source"] == "ai"
 
@@ -116,7 +106,7 @@ def test_sandy_elastic_waistband():
         "craft_recommendations": {},
         "cut": {"waist_treatment": "elastic"},
     }
-    opts = _build_annotated_options("sandy", analysis, _arm(), {})
+    opts = build_annotated_options("sandy", analysis, {})
     assert opts["waistbandWidth"]["value"] == 30
     assert opts["waistbandWidth"]["source"] == "ai"
 
@@ -127,7 +117,7 @@ def test_sandy_dart_waistband():
         "craft_recommendations": {},
         "cut": {"waist_treatment": "dart"},
     }
-    opts = _build_annotated_options("sandy", analysis, _arm(), {})
+    opts = build_annotated_options("sandy", analysis, {})
     assert opts["waistbandWidth"]["value"] == 40
     assert opts["waistbandWidth"]["source"] == "default"
 
@@ -139,7 +129,7 @@ def test_sandy_no_waist_treatment_is_default():
         "craft_recommendations": {},
         "cut": {},  # no waist_treatment key
     }
-    opts = _build_annotated_options("sandy", analysis, _arm(), {})
+    opts = build_annotated_options("sandy", analysis, {})
     assert opts["waistbandWidth"]["value"] == 40
     assert opts["waistbandWidth"]["source"] == "default"
 
@@ -150,7 +140,7 @@ def test_paperless_always_default():
         "craft_recommendations": {},
         "cut": {},
     }
-    opts = _build_annotated_options("simon", analysis, _arm(), {})
+    opts = build_annotated_options("simon", analysis, {})
     assert opts["paperless"]["value"] is False
     assert opts["paperless"]["source"] == "default"
 
@@ -165,7 +155,7 @@ def test_simone_collar_basic_shirt_collar():
         "craft_recommendations": {},
         "cut": {},
     }
-    opts = _build_annotated_options("simone", analysis, _arm(), {})
+    opts = build_annotated_options("simone", analysis, {})
     assert opts["collarStyle"]["value"] == "classic"
     assert opts["collarStyle"]["source"] == "ai"
 
@@ -177,6 +167,6 @@ def test_paco_non_elastic_waist_is_default():
         "craft_recommendations": {},
         "cut": {"waist_treatment": "dart"},
     }
-    opts = _build_annotated_options("paco", analysis, _arm(), {})
+    opts = build_annotated_options("paco", analysis, {})
     assert opts["elasticWidth"]["value"] == 0
     assert opts["elasticWidth"]["source"] == "default"

@@ -333,8 +333,7 @@ async def get_draft_params(
 
     analysis_json = row[0]  # already a dict (asyncpg parses JSONB)
     if isinstance(analysis_json, str):
-        import json as _json
-        analysis_json = _json.loads(analysis_json)
+        analysis_json = json.loads(analysis_json)
 
     # 2. Load body measurements (mm)
     warning = None
@@ -346,23 +345,30 @@ async def get_draft_params(
     if meas_row:
         measurements_mm = meas_row[0] or {}
         if isinstance(measurements_mm, str):
-            import json as _json
-            measurements_mm = _json.loads(measurements_mm)
+            measurements_mm = json.loads(measurements_mm)
     else:
         measurements_mm = {}
         warning = "no_measurements"
 
-    # 3. Run scorer + Armstrong
-    from services.auto_pattern_maker import build_draft_params, _build_annotated_options, calculate_armstrong_metrics
+    # 3–5. Run scorer + Armstrong + annotated options
+    try:
+        from services.auto_pattern_maker import build_draft_params, build_annotated_options
+        draft = build_draft_params(measurements_mm, analysis_json)
+        chosen_design = design or draft.design
 
-    draft = build_draft_params(measurements_mm, analysis_json)
+        VALID_DESIGNS = {
+            "aaron", "bella", "bibi", "brian", "carlita", "carlton",
+            "huey", "lily", "paco", "sandy", "simon", "simone",
+            "teagan", "titan", "waralee",
+        }
+        if chosen_design not in VALID_DESIGNS:
+            raise HTTPException(status_code=400, detail=f"未知設計: {chosen_design}")
 
-    # 4. Resolve final design (AI top choice or user override)
-    chosen_design = design or draft.design
-
-    # 5. Build annotated options for chosen design
-    arm = calculate_armstrong_metrics(measurements_mm)
-    annotated_opts = _build_annotated_options(chosen_design, analysis_json, arm, {})
+        annotated_opts = build_annotated_options(chosen_design, analysis_json, {})
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"打版參數推薦失敗: {exc}") from exc
 
     response: dict = {
         "design":       chosen_design,
