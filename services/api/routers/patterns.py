@@ -106,7 +106,7 @@ async def draft_pattern(
             "o":          json.dumps(req.options),
             "sa":         req.sa,
             "paperless":  req.paperless,
-            "ai":         req.ai_source_photo_id is not None,
+            "ai":         req.ai_source_photo_id is not None or req.ai_confidence is not None,
             "ai_photo":   str(req.ai_source_photo_id) if req.ai_source_photo_id else None,
             "conf":       req.ai_confidence,
             "logs":       json.dumps(engine_result.get("logs", {})),

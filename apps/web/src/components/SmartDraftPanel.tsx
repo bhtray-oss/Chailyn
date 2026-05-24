@@ -86,7 +86,7 @@ export default function SmartDraftPanel({ analysisId, profileId = DEV_PROFILE_ID
         sa:              typeof sa === 'number' ? sa : 10,
         paperless:       paperless === true,
         options:         restOpts as Record<string, unknown>,
-        aiConfidence:    params.confidence,          // marks created_by_ai = true
+        aiConfidence:    params.confidence,          // triggers created_by_ai = true
       }) as { instance_id?: string; id?: string }
 
       const instanceId = result.instance_id ?? result.id
