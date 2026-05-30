@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useRef, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useDropzone } from 'react-dropzone'
 import { analysisApi, jobApi, patternApi, recommendationsApi } from '@/lib/api'
 import type { GarmentAnalysis } from '@/lib/types'
@@ -33,7 +34,12 @@ type Step = 'upload' | 'uploading' | 'analyzing' | 'result'
 
 export default function AnalyzePage() {
   const { t, lang } = useLanguage()
-  const [step, setStep]           = useState<Step>('upload')
+  const searchParams = useSearchParams()
+
+  // ?debug_analysis_id=<uuid> skips upload and shows SmartDraftPanel for an existing analysis
+  const debugAnalysisId = searchParams.get('debug_analysis_id')
+
+  const [step, setStep]           = useState<Step>(debugAnalysisId ? 'result' : 'upload')
   const [preview, setPreview]     = useState<string | null>(null)
   const [analysis, setAnalysis]   = useState<GarmentAnalysis | null>(null)
   const [error, setError]         = useState<string | null>(null)
@@ -54,7 +60,7 @@ export default function AnalyzePage() {
   const armstrongRef = useRef<HTMLDivElement>(null)
 
   // AI Smart Draft — populated when analysis job completes
-  const [analysisId, setAnalysisId] = useState<string | null>(null)
+  const [analysisId, setAnalysisId] = useState<string | null>(debugAnalysisId)
 
   // Download center — populated when Armstrong panel finishes drafting
   const [dlFormula,   setDlFormula]   = useState<ArmstrongDraftResult | null>(null)
@@ -65,6 +71,14 @@ export default function AnalyzePage() {
   const [recsLoading, setRecsLoading] = useState(false)
   const [recsError, setRecsError] = useState<string | null>(null)
   const recsRef = useRef<HTMLDivElement>(null)
+
+  // Debug mode: auto-fetch analysis when ?debug_analysis_id= is present
+  useEffect(() => {
+    if (!debugAnalysisId) return
+    analysisApi.get(debugAnalysisId)
+      .then((data: GarmentAnalysis) => setAnalysis(data))
+      .catch(() => {/* silently ignore in debug mode */})
+  }, [debugAnalysisId])
 
   useEffect(() => {
     if (activePreview && previewRef.current) {
